@@ -1,7 +1,7 @@
 <div align="center"><h1>MO:A</h1></div>
 
 ### Wiki 📑
-👉 [Wiki Page](https://github.com/Juhongseok/Moa/wiki)
+👉 [Wiki Page](https://github.com/Project-MO-A/Community/wiki)
 
 ## 팀원👨‍💻👩‍💻
 
