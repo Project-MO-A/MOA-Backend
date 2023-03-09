@@ -1,4 +1,4 @@
-package com.moa.config;
+package com.moa.global.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationRunner;
