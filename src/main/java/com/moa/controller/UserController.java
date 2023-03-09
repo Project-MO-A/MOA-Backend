@@ -1,13 +1,11 @@
 package com.moa.controller;
 
-import com.moa.dto.user.UserSignupRequest;
+import com.moa.dto.user.*;
 import com.moa.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.HttpStatus.CREATED;
 
@@ -22,5 +20,15 @@ public class UserController {
         return ResponseEntity
                 .status(CREATED)
                 .body(userService.saveUser(request));
+    }
+
+    @GetMapping("info")
+    public UserInfoResponse getInfo(@Login UserLogin user) {
+        return userService.getUserInfoByEmail(user.email());
+    }
+
+    @PatchMapping("info")
+    public String update(@RequestBody @Valid UserUpdateRequest updateRequest, @Login UserLogin user) {
+        return userService.updateUser(updateRequest, user.email());
     }
 }
