@@ -13,6 +13,7 @@ import static jakarta.persistence.FetchType.LAZY;
 public class Interests {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "INTERESTS_ID")
     private Long id;
 
     @Column(name = "INTERESTS_NAME")
