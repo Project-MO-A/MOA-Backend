@@ -1,5 +1,6 @@
 package com.moa.domain.user;
 
+import com.moa.dto.user.UserUpdateRequest;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -49,5 +50,16 @@ public class User {
 
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
+    }
+
+    public void update(UserUpdateRequest updateRequest) {
+        this.email = updateRequest.email();
+        this.password = updateRequest.password();
+        this.name = updateRequest.name();
+        this.nickname = updateRequest.nickname();
+        this.locationLatitude = updateRequest.locationLatitude();
+        this.locationLongitude = updateRequest.locationLongitude();
+        this.popularity = updateRequest.popularity();
+        this.details = updateRequest.details();
     }
 }
