@@ -12,6 +12,8 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Transactional
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
@@ -34,6 +36,10 @@ public class UserService implements UserDetailsService {
 
 
     public void deleteUser(String email) {
-        userRepository.deleteByEmail(email);
+        Optional<User> findUser = userRepository.findByEmail(email);
+        if (findUser.isEmpty()) {
+            throw new UsernameNotFoundException("해당 이메일을 가진 유저를 찾을 수 없습니다");
+        }
+        userRepository.delete(findUser.get());
     }
 }
