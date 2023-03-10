@@ -32,4 +32,7 @@ public class UserService implements UserDetailsService {
     }
 
 
+    public void deleteUser(String email) {
+        userRepository.deleteByEmail(email);
+    }
 }

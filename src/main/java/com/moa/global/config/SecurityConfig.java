@@ -8,6 +8,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 
+import static org.springframework.http.HttpMethod.POST;
+
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
@@ -26,6 +28,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorize ->
                         authorize
+                                .requestMatchers(POST, "/sign-out").hasRole("USER")
                                 .anyRequest().permitAll()
                 );
 
