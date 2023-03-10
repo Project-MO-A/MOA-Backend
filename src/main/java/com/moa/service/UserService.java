@@ -2,6 +2,7 @@ package com.moa.service;
 
 import com.moa.domain.user.User;
 import com.moa.domain.user.UserRepository;
+import com.moa.dto.user.UserEmailResponse;
 import com.moa.dto.user.UserSignupRequest;
 import com.moa.global.auth.model.SecurityUser;
 import lombok.RequiredArgsConstructor;
@@ -25,10 +26,10 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("해당 이메일을 가진 유저를 찾을 수 없습니다")));
     }
 
-    public String saveUser(UserSignupRequest request) {
+    public UserEmailResponse saveUser(UserSignupRequest request) {
         User user = request.toEntity();
         user.encodePassword(passwordEncoder);
-        return userRepository.save(user).getEmail();
+        return new UserEmailResponse(userRepository.save(user).getEmail());
     }
 
 

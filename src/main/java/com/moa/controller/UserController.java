@@ -1,5 +1,6 @@
 package com.moa.controller;
 
+import com.moa.dto.user.UserEmailResponse;
 import com.moa.dto.user.UserSignupRequest;
 import com.moa.service.UserService;
 import jakarta.validation.Valid;
@@ -17,7 +18,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/sign-up")
-    public ResponseEntity<String> signUp(@RequestBody @Valid UserSignupRequest request) {
+    public ResponseEntity<UserEmailResponse> signUp(@RequestBody @Valid UserSignupRequest request) {
         return ResponseEntity
                 .status(CREATED)
                 .body(userService.saveUser(request));
