@@ -1,11 +1,15 @@
 package com.moa.domain.user;
 
+import com.moa.domain.interests.Interests;
 import com.moa.dto.user.UserUpdateRequest;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "USERS")
@@ -17,6 +21,7 @@ public class User {
     @Column(name = "USER_ID")
     private Long id;
 
+    @Column(unique = true)
     private String email;
     private String password;
     private String name;
@@ -31,6 +36,9 @@ public class User {
     private String details;
 
     private String refreshToken;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Interests> interests = new ArrayList<>();
 
     @Builder
     public User(String email, String password, String name, String nickname, double locationLatitude, double locationLongitude, int popularity, String details) {
@@ -52,6 +60,13 @@ public class User {
         this.refreshToken = refreshToken;
     }
 
+    public void addInterests(List<Interests> interests) {
+        if (interests != null) {
+            this.interests = interests;
+            interests.forEach(i -> i.setParent(this));
+        }
+    }
+    
     public void update(UserUpdateRequest updateRequest) {
         this.password = updateRequest.password();
         this.name = updateRequest.name();

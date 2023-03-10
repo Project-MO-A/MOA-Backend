@@ -1,6 +1,7 @@
 package com.moa.global.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.moa.global.filter.exception.BadValueAuthenticationException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -17,7 +18,7 @@ public class LoginProcessFilter extends AbstractAuthenticationProcessingFilter {
 
     private static final String METHOD_NAME = "POST";
     private static final String CONTENT_TYPE = "application/json";
-    private static final String SPRING_SECURITY_FORM_USERNAME_KEY = "email";
+    private static final String SPRING_SECURITY_FORM_EMAIL_KEY = "email";
     private static final String SPRING_SECURITY_FORM_PASSWORD_KEY = "password";
     private static final String DEFAULT_FILTER_PROCESSES_URL = "/form-login";
     private final ObjectMapper objectMapper;
@@ -34,10 +35,17 @@ public class LoginProcessFilter extends AbstractAuthenticationProcessingFilter {
         }
 
         Map<String, String> parameter = objectMapper.readValue(request.getInputStream(), Map.class);
-        String username = parameter.get(SPRING_SECURITY_FORM_USERNAME_KEY);
+        String email = parameter.get(SPRING_SECURITY_FORM_EMAIL_KEY);
         String password = parameter.get(SPRING_SECURITY_FORM_PASSWORD_KEY);
 
-        UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(username, password);
+        validateParameterValue(email, password);
+        UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(email, password);
         return this.getAuthenticationManager().authenticate(authRequest);
+    }
+
+    private void validateParameterValue(String email, String password) throws AuthenticationException {
+        if (email == null || password == null) {
+            throw new BadValueAuthenticationException("email, password 값 둘 다 입력해 주세요");
+        }
     }
 }

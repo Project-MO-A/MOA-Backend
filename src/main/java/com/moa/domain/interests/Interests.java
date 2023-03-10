@@ -23,8 +23,11 @@ public class Interests {
     @JoinColumn(name = "USER_ID")
     private User user;
 
-    public Interests(String name, User user) {
+    public Interests(String name) {
         this.name = name;
+    }
+
+    public void setParent(User user) {
         this.user = user;
     }
 }
