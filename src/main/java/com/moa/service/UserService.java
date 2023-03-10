@@ -6,6 +6,7 @@ import com.moa.dto.user.UserEmailResponse;
 import com.moa.dto.user.UserSignupRequest;
 import com.moa.global.auth.model.SecurityUser;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -29,8 +30,13 @@ public class UserService implements UserDetailsService {
     }
 
     public UserEmailResponse saveUser(UserSignupRequest request) {
+        Optional<User> findUser = userRepository.findByEmail(request.email());
+        if (findUser.isPresent()) {
+            throw new DuplicateKeyException("해당 이메일로 가입이 불가능합니다");
+        }
         User user = request.toEntity();
         user.encodePassword(passwordEncoder);
+        user.addInterests(request.getInterests());
         return new UserEmailResponse(userRepository.save(user).getEmail());
     }
 
