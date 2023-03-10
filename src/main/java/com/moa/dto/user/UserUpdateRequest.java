@@ -1,18 +1,16 @@
 package com.moa.dto.user;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.Builder;
 
 @Builder
 public record UserUpdateRequest(
-        @Email String email,
         String password,
-        @NotNull String name,
-        @NotNull String nickname,
-        double locationLatitude,
-        double locationLongitude,
-        int popularity,
+        String name,
+        String nickname,
+        @Positive double locationLatitude,
+        @Positive double locationLongitude,
+        @Positive int popularity,
         String details
 ) {
 }

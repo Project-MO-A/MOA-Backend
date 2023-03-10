@@ -53,7 +53,6 @@ public class User {
     }
 
     public void update(UserUpdateRequest updateRequest) {
-        this.email = updateRequest.email();
         this.password = updateRequest.password();
         this.name = updateRequest.name();
         this.nickname = updateRequest.nickname();
