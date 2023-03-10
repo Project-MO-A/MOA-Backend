@@ -1,6 +1,7 @@
 package com.moa.domain.user;
 
 import com.moa.domain.interests.Interests;
+import com.moa.dto.user.UserUpdateRequest;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -64,5 +65,15 @@ public class User {
             this.interests = interests;
             interests.forEach(i -> i.setParent(this));
         }
+    }
+    
+    public void update(UserUpdateRequest updateRequest) {
+        this.password = updateRequest.password();
+        this.name = updateRequest.name();
+        this.nickname = updateRequest.nickname();
+        this.locationLatitude = updateRequest.locationLatitude();
+        this.locationLongitude = updateRequest.locationLongitude();
+        this.popularity = updateRequest.popularity();
+        this.details = updateRequest.details();
     }
 }

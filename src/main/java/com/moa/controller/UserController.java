@@ -1,7 +1,6 @@
 package com.moa.controller;
 
-import com.moa.dto.user.UserEmailResponse;
-import com.moa.dto.user.UserSignupRequest;
+import com.moa.dto.user.*;
 import com.moa.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,5 +28,15 @@ public class UserController {
     public ResponseEntity<Void> signOut(@RequestParam String email){
         userService.deleteUser(email);
         return new ResponseEntity<>(OK);
+    }
+    
+    @GetMapping("info")
+    public UserInfoResponse getInfo(@Login UserLogin user) {
+        return userService.getUserInfoByEmail(user.email());
+    }
+
+    @PatchMapping("info")
+    public String update(@RequestBody @Valid UserUpdateRequest updateRequest, @Login UserLogin user) {
+        return userService.updateUser(updateRequest, user.email());
     }
 }
