@@ -1,11 +1,14 @@
 package com.moa.global.auth.utils;
 
+import com.moa.global.auth.properties.JwtProperties;
+import com.moa.global.auth.properties.JwtProperties.TokenInfo;
 import com.moa.global.auth.model.TokenMapping;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.util.Map;
 import java.util.Optional;
 
 import static java.lang.Thread.sleep;
@@ -14,17 +17,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 class JwtServiceTest {
 
     private static final String SECRET = "secret";
-    private static final long ACCESS_TOKEN_VALIDATION_SECONDS = 1;
-    private static final long REFRESH_TOKEN_VALIDATION_SECONDS = 1;
+    private static final int ACCESS_TOKEN_VALIDATION_SECONDS = 1;
+    private static final int REFRESH_TOKEN_VALIDATION_SECONDS = 1;
     private static final String ACCESS_HEADER = "Authorization";
     private static final String REFRESH_HEADER = "AuthorizationRefresh";
 
     private final JwtService jwtService = new JwtService(
-            SECRET,
-            ACCESS_TOKEN_VALIDATION_SECONDS,
-            REFRESH_TOKEN_VALIDATION_SECONDS,
-            ACCESS_HEADER,
-            REFRESH_HEADER);
+            new JwtProperties(
+                    SECRET,
+                    Map.of("access", new TokenInfo(ACCESS_TOKEN_VALIDATION_SECONDS, ACCESS_HEADER),
+                            "refresh", new TokenInfo(REFRESH_TOKEN_VALIDATION_SECONDS, REFRESH_HEADER)))
+    );
 
     @Test
     @DisplayName("토큰 생성")
@@ -71,8 +74,8 @@ class JwtServiceTest {
         request.addHeader(REFRESH_HEADER, sendRefreshToken);
 
         //when
-        Optional<String> accessToken = jwtService.extractAccessToken(request);
-        Optional<String> refreshToken = jwtService.extractRefreshToken(request);
+        Optional<String> accessToken = jwtService.extractToken(request, ACCESS_HEADER);
+        Optional<String> refreshToken = jwtService.extractToken(request, REFRESH_HEADER);
 
         //then
         assertThat(accessToken.isPresent()).isTrue();
@@ -93,8 +96,8 @@ class JwtServiceTest {
         request.addHeader(REFRESH_HEADER, sendRefreshToken);
 
         //when
-        Optional<String> accessToken = jwtService.extractAccessToken(request);
-        Optional<String> refreshToken = jwtService.extractRefreshToken(request);
+        Optional<String> accessToken = jwtService.extractToken(request, ACCESS_HEADER);
+        Optional<String> refreshToken = jwtService.extractToken(request, REFRESH_HEADER);
 
         //then
         assertThat(accessToken.isEmpty()).isTrue();
