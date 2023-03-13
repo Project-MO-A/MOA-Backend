@@ -1,7 +1,10 @@
 package com.moa.dto.user;
 
+import com.moa.domain.interests.Interests;
 import com.moa.domain.user.User;
 import lombok.Getter;
+
+import java.util.List;
 
 @Getter
 public class UserInfoResponse {
@@ -13,6 +16,7 @@ public class UserInfoResponse {
     private final double locationLongitude;
     private final int popularity;
     private final String details;
+    private List<String> interests;
 
     public UserInfoResponse(User user) {
         this.email = user.getEmail();
@@ -23,5 +27,12 @@ public class UserInfoResponse {
         this.locationLongitude = user.getLocationLongitude();
         this.popularity = user.getPopularity();
         this.details = user.getDetails();
+        setInterests(user.getInterests());
+    }
+
+    public void setInterests(List<Interests> interests) {
+        if (interests != null) {
+            this.interests = interests.stream().map(Interests::getName).toList();
+        }
     }
 }
