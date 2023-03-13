@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -89,6 +90,7 @@ class LoginProcessFilterTest {
 
         //when
         ResultActions action = mvc.perform(post("/form-login")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(mapper.writeValueAsString(new Login("user@email.com", "password"))));
 
         //then
@@ -115,6 +117,7 @@ class LoginProcessFilterTest {
 
         //when
         ResultActions action = mvc.perform(post("/form-login")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(mapper.writeValueAsString(new Login("incorrect@email.com", "password"))));
 
         //then
@@ -133,13 +136,13 @@ class LoginProcessFilterTest {
 
         //when
         ResultActions action = mvc.perform(post("/form-login")
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(mapper.writeValueAsString(new Login("user@email.com", "password11"))));
 
         //then
         action.andExpectAll(
                 status().isBadRequest(),
-                result -> result.getResolvedException().getClass().isAssignableFrom(BadCredentialsException.class),
-                result -> result.getResolvedException().getMessage().equals("비밀번호를 다시 입력해 주세요")
+                jsonPath("$.message").value("비밀번호를 다시 입력해 주세요")
         );
     }
 
