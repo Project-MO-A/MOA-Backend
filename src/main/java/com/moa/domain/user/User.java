@@ -75,5 +75,6 @@ public class User {
         this.locationLongitude = updateRequest.locationLongitude();
         this.popularity = updateRequest.popularity();
         this.details = updateRequest.details();
+        addInterests(updateRequest.interestsValue());
     }
 }
