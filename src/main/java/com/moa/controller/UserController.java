@@ -30,13 +30,13 @@ public class UserController {
         return new ResponseEntity<>(OK);
     }
     
-    @GetMapping("info")
-    public UserInfoResponse getInfo(@Login UserLogin user) {
-        return userService.getUserInfoByEmail(user.email());
+    @GetMapping("/info")
+    public UserInfoResponse getInfo(@RequestParam String email) {
+        return userService.getUserInfoByEmail(email);
     }
 
-    @PatchMapping("info")
-    public String update(@RequestBody @Valid UserUpdateRequest updateRequest, @Login UserLogin user) {
-        return userService.updateUser(updateRequest, user.email());
+    @PatchMapping("/info")
+    public String update(@RequestBody @Valid UserUpdateRequest updateRequest) {
+        return userService.updateUser(updateRequest);
     }
 }
