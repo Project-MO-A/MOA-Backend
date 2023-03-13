@@ -56,8 +56,8 @@ public class UserService implements UserDetailsService {
         userRepository.delete(findUser.get());
     }
     
-    public String updateUser(final UserUpdateRequest updateRequest, final String email) {
-        User user = userRepository.findByEmail(email)
+    public String updateUser(final UserUpdateRequest updateRequest) {
+        User user = userRepository.findByEmail(updateRequest.email())
                 .orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 유저를 찾을 수 없습니다"));
         user.update(updateRequest);
         return user.getEmail();

@@ -67,6 +67,7 @@ class UserServiceTest {
     void update() {
         //given
         UserUpdateRequest updateRequest = UserUpdateRequest.builder()
+                .email(TEST_EMAIL)
                 .password("test1234")
                 .name("기우")
                 .nickname("bam")
@@ -76,7 +77,7 @@ class UserServiceTest {
                 .build();
 
         //when
-        userService.updateUser(updateRequest, TEST_EMAIL);
+        userService.updateUser(updateRequest);
 
         //then
         User user = userRepository.findByEmail(TEST_EMAIL).orElseThrow();
@@ -90,6 +91,7 @@ class UserServiceTest {
     void updateFail1() {
         //given
         UserUpdateRequest updateRequest = UserUpdateRequest.builder()
+                .email("ssss@naver.com")
                 .password("test1234")
                 .name("기우")
                 .nickname("bam")
@@ -99,7 +101,7 @@ class UserServiceTest {
                 .build();
 
         //when
-        assertThatThrownBy(() -> userService.updateUser(updateRequest, "ssss@naver.com"))
+        assertThatThrownBy(() -> userService.updateUser(updateRequest))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 }
