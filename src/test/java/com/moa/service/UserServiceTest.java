@@ -10,7 +10,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -28,6 +32,10 @@ class UserServiceTest {
 
     @BeforeEach
     void setUp() {
+        List<String> interests = new ArrayList<>();
+        interests.add("Java");
+        interests.add("Python");
+
         UserSignupRequest testUser = UserSignupRequest.builder()
                 .email(TEST_EMAIL)
                 .password("qwer1234")
@@ -36,12 +44,13 @@ class UserServiceTest {
                 .details("Hello")
                 .locationLatitude(23.1551134)
                 .locationLongitude(51.2341355)
+                .interests(interests)
                 .build();
 
-        userRepository.save(testUser.toEntity());
+        userService.saveUser(testUser);
     }
 
-    @DisplayName("유저의 개인 정보를 가져온다")
+    @DisplayName("info - 유저의 개인 정보를 가져온다")
     @Test
     void info() {
         //when
@@ -52,20 +61,25 @@ class UserServiceTest {
         assertThat(info.getPopularity()).isEqualTo(0);
         assertThat(info.getNickname()).isEqualTo("john");
         assertThat(info.getDetails()).isEqualTo("Hello");
+        assertThat(info.getInterests()).containsOnly("Java", "Python");
     }
 
-    @DisplayName("유저의 개인 정보를 가져오는데 실패한다. (잘못된 이메일)")
+    @DisplayName("info - 유저의 개인 정보를 가져오는데 실패한다. (잘못된 이메일)")
     @Test
     void infoFail1() {
         //when
         assertThatThrownBy(() -> userService.getUserInfoByEmail("ssss@naver.com"))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(UsernameNotFoundException.class);
     }
 
-    @DisplayName("유저의 개인 정보를 수정한다.")
+    @DisplayName("update - 유저의 개인 정보를 수정한다.")
     @Test
     void update() {
         //given
+        List<String> interests = new ArrayList<>();
+        interests.add("C#");
+        interests.add("JavaScript");
+
         UserUpdateRequest updateRequest = UserUpdateRequest.builder()
                 .email(TEST_EMAIL)
                 .password("test1234")
@@ -74,6 +88,7 @@ class UserServiceTest {
                 .details("Hello bro")
                 .locationLatitude(23.1551134)
                 .locationLongitude(51.2341355)
+                .interests(interests)
                 .build();
 
         //when
@@ -84,9 +99,10 @@ class UserServiceTest {
         assertThat(user.getPassword()).isEqualTo("test1234");
         assertThat(user.getDetails()).isEqualTo("Hello bro");
         assertThat(user.getNickname()).isEqualTo("bam");
+        assertThat(user.getInterests().get(0).getName()).isEqualTo("C#");
     }
 
-    @DisplayName("유저의 개인 정보를 수정하는데 실패한다. (잘못된 이메일)")
+    @DisplayName("update - 유저의 개인 정보를 수정하는데 실패한다. (잘못된 이메일)")
     @Test
     void updateFail1() {
         //given
@@ -102,6 +118,6 @@ class UserServiceTest {
 
         //when
         assertThatThrownBy(() -> userService.updateUser(updateRequest))
-                .isInstanceOf(IllegalArgumentException.class);
+                .isInstanceOf(UsernameNotFoundException.class);
     }
 }

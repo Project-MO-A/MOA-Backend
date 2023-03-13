@@ -45,7 +45,7 @@ public class UserService implements UserDetailsService {
     @Transactional(readOnly = true)
     public UserInfoResponse getUserInfoByEmail(final String email) {
         return new UserInfoResponse(userRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 유저를 찾을 수 없습니다")));
+                .orElseThrow(() -> new UsernameNotFoundException("해당 이메일을 가진 유저를 찾을 수 없습니다")));
     }
 
     public void deleteUser(String email) {
@@ -58,7 +58,7 @@ public class UserService implements UserDetailsService {
     
     public String updateUser(final UserUpdateRequest updateRequest) {
         User user = userRepository.findByEmail(updateRequest.email())
-                .orElseThrow(() -> new IllegalArgumentException("해당 이메일을 가진 유저를 찾을 수 없습니다"));
+                .orElseThrow(() -> new UsernameNotFoundException("해당 이메일을 가진 유저를 찾을 수 없습니다"));
         user.update(updateRequest);
         return user.getEmail();
     }
