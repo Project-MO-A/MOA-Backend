@@ -12,12 +12,10 @@ import java.util.List;
 @Builder
 public record UserUpdateRequest(
         @Email @NotBlank String email,
-        @NotBlank String password,
         @NotBlank @Length(min = 1, max = 15) String name,
-        @Length(min = 1, max = 15) String nickname,
+        @NotBlank @Length(min = 1, max = 15) String nickname,
         @Positive double locationLatitude,
         @Positive double locationLongitude,
-        @Positive int popularity,
         String details,
         List<String> interests
 ) {

@@ -68,12 +68,10 @@ public class User {
     }
     
     public void update(UserUpdateRequest updateRequest) {
-        this.password = updateRequest.password();
         this.name = updateRequest.name();
         this.nickname = updateRequest.nickname();
         this.locationLatitude = updateRequest.locationLatitude();
         this.locationLongitude = updateRequest.locationLongitude();
-        this.popularity = updateRequest.popularity();
         this.details = updateRequest.details();
         addInterests(updateRequest.interestsValue());
     }
