@@ -25,8 +25,8 @@ public class JwtService {
 
     public TokenMapping createToken(String email) {
         return TokenMapping.builder()
-                .accessToken(PREFIX.concat(createAccessToken(email)))
-                .refreshToken(PREFIX.concat(createRefreshToken()))
+                .accessToken(createAccessToken(email))
+                .refreshToken(createRefreshToken())
                 .build();
     }
 
@@ -46,8 +46,8 @@ public class JwtService {
     }
 
     public void sendBothToken(HttpServletResponse response, String accessToken, String refreshToken) {
-        setAccessTokenInHeader(response, accessToken);
-        setRefreshTokenInHeader(response, refreshToken);
+        setAccessTokenInHeader(response, PREFIX.concat(accessToken));
+        setRefreshTokenInHeader(response, PREFIX.concat(refreshToken));
     }
 
     public void setAccessTokenInHeader(HttpServletResponse response, String accessToken) {
