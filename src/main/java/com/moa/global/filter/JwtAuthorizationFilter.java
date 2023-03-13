@@ -36,7 +36,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        Optional<String> accessToken = jwtService.extractAccessToken(request);
+        Optional<String> accessToken = jwtService.extractToken(request, "Authorization");
         if (accessToken.isEmpty()) {
             filterChain.doFilter(request, response);
             return;
@@ -69,7 +69,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     }
 
     private void checkRefreshToken(HttpServletRequest request, HttpServletResponse response) {
-        Optional<String> refreshToken = jwtService.extractRefreshToken(request)
+        Optional<String> refreshToken = jwtService.extractToken(request, "AuthorizationRefresh")
                 .filter(jwtService::isTokenValid);
 
         if (refreshToken.isPresent()) {

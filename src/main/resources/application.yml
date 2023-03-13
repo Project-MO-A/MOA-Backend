@@ -17,12 +17,11 @@ spring:
 
 
 jwt:
-  secret: 2dae84f846e4f4b158a8d26681707f4338495bc7ab681523E6BE37DB3818CC36871E26235DD67D32FE4041492
-
-  access:
-    expiration: 20
-    header: Authorization
-
-  refresh:
-    expiration: 30
-    header: AuthorizationRefresh
+  secretKey: 2dae84f846e4f4b158a8d26681707f4338495bc7ab681523E6BE37DB3818CC36871E26235DD67D32FE4041492
+  info:
+    access:
+      expiration: 20
+      header: Authorization
+    refresh:
+      expiration: 30
+      header: AuthorizationRefresh

@@ -1,10 +1,13 @@
 package com.moa.global.config;
 
+import com.moa.global.config.sub.SecurityFilterBeanConfig;
+import com.moa.global.config.sub.SecurityServiceBeanConfig;
 import com.moa.global.filter.JwtAuthorizationFilter;
 import com.moa.global.filter.LoginProcessFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
@@ -13,6 +16,7 @@ import static org.springframework.http.HttpMethod.DELETE;
 
 @Configuration
 @RequiredArgsConstructor
+@Import({SecurityFilterBeanConfig.class, SecurityServiceBeanConfig.class})
 public class SecurityConfig {
 
     private final LoginProcessFilter loginProcessFilter;

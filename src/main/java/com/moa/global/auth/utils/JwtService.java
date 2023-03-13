@@ -3,34 +3,25 @@ package com.moa.global.auth.utils;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.moa.global.auth.properties.JwtProperties;
 import com.moa.global.auth.model.TokenMapping;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.Optional;
 
 @Service
-@NoArgsConstructor
-@AllArgsConstructor
+@RequiredArgsConstructor
+@EnableConfigurationProperties(JwtProperties.class)
 public class JwtService {
 
-    private final String PREFIX = "Bearer ";
-    private final String BLANK = "";
-    @Value("${jwt.secret}")
-    private String secret;
-    @Value("${jwt.access.expiration}")
-    private long accessTokenValidationSeconds;
-    @Value("${jwt.refresh.expiration}")
-    private long refreshTokenValidationSeconds;
-    @Value("${jwt.access.header}")
-    private String accessHeader;
-    @Value("${jwt.refresh.header}")
-    private String refreshHeader;
+    private static final String PREFIX = "Bearer ";
+    private static final String BLANK = "";
+    private final JwtProperties jwtProperties;
 
     public TokenMapping createToken(String email) {
         return TokenMapping.builder()
@@ -38,48 +29,43 @@ public class JwtService {
                 .refreshToken(createRefreshToken())
                 .build();
     }
+
     public String createAccessToken(String email) {
-        return PREFIX.concat(JWT.create()
+        return JWT.create()
                 .withSubject("AccessToken")
-                .withExpiresAt(new Date(System.currentTimeMillis() + accessTokenValidationSeconds * 1000))
+                .withExpiresAt(createExpireTime("access"))
                 .withClaim("email", email)
-                .sign(Algorithm.HMAC512(secret)));
+                .sign(Algorithm.HMAC512(jwtProperties.secretKey()));
     }
 
     public String createRefreshToken() {
-        return PREFIX.concat(JWT.create()
+        return JWT.create()
                 .withSubject("RefreshToken")
-                .withExpiresAt(new Date(System.currentTimeMillis() + refreshTokenValidationSeconds * 1000))
-                .sign(Algorithm.HMAC512(secret)));
+                .withExpiresAt(createExpireTime("refresh"))
+                .sign(Algorithm.HMAC512(jwtProperties.secretKey()));
     }
 
     public void sendBothToken(HttpServletResponse response, String accessToken, String refreshToken) {
-        setAccessTokenInHeader(response, accessToken);
-        setRefreshTokenInHeader(response, refreshToken);
+        setAccessTokenInHeader(response, PREFIX.concat(accessToken));
+        setRefreshTokenInHeader(response, PREFIX.concat(refreshToken));
     }
 
     public void setAccessTokenInHeader(HttpServletResponse response, String accessToken) {
-        response.setHeader(accessHeader, accessToken);
+        response.setHeader(jwtProperties.getHeader("access"), accessToken);
     }
 
     public void setRefreshTokenInHeader(HttpServletResponse response, String refreshToken) {
-        response.setHeader(refreshHeader, refreshToken);
+        response.setHeader(jwtProperties.getHeader("refresh"), refreshToken);
     }
 
-    public Optional<String> extractAccessToken(HttpServletRequest request) {
-        return Optional.ofNullable(request.getHeader(accessHeader))
-                .filter(refreshToken -> refreshToken.startsWith(PREFIX))
-                .map(refreshToken -> refreshToken.replace(PREFIX, BLANK));
-    }
-
-    public Optional<String> extractRefreshToken(HttpServletRequest request) {
-        return Optional.ofNullable(request.getHeader(refreshHeader))
-                .filter(refreshToken -> refreshToken.startsWith(PREFIX))
-                .map(refreshToken -> refreshToken.replace(PREFIX, BLANK));
+    public Optional<String> extractToken(HttpServletRequest request, String headerName) {
+        return Optional.ofNullable(request.getHeader(headerName))
+                .filter(token -> token.startsWith(PREFIX))
+                .map(token -> token.replace(PREFIX, BLANK));
     }
 
     public String extractUserEmail(String token) {
-        return JWT.require(Algorithm.HMAC512(secret))
+        return JWT.require(Algorithm.HMAC512(jwtProperties.secretKey()))
                 .build()
                 .verify(token.replace(PREFIX, BLANK))
                 .getClaim("email")
@@ -87,9 +73,9 @@ public class JwtService {
     }
 
     public String extractUserEmail(HttpServletRequest request) {
-        return JWT.require(Algorithm.HMAC512(secret))
+        return JWT.require(Algorithm.HMAC512(jwtProperties.secretKey()))
                 .build()
-                .verify(extractAccessToken(request).orElseThrow(RuntimeException::new)
+                .verify(extractToken(request, "Authorization").orElseThrow(RuntimeException::new)
                         .replace(PREFIX, BLANK))
                 .getClaim("email")
                 .asString();
@@ -97,12 +83,16 @@ public class JwtService {
 
     public boolean isTokenValid(String token) {
         try {
-            JWT.require(Algorithm.HMAC512(secret))
+            JWT.require(Algorithm.HMAC512(jwtProperties.secretKey()))
                     .build()
                     .verify(token);
             return true;
         } catch (JWTVerificationException e) {
             return false;
         }
+    }
+
+    private Date createExpireTime(String tokenFlag) {
+        return new Date(System.currentTimeMillis() + jwtProperties.getExpiration(tokenFlag));
     }
 }

@@ -10,16 +10,15 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
+import org.springframework.util.Assert;
 
 import java.io.IOException;
-import java.util.Map;
+
+import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 public class LoginProcessFilter extends AbstractAuthenticationProcessingFilter {
 
-    private static final String METHOD_NAME = "POST";
-    private static final String CONTENT_TYPE = "application/json";
-    private static final String SPRING_SECURITY_FORM_EMAIL_KEY = "email";
-    private static final String SPRING_SECURITY_FORM_PASSWORD_KEY = "password";
     private static final String DEFAULT_FILTER_PROCESSES_URL = "/form-login";
     private final ObjectMapper objectMapper;
 
@@ -30,22 +29,28 @@ public class LoginProcessFilter extends AbstractAuthenticationProcessingFilter {
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException, IOException {
-        if ((request.getContentType() == null || !request.getContentType().equals(CONTENT_TYPE)) && !request.getMethod().equals(METHOD_NAME)) {
-            throw new AuthenticationServiceException("Authentication Content-Type not supported: " + request.getContentType());
-        }
-
-        Map<String, String> parameter = objectMapper.readValue(request.getInputStream(), Map.class);
-        String email = parameter.get(SPRING_SECURITY_FORM_EMAIL_KEY);
-        String password = parameter.get(SPRING_SECURITY_FORM_PASSWORD_KEY);
-
-        validateParameterValue(email, password);
-        UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(email, password);
+        validateRequest(request);
+        Login loginInfo = objectMapper.readValue(request.getInputStream(), Login.class);
+        loginInfo.valid();
+        UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(loginInfo.email, loginInfo.password);
         return this.getAuthenticationManager().authenticate(authRequest);
     }
 
-    private void validateParameterValue(String email, String password) throws AuthenticationException {
-        if (email == null || password == null) {
-            throw new BadValueAuthenticationException("email, password 값 둘 다 입력해 주세요");
+    private static void validateRequest(HttpServletRequest request) {
+        if (!request.getContentType().equals(APPLICATION_JSON_VALUE) && !request.getMethod().equals(POST.name())) {
+            throw new AuthenticationServiceException("Not Valid Request");
         }
     }
+
+    record Login(String email, String password) {
+        public void valid() {
+            try {
+                Assert.hasText(email, "email 값은 필수입니다");
+                Assert.hasText(password, "password 값은 필수입니다");
+            } catch (IllegalArgumentException e) {
+                throw new BadValueAuthenticationException(e.getMessage());
+            }
+        }
+    }
+
 }
