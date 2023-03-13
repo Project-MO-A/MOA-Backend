@@ -58,8 +58,8 @@ class JwtServiceTest {
         String accessToken = response.getHeader(ACCESS_HEADER);
         String refreshToken = response.getHeader(REFRESH_HEADER);
 
-        assertThat(token.accessToken()).isEqualTo(accessToken);
-        assertThat(token.refreshToken()).isEqualTo(refreshToken);
+        assertThat(token.accessToken()).isEqualTo(accessToken.replace("Bearer ", ""));
+        assertThat(token.refreshToken()).isEqualTo(refreshToken.replace("Bearer ", ""));
     }
 
     @Test
