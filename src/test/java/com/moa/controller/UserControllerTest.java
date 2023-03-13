@@ -204,8 +204,14 @@ class UserControllerTest extends AbstractControllerTest {
                     jsonPath("$.locationLongitude").value(34.14123),
                     jsonPath("$.details").value("Hello"),
                     jsonPath("$.interests.[0]").value("Java"),
-                    jsonPath("$.interests.[1]").value("Python")
-            );
+                    jsonPath("$.interests.[1]").value("Python"))
+                            .andDo(
+                                    document("user/info",
+                                            queryParameters(
+                                                    parameterWithName("email").description("user email")
+                                            )
+                                    )
+                            );
         }
 
         @Test
@@ -219,7 +225,14 @@ class UserControllerTest extends AbstractControllerTest {
                     .header("AuthorizationRefresh", "refresh.jwt.token"));
 
             //400
-            action.andExpect(status().isBadRequest());
+            action.andExpect(status().isBadRequest())
+                    .andDo(
+                            document("user/info",
+                                    queryParameters(
+                                            parameterWithName("email").description("user email")
+                                    )
+                            )
+                    );;
         }
 
         @DisplayName("update - 사용자 정보를 수정하는데 성공한다.")
@@ -248,7 +261,21 @@ class UserControllerTest extends AbstractControllerTest {
                     .header(HttpHeaders.AUTHORIZATION, "access.jwt.token")
                     .header("AuthorizationRefresh", "refresh.jwt.token"));
 
-            action.andExpect(status().isNoContent());
+            action.andExpect(status().isNoContent())
+                    .andDo(
+                            document("user/signup",
+                                    requestFields(
+                                            fieldWithPath("email").type(STRING).description("email"),
+                                            fieldWithPath("name").type(STRING).description("name"),
+                                            fieldWithPath("nickname").type(STRING).description("nickname").optional(),
+                                            fieldWithPath("details").type(STRING).description("details").optional(),
+                                            fieldWithPath("locationLatitude").type(NUMBER).description("locationLatitude").optional(),
+                                            fieldWithPath("locationLongitude").type(NUMBER).description("locationLongitude").optional(),
+                                            fieldWithPath("interests").type(ARRAY).description("interests of list").optional()
+                                    )
+                            )
+                    );
+
             UserInfoResponse info = userService.getUserInfoByEmail(EMAIL);
             assertThat(info.getName()).isEqualTo("Jenny");
             assertThat(info.getNickname()).isEqualTo("Honey");
