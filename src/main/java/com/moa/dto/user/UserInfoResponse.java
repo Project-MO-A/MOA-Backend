@@ -9,7 +9,6 @@ import java.util.List;
 @Getter
 public class UserInfoResponse {
     private final String email;
-    private final String password;
     private final String name;
     private final String nickname;
     private final double locationLatitude;
@@ -20,7 +19,6 @@ public class UserInfoResponse {
 
     public UserInfoResponse(User user) {
         this.email = user.getEmail();
-        this.password = user.getPassword();
         this.name = user.getName();
         this.nickname = user.getNickname();
         this.locationLatitude = user.getLocationLatitude();

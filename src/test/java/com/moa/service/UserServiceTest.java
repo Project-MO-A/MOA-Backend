@@ -82,7 +82,6 @@ class UserServiceTest {
 
         UserUpdateRequest updateRequest = UserUpdateRequest.builder()
                 .email(TEST_EMAIL)
-                .password("test1234")
                 .name("기우")
                 .nickname("bam")
                 .details("Hello bro")
@@ -96,7 +95,6 @@ class UserServiceTest {
 
         //then
         User user = userRepository.findByEmail(TEST_EMAIL).orElseThrow();
-        assertThat(user.getPassword()).isEqualTo("test1234");
         assertThat(user.getDetails()).isEqualTo("Hello bro");
         assertThat(user.getNickname()).isEqualTo("bam");
         assertThat(user.getInterests().get(0).getName()).isEqualTo("C#");
@@ -108,7 +106,6 @@ class UserServiceTest {
         //given
         UserUpdateRequest updateRequest = UserUpdateRequest.builder()
                 .email("ssss@naver.com")
-                .password("test1234")
                 .name("기우")
                 .nickname("bam")
                 .details("Hello bro")
