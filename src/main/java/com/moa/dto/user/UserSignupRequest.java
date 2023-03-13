@@ -31,7 +31,7 @@ public record UserSignupRequest(
                 .build();
     }
 
-    public List<Interests> getInterests() {
+    public List<Interests> interestsValue() {
         if (interests != null) {
             return interests.stream()
                     .map(Interests::new)

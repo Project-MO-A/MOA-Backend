@@ -38,7 +38,7 @@ public class UserService implements UserDetailsService {
         }
         User user = request.toEntity();
         user.encodePassword(passwordEncoder);
-        user.addInterests(request.getInterests());
+        user.addInterests(request.interestsValue());
         return new UserEmailResponse(userRepository.save(user).getEmail());
     }
 

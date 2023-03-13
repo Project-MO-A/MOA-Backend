@@ -30,7 +30,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorize ->
                         authorize
-                                .requestMatchers(DELETE, "/sign-out").hasRole("USER")
+                                .requestMatchers(DELETE, "/user/sign-out").hasRole("USER")
                                 .anyRequest().permitAll()
                 );
 
