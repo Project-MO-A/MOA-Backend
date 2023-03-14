@@ -1,9 +1,6 @@
 package com.moa.controller;
 
-import com.moa.dto.user.UserEmailResponse;
-import com.moa.dto.user.UserInfoResponse;
-import com.moa.dto.user.UserSignupRequest;
-import com.moa.dto.user.UserUpdateRequest;
+import com.moa.dto.user.*;
 import com.moa.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -41,5 +38,11 @@ public class UserController {
     @PutMapping("/info")
     public void update(@RequestBody @Valid UserUpdateRequest updateRequest) {
         userService.updateUser(updateRequest);
+    }
+
+    @ResponseStatus(NO_CONTENT)
+    @PutMapping("/pw")
+    public void changePassword(@RequestBody @Valid UserPwUpdateRequest pwUpdateRequest) {
+        userService.changePassword(pwUpdateRequest);
     }
 }

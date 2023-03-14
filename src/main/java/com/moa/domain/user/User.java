@@ -56,6 +56,10 @@ public class User {
         this.password = passwordEncoder.encode(password);
     }
 
+    public void changePassword(PasswordEncoder passwordEncoder, final String newPassword) {
+        this.password = passwordEncoder.encode(newPassword);
+    }
+
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
     }

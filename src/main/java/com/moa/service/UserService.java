@@ -2,11 +2,9 @@ package com.moa.service;
 
 import com.moa.domain.user.User;
 import com.moa.domain.user.UserRepository;
-import com.moa.dto.user.UserEmailResponse;
-import com.moa.dto.user.UserInfoResponse;
-import com.moa.dto.user.UserSignupRequest;
-import com.moa.dto.user.UserUpdateRequest;
+import com.moa.dto.user.*;
 import com.moa.global.auth.model.SecurityUser;
+import com.moa.global.exception.auth.WrongPasswordException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -60,5 +58,16 @@ public class UserService implements UserDetailsService {
         User user = userRepository.findByEmail(updateRequest.email())
                 .orElseThrow(() -> new UsernameNotFoundException("해당 이메일을 가진 유저를 찾을 수 없습니다"));
         user.update(updateRequest);
+    }
+
+    public void changePassword(final UserPwUpdateRequest pwUpdateRequest) {
+        User user = userRepository.findByEmail(pwUpdateRequest.email())
+                .orElseThrow(() -> new UsernameNotFoundException("해당 이메일을 가진 유저를 찾을 수 없습니다"));
+        validatePassword(user.getPassword(), pwUpdateRequest.currentPassword());
+        user.changePassword(passwordEncoder, pwUpdateRequest.newPassword());
+    }
+
+    private void validatePassword(final String userPassword, final String givenPassword) {
+        if (!passwordEncoder.matches(givenPassword, userPassword)) throw new WrongPasswordException();
     }
 }
