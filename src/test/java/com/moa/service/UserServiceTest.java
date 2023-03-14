@@ -3,14 +3,17 @@ package com.moa.service;
 import com.moa.domain.user.User;
 import com.moa.domain.user.UserRepository;
 import com.moa.dto.user.UserInfoResponse;
+import com.moa.dto.user.UserPwUpdateRequest;
 import com.moa.dto.user.UserSignupRequest;
 import com.moa.dto.user.UserUpdateRequest;
+import com.moa.global.exception.auth.WrongPasswordException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -24,6 +27,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class UserServiceTest {
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     @Autowired
     UserService userService;
@@ -116,5 +121,54 @@ class UserServiceTest {
         //when
         assertThatThrownBy(() -> userService.updateUser(updateRequest))
                 .isInstanceOf(UsernameNotFoundException.class);
+    }
+
+    @DisplayName("changePassword - 유저 비밀번호 변경에 성공한다.")
+    @Test
+    void updatePassword() {
+        //given
+        String newPw = "different1234";
+        UserPwUpdateRequest pwUpdateRequest = UserPwUpdateRequest.builder()
+                .email(TEST_EMAIL)
+                .currentPassword("qwer1234")
+                .newPassword(newPw)
+                .build();
+
+        //when
+        userService.changePassword(pwUpdateRequest);
+
+        //then
+        User user = userRepository.findByEmail(TEST_EMAIL).orElseThrow();
+        assertThat(passwordEncoder.matches(newPw, user.getPassword())).isTrue();
+    }
+
+    @DisplayName("changePassword - 유저 비밀번호 변경에 실패한다. (잘못된 이메일)")
+    @Test
+    void updatePasswordFail1() {
+        //given
+        UserPwUpdateRequest pwUpdateRequest = UserPwUpdateRequest.builder()
+                .email("wrongEmail@email.com")
+                .currentPassword("qwer1234")
+                .newPassword("different1234")
+                .build();
+
+        //when & then
+        assertThatThrownBy(() -> userService.changePassword(pwUpdateRequest))
+                .isInstanceOf(UsernameNotFoundException.class);
+    }
+
+    @DisplayName("changePassword - 유저 비밀번호 변경에 실패한다. (잘못된 패스워드)")
+    @Test
+    void updatePasswordFail2() {
+        //given
+        UserPwUpdateRequest pwUpdateRequest = UserPwUpdateRequest.builder()
+                .email(TEST_EMAIL)
+                .currentPassword("wrongPW123")
+                .newPassword("different1234")
+                .build();
+
+        //when
+        assertThatThrownBy(() -> userService.changePassword(pwUpdateRequest))
+                .isInstanceOf(WrongPasswordException.class);
     }
 }

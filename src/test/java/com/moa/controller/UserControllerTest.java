@@ -1,7 +1,9 @@
 package com.moa.controller;
 
 import com.moa.base.AbstractControllerTest;
+import com.moa.domain.user.UserRepository;
 import com.moa.dto.user.UserInfoResponse;
+import com.moa.dto.user.UserPwUpdateRequest;
 import com.moa.dto.user.UserSignupRequest;
 import com.moa.dto.user.UserUpdateRequest;
 import com.moa.service.UserService;
@@ -165,6 +167,7 @@ class UserControllerTest extends AbstractControllerTest {
     @Nested
     class Information {
         final String EMAIL = "test@email.com";
+
         @BeforeEach
         void setUp() {
             //given
@@ -340,6 +343,36 @@ class UserControllerTest extends AbstractControllerTest {
 
             action.andExpectAll(status().isBadRequest());
         }
-    }
 
+        @DisplayName("changePassword - 사용자 비밀번호 수정요청에 성공한다.")
+        @WithMockUser
+        @Test
+        void changePassword() throws Exception {
+            //given
+            String newPw = "different1234";
+            UserPwUpdateRequest request = UserPwUpdateRequest.builder()
+                    .email(EMAIL)
+                    .currentPassword("password")
+                    .newPassword(newPw)
+                    .build();
+
+            //when
+            ResultActions action = mvc.perform(put("/user/pw")
+                    .content(toJson(request))
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header(HttpHeaders.AUTHORIZATION, "access.jwt.token")
+                    .header("AuthorizationRefresh", "refresh.jwt.token"));
+
+            action.andExpect(status().isNoContent())
+                    .andDo(
+                            document("user/pw",
+                                    requestFields(
+                                            fieldWithPath("email").type(STRING).description("email"),
+                                            fieldWithPath("currentPassword").type(STRING).description("current"),
+                                            fieldWithPath("newPassword").type(STRING).description("new")
+                                    )
+                            )
+                    );
+        }
+    }
 }
