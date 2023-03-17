@@ -1,10 +1,12 @@
 package com.moa.controller;
 
 import com.moa.dto.user.*;
+import com.moa.global.auth.model.SecurityUser;
 import com.moa.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import static org.springframework.http.HttpStatus.*;
@@ -30,8 +32,8 @@ public class UserController {
     }
     
     @GetMapping("/info")
-    public UserInfoResponse getInfo(@RequestParam String email) {
-        return userService.getUserInfoByEmail(email);
+    public UserInfoResponse getInfo(@AuthenticationPrincipal SecurityUser user) {
+        return userService.getUserInfoById(user.getId());
     }
 
     @ResponseStatus(NO_CONTENT)
