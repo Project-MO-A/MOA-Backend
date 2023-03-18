@@ -1,12 +1,17 @@
 package com.moa.domain.recruit;
 
+import com.moa.domain.member.RecruitMember;
 import com.moa.domain.notice.Post;
+import com.moa.domain.recruit.category.RecruitCategory;
 import com.moa.domain.user.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -26,13 +31,30 @@ public class Recruitment {
     @Enumerated(EnumType.STRING)
     private RecruitState state;
 
-    private String Category;
+    @OneToMany(mappedBy = "recruitment", orphanRemoval = true, cascade = CascadeType.ALL)
+    private List<RecruitCategory> category = new ArrayList<>();
+
+    @OneToMany(mappedBy = "recruitment", orphanRemoval = true, cascade = CascadeType.ALL)
+    private List<RecruitMember> members = new ArrayList<>();
 
     @Builder
-    public Recruitment(User user, Post post, RecruitState state, String category) {
+    public Recruitment(User user, Post post, RecruitState state) {
         this.user = user;
         this.post = post;
         this.state = state;
-        Category = category;
+    }
+
+    public void setCategory(List<RecruitCategory> list) {
+        this.category=list;
+        for (RecruitCategory recruitCategory : list) {
+            recruitCategory.setParent(this);
+        }
+    }
+
+    public void setMembers(List<RecruitMember> list) {
+        this.members=list;
+        for (RecruitMember recruitMember : list) {
+            recruitMember.setParent(this);
+        }
     }
 }
