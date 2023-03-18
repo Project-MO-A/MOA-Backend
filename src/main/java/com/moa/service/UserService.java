@@ -2,8 +2,6 @@ package com.moa.service;
 
 import com.moa.domain.member.ApplimentMember;
 import com.moa.domain.member.ApplimentMemberRepository;
-import com.moa.domain.member.RecruitMember;
-import com.moa.domain.member.RecruitMemberRepository;
 import com.moa.domain.user.User;
 import com.moa.domain.user.UserRepository;
 import com.moa.dto.user.*;
@@ -28,7 +26,6 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final ApplimentMemberRepository applimentMemberRepository;
-    private final RecruitMemberRepository recruitMemberRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -52,8 +49,7 @@ public class UserService implements UserDetailsService {
     @Transactional(readOnly = true)
     public UserInfoResponse getUserInfoById(final Long userId) {
         List<ApplimentMember> applimentMembers = applimentMemberRepository.findAllByUserId(userId);
-        List<RecruitMember> recruitMembers = recruitMemberRepository.findFetchAllById(recruitMemberIds(applimentMembers));
-        return new UserInfoResponse(applimentMembers, recruitMembers);
+        return new UserInfoResponse(applimentMembers);
     }
 
     public void deleteUser(String email) {
@@ -79,11 +75,5 @@ public class UserService implements UserDetailsService {
 
     private void validatePassword(final String userPassword, final String givenPassword) {
         if (!passwordEncoder.matches(givenPassword, userPassword)) throw new WrongPasswordException();
-    }
-
-    private static List<Long> recruitMemberIds(List<ApplimentMember> applimentMembers) {
-        return applimentMembers.stream()
-                .map(data -> data.getRecruitMember().getId())
-                .toList();
     }
 }

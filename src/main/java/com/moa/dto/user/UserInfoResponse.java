@@ -18,13 +18,13 @@ public class UserInfoResponse {
     private final UserInfo userInfo;
     private final List<RecruitmentInfo> recruitPostInfo;
 
-    public UserInfoResponse(List<ApplimentMember> applimentMembers, List<RecruitMember> recruitMembers) {
+    public UserInfoResponse(List<ApplimentMember> applimentMembers) {
         if (applimentMembers.size() == 0) {
             this.userInfo = UserInfo.builder().build();
             this.recruitPostInfo = Collections.emptyList();
         } else {
             this.userInfo = setUserInfo(applimentMembers);
-            this.recruitPostInfo = setRecruitPostInfo(applimentMembers, recruitMembers);
+            this.recruitPostInfo = setRecruitPostInfo(applimentMembers);
         }
     }
 
@@ -46,25 +46,24 @@ public class UserInfoResponse {
                 .build();
     }
 
-    private List<RecruitmentInfo> setRecruitPostInfo(List<ApplimentMember> applimentMembers, List<RecruitMember> recruitMembers) {
-        sortDtoByRecruitMemberId(applimentMembers, recruitMembers);
+    private List<RecruitmentInfo> setRecruitPostInfo(List<ApplimentMember> applimentMembers) {
+        sortDtoByRecruitMemberId(applimentMembers);
 
         List<RecruitmentInfo> infos = new ArrayList<>();
-        for (int i = 0; i < applimentMembers.size(); i++) {
-            RecruitMember recruitMember = recruitMembers.get(i);
+        for (ApplimentMember applimentMember : applimentMembers) {
+            RecruitMember recruitMember = applimentMember.getRecruitMember();
             infos.add(RecruitmentInfo.builder()
                     .id(recruitMember.getId())
                     .title(recruitMember.getRecruitment().getPost().getTitle())
                     .postState(recruitMember.getRecruitment().getState().name())
-                    .recruitState(applimentMembers.get(i).getApproval().name())
+                    .recruitState(applimentMember.getApproval().name())
                     .build());
         }
         return infos;
     }
 
-    private static void sortDtoByRecruitMemberId(List<ApplimentMember> all, List<RecruitMember> recruitMembers) {
+    private static void sortDtoByRecruitMemberId(List<ApplimentMember> all) {
         all.sort(comparing(o -> o.getRecruitMember().getId()));
-        recruitMembers.sort(comparing(RecruitMember::getId));
     }
 
     @Builder
