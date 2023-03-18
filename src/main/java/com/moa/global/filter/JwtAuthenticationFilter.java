@@ -2,6 +2,7 @@ package com.moa.global.filter;
 
 import com.moa.domain.user.User;
 import com.moa.domain.user.UserRepository;
+import com.moa.global.auth.model.JwtUser;
 import com.moa.global.auth.model.SecurityUser;
 import com.moa.global.auth.utils.JwtService;
 import com.moa.global.filter.exception.JwtTokenNotValidException;
@@ -21,7 +22,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 @RequiredArgsConstructor
-public class JwtAuthorizationFilter extends OncePerRequestFilter {
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserRepository userRepository;
@@ -60,12 +61,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private void saveAuthentication(String accessToken) {
         String email = jwtService.extractUserEmail(accessToken);
-        SecurityUser securityUser = new SecurityUser(
-                userRepository.findByEmail(email)
-                        .orElseThrow(() -> new UsernameNotFoundException("회원 정보를 찾을 수 없습니다"))
-        );
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(securityUser, null, securityUser.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        SecurityContextHolder.getContext().setAuthentication(createAuthentication(email));
     }
 
     private void checkRefreshToken(HttpServletRequest request, HttpServletResponse response) {
@@ -81,5 +77,12 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
         } else {
             throw new JwtTokenNotValidException("로그인을 재시도 해주세요");
         }
+    }
+
+    private UsernamePasswordAuthenticationToken createAuthentication(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("회원 정보를 찾을 수 없습니다"));
+        SecurityUser securityUser = new SecurityUser(user);
+        return new UsernamePasswordAuthenticationToken(new JwtUser(user.getId()), null, securityUser.getAuthorities());
     }
 }

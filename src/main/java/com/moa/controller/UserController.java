@@ -1,7 +1,7 @@
 package com.moa.controller;
 
 import com.moa.dto.user.*;
-import com.moa.global.auth.model.SecurityUser;
+import com.moa.global.auth.model.JwtUser;
 import com.moa.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,8 +32,8 @@ public class UserController {
     }
     
     @GetMapping("/info")
-    public UserInfoResponse getInfo(@AuthenticationPrincipal SecurityUser user) {
-        return userService.getUserInfoById(user.getId());
+    public UserInfoResponse getInfo(@AuthenticationPrincipal JwtUser user) {
+        return userService.getUserInfoById(user.id());
     }
 
     @ResponseStatus(NO_CONTENT)
