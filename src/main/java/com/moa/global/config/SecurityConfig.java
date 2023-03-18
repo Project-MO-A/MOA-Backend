@@ -2,7 +2,7 @@ package com.moa.global.config;
 
 import com.moa.global.config.sub.SecurityFilterBeanConfig;
 import com.moa.global.config.sub.SecurityServiceBeanConfig;
-import com.moa.global.filter.JwtAuthorizationFilter;
+import com.moa.global.filter.JwtAuthenticationFilter;
 import com.moa.global.filter.LoginProcessFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -20,7 +20,7 @@ import static org.springframework.http.HttpMethod.DELETE;
 public class SecurityConfig {
 
     private final LoginProcessFilter loginProcessFilter;
-    private final JwtAuthorizationFilter jwtAuthorizationFilter;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -39,7 +39,7 @@ public class SecurityConfig {
                 );
 
         http.addFilterAfter(loginProcessFilter, LogoutFilter.class);
-        http.addFilterAfter(jwtAuthorizationFilter, LoginProcessFilter.class);
+        http.addFilterAfter(jwtAuthenticationFilter, LoginProcessFilter.class);
         return http.build();
     }
 }

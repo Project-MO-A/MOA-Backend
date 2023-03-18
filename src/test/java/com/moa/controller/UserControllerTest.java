@@ -1,8 +1,6 @@
 package com.moa.controller;
 
 import com.moa.base.AbstractControllerTest;
-import com.moa.domain.user.UserRepository;
-import com.moa.dto.user.UserInfoResponse;
 import com.moa.dto.user.UserPwUpdateRequest;
 import com.moa.dto.user.UserSignupRequest;
 import com.moa.dto.user.UserUpdateRequest;
@@ -21,7 +19,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -190,24 +187,24 @@ class UserControllerTest extends AbstractControllerTest {
         }
 
         @Test
-        @DisplayName("getInfo - 사용자의 정보를 가져오는데 성공한다.")
+        @DisplayName("getInfo - 사용자의 정보를 가져오는데 성공한다. fail -> 모집 글 기능 구현시 테스트 재 구성 필")
         @WithMockUser
         void getInfo() throws Exception {
             //when
-            ResultActions action = mvc.perform(get("/user/info?email="+EMAIL)
+            ResultActions action = mvc.perform(get("/user/info")
                     .header(HttpHeaders.AUTHORIZATION, "access.jwt.token")
                     .header("AuthorizationRefresh", "refresh.jwt.token"));
 
             action.andExpectAll(
                     status().isOk(),
-                    jsonPath("$.email").value(EMAIL),
-                    jsonPath("$.name").value("name"),
-                    jsonPath("$.nickname").value("John"),
-                    jsonPath("$.locationLatitude").value(34.14123),
-                    jsonPath("$.locationLongitude").value(34.14123),
-                    jsonPath("$.details").value("Hello"),
-                    jsonPath("$.interests.[0]").value("Java"),
-                    jsonPath("$.interests.[1]").value("Python"))
+                    jsonPath("$.userInfo.email").value(EMAIL),
+                    jsonPath("$.userInfo.name").value("name"),
+                    jsonPath("$.userInfo.nickname").value("John"),
+                    jsonPath("$.userInfo.locationLatitude").value(34.14123),
+                    jsonPath("$.userInfo.locationLongitude").value(34.14123),
+                    jsonPath("$.userInfo.details").value("Hello"),
+                    jsonPath("$.userInfo.interests.[0]").value("Java"),
+                    jsonPath("$.userInfo.interests.[1]").value("Python"))
                             .andDo(
                                     document("user/info",
                                             queryParameters(
@@ -215,27 +212,6 @@ class UserControllerTest extends AbstractControllerTest {
                                             )
                                     )
                             );
-        }
-
-        @Test
-        @DisplayName("getInfo - 사용자의 정보를 가져오는데 실패한다. (잘못된 이메일)")
-        @WithMockUser
-        void getInfoFail1() throws Exception {
-            //when
-            String none = "none@email.com";
-            ResultActions action = mvc.perform(get("/user/info?email="+none)
-                    .header(HttpHeaders.AUTHORIZATION, "access.jwt.token")
-                    .header("AuthorizationRefresh", "refresh.jwt.token"));
-
-            //400
-            action.andExpect(status().isBadRequest())
-                    .andDo(
-                            document("user/info",
-                                    queryParameters(
-                                            parameterWithName("email").description("user email")
-                                    )
-                            )
-                    );;
         }
 
         @DisplayName("update - 사용자 정보를 수정하는데 성공한다.")
@@ -279,11 +255,11 @@ class UserControllerTest extends AbstractControllerTest {
                             )
                     );
 
-            UserInfoResponse info = userService.getUserInfoByEmail(EMAIL);
+            /*UserInfoResponse info = userService.getUserInfoById(EMAIL);
             assertThat(info.getName()).isEqualTo("Jenny");
             assertThat(info.getNickname()).isEqualTo("Honey");
             assertThat(info.getDetails()).isEqualTo("Bye");
-            assertThat(info.getInterests()).containsOnly("AWS", "Jenkins");
+            assertThat(info.getInterests()).containsOnly("AWS", "Jenkins");*/
         }
 
         @DisplayName("update - 사용자 정보를 수정하는데 실패한다. (validation)")

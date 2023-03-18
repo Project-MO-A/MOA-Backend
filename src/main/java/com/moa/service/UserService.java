@@ -1,5 +1,7 @@
 package com.moa.service;
 
+import com.moa.domain.member.ApplimentMember;
+import com.moa.domain.member.ApplimentMemberRepository;
 import com.moa.domain.user.User;
 import com.moa.domain.user.UserRepository;
 import com.moa.dto.user.*;
@@ -11,15 +13,19 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Transactional
+@Service
 @RequiredArgsConstructor
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
+    private final ApplimentMemberRepository applimentMemberRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -41,9 +47,9 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional(readOnly = true)
-    public UserInfoResponse getUserInfoByEmail(final String email) {
-        return new UserInfoResponse(userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("해당 이메일을 가진 유저를 찾을 수 없습니다")));
+    public UserInfoResponse getUserInfoById(final Long userId) {
+        List<ApplimentMember> applimentMembers = applimentMemberRepository.findAllByUserId(userId);
+        return new UserInfoResponse(applimentMembers);
     }
 
     public void deleteUser(String email) {
@@ -53,7 +59,7 @@ public class UserService implements UserDetailsService {
         }
         userRepository.delete(findUser.get());
     }
-    
+
     public void updateUser(final UserUpdateRequest updateRequest) {
         User user = userRepository.findByEmail(updateRequest.email())
                 .orElseThrow(() -> new UsernameNotFoundException("해당 이메일을 가진 유저를 찾을 수 없습니다"));

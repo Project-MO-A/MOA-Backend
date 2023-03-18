@@ -1,6 +1,5 @@
 package com.moa.global.config.sub;
 
-import com.moa.domain.user.UserRepository;
 import com.moa.service.UserService;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -30,10 +29,5 @@ public class SecurityServiceBeanConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public UserService userService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
-        return new UserService(userRepository, passwordEncoder);
     }
 }
