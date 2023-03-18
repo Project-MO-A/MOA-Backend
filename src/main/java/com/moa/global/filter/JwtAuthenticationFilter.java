@@ -1,5 +1,6 @@
 package com.moa.global.filter;
 
+import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.moa.domain.user.User;
 import com.moa.domain.user.UserRepository;
 import com.moa.global.auth.model.JwtUser;
@@ -31,8 +32,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     /**
      * accessToken 유효 -> authentication 저장
      * accessToken 만료
-     *      refreshToken 유효 -> authentication 저장, accessToken 갱신
-     *      refreshToken 만료 -> authentication 저장 X
+     * refreshToken 유효 -> authentication 저장, accessToken 갱신
+     * refreshToken 만료 -> authentication 저장 X
      */
 
     @Override
@@ -42,16 +43,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-        doFilterInternal(request, response, filterChain, accessToken);
+        doFilterInternal(request, response, filterChain, accessToken.get());
     }
 
-    private void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain, Optional<String> accessToken) throws ServletException, IOException {
+    private void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain, String accessToken) throws ServletException, IOException {
         try {
-            accessToken.filter(jwtService::isTokenValid)
-                    .ifPresentOrElse(
-                            this::saveAuthentication,
-                            () -> checkRefreshToken(request, response)
-                    );
+            if (jwtService.isTokenValid(accessToken)) {
+                saveAuthentication(accessToken);
+                return;
+            }
+            checkRefreshToken(request, response, accessToken);
         } catch (AuthenticationException exception) {
             failureHandler.onAuthenticationFailure(request, response, exception);
             return;
@@ -64,19 +65,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(createAuthentication(email));
     }
 
-    private void checkRefreshToken(HttpServletRequest request, HttpServletResponse response) {
-        Optional<String> refreshToken = jwtService.extractToken(request, "AuthorizationRefresh")
-                .filter(jwtService::isTokenValid);
+    private void checkRefreshToken(HttpServletRequest request, HttpServletResponse response, String accessToken) {
+        String refreshToken = jwtService.extractToken(request, "AuthorizationRefresh")
+                .filter(jwtService::isTokenValid)
+                .orElseThrow(() -> new JwtTokenNotValidException("토큰이 유효하지 않습니다."));
 
-        if (refreshToken.isPresent()) {
-            User user = userRepository.findByRefreshToken(refreshToken.get())
-                    .orElseThrow(IllegalArgumentException::new);
-            String accessToken = jwtService.createAccessToken(user.getEmail());
-            jwtService.setAccessTokenInHeader(response, accessToken);
-            saveAuthentication(accessToken);
-        } else {
-            throw new JwtTokenNotValidException("로그인을 재시도 해주세요");
-        }
+        User user = userRepository.findByRefreshToken(refreshToken)
+                .orElseThrow(() -> new JwtTokenNotValidException("토큰이 유효하지 않습니다."));
+        validateEmail(accessToken, user);
+        String recreateAccessToken = jwtService.createAccessToken(user.getEmail());
+        jwtService.setAccessTokenInHeader(response, recreateAccessToken);
+        saveAuthentication(recreateAccessToken);
     }
 
     private UsernamePasswordAuthenticationToken createAuthentication(String email) {
@@ -84,5 +83,16 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 .orElseThrow(() -> new UsernameNotFoundException("회원 정보를 찾을 수 없습니다"));
         SecurityUser securityUser = new SecurityUser(user);
         return new UsernamePasswordAuthenticationToken(new JwtUser(user.getId()), null, securityUser.getAuthorities());
+    }
+
+    private void validateEmail(String accessToken, User user) {
+        try {
+            String email = jwtService.extractUserEmail(accessToken);
+            if (!email.equals(user.getEmail())) {
+                throw new JwtTokenNotValidException("토큰이 유효하지 않습니다.");
+            }
+        } catch (JWTDecodeException exception) {
+            throw new JwtTokenNotValidException("토큰이 유효하지 않습니다.");
+        }
     }
 }
