@@ -34,7 +34,7 @@ class CategoryServiceTest {
         List<String> list = List.of("프로젝트", "웹");
 
         //when
-        categoryService.save(list);
+        categoryService.update(list);
 
         //then
         List<Long> idList = categoryRepository.findIdByName(list);
@@ -49,7 +49,7 @@ class CategoryServiceTest {
         List<String> list = List.of("개발", "프로젝트", "웹");
 
         //when
-        List<Category> save = categoryService.save(list);
+        List<Category> save = categoryService.update(list);
 
         //then
         List<Long> idList = categoryRepository.findIdByName(list);

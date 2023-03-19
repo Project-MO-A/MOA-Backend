@@ -15,7 +15,12 @@ import java.util.List;
 public class CategoryService {
     private final CategoryRepository categoryRepository;
 
-    public List<Category> save(List<String> categories) {
+    public List<Long> updateAndReturnId(List<String> categories) {
+        update(categories);
+        return getId(categories);
+    }
+
+    public List<Category> update(List<String> categories) {
         List<String> exist = categoryRepository.findExistName(categories);
         return categoryRepository.saveAll(getTargetCategory(categories, exist));
     }
