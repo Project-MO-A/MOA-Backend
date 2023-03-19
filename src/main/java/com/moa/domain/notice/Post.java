@@ -3,10 +3,7 @@ package com.moa.domain.notice;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.Lob;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -20,6 +17,16 @@ public class Post {
     @Builder
     public Post(String title, String content) {
         this.title = title;
+        this.content = content;
+    }
+
+    public void updateTitle(String title) {
+        if (title == null || title.isBlank()) return;
+        this.title = title;
+    }
+
+    public void updateContent(String content) {
+        if (content == null || content.isBlank()) return;
         this.content = content;
     }
 }

@@ -4,6 +4,7 @@ import com.moa.domain.member.RecruitMember;
 import com.moa.domain.notice.Post;
 import com.moa.domain.recruit.category.RecruitCategory;
 import com.moa.domain.user.User;
+import com.moa.dto.recruit.RecruitUpdateRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -29,7 +30,7 @@ public class Recruitment {
     private Post post;
 
     @Enumerated(EnumType.STRING)
-    private RecruitState state;
+    private RecruitStatus status;
 
     @OneToMany(mappedBy = "recruitment", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<RecruitCategory> category = new ArrayList<>();
@@ -38,10 +39,10 @@ public class Recruitment {
     private List<RecruitMember> members = new ArrayList<>();
 
     @Builder
-    public Recruitment(User user, Post post, RecruitState state) {
+    public Recruitment(User user, Post post, RecruitStatus status) {
         this.user = user;
         this.post = post;
-        this.state = state;
+        this.status = status;
     }
 
     public void setCategory(List<RecruitCategory> list) {
@@ -56,5 +57,29 @@ public class Recruitment {
         for (RecruitMember recruitMember : list) {
             recruitMember.setParent(this);
         }
+    }
+
+    public void update(RecruitUpdateRequest updateRequest, List<RecruitCategory> categories) {
+        this.post.updateTitle(updateRequest.title());
+        this.post.updateContent(updateRequest.content());
+        updateState(updateRequest.state());
+        updateMembers(updateRequest.toMemberList());
+        updateCategory(categories);
+    }
+
+    private void updateMembers(List<RecruitMember> memberList) {
+        if (memberList == null || memberList.isEmpty()) return;
+        this.members.clear();
+        this.setMembers(memberList);
+    }
+
+    private void updateCategory(List<RecruitCategory> categories) {
+        if (categories == null || categories.isEmpty()) return;
+        this.category.clear();
+        this.setCategory(categories);
+    }
+
+    public void updateState(Integer stateCode) {
+        if (stateCode != null) this.status = RecruitStatus.getState(stateCode);
     }
 }
