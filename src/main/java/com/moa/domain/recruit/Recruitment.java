@@ -46,16 +46,20 @@ public class Recruitment {
     }
 
     public void setCategory(List<RecruitCategory> list) {
-        this.category=list;
         for (RecruitCategory recruitCategory : list) {
-            recruitCategory.setParent(this);
+            if (!this.category.contains(recruitCategory)) {
+                this.category.add(recruitCategory);
+                recruitCategory.setParent(this);
+            }
         }
     }
 
     public void setMembers(List<RecruitMember> list) {
-        this.members=list;
         for (RecruitMember recruitMember : list) {
-            recruitMember.setParent(this);
+            if (!this.members.contains(recruitMember)) {
+                this.members.add(recruitMember);
+                recruitMember.setParent(this);
+            }
         }
     }
 
