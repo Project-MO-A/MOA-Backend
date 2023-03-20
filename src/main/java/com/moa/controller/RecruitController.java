@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RequestMapping("/recruit")
@@ -22,7 +23,7 @@ public class RecruitController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public Long post(@RequestBody @Valid RecruitPostRequest request, Long userId) {
-        List<Long> categoryId = categoryService.updateAndReturnId(request.category());
+        List<Long> categoryId = categoryService.updateAndReturnId(request.category()).orElse(new ArrayList<>());
         return recruitService.post(userId, request, categoryId);
     }
 
@@ -33,7 +34,7 @@ public class RecruitController {
 
     @PatchMapping("/{recruitId}")
     public Long updatePost(@PathVariable Long recruitId, @RequestBody @Valid RecruitUpdateRequest request) {
-        List<Long> categoryId = categoryService.updateAndReturnId(request.category());
+        List<Long> categoryId = categoryService.updateAndReturnId(request.category()).orElse(new ArrayList<>());
         return recruitService.update(recruitId, request, categoryId);
     }
 

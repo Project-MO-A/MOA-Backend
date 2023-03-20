@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Transactional
@@ -15,9 +16,10 @@ import java.util.List;
 public class CategoryService {
     private final CategoryRepository categoryRepository;
 
-    public List<Long> updateAndReturnId(List<String> categories) {
+    public Optional<List<Long>> updateAndReturnId(List<String> categories) {
+        if (categories == null || categories.isEmpty()) return Optional.empty();
         update(categories);
-        return getId(categories);
+        return Optional.of(getId(categories));
     }
 
     public List<Category> update(List<String> categories) {

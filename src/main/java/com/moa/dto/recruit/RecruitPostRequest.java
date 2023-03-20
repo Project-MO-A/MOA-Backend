@@ -29,8 +29,8 @@ public record RecruitPostRequest (
                 .post(post)
                 .status(RecruitStatus.RECRUITING)
                 .build();
-        recruitment.setMembers(members);
-        recruitment.setCategory(categories);
+        if (members != null) recruitment.setMembers(members);
+        if (categories != null) recruitment.setCategory(categories);
         return recruitment;
     }
 
