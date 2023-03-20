@@ -155,7 +155,7 @@ class RecruitServiceTest {
                     .build();
 
             //when
-            Long update = recruitService.update(recruitId, updateRequest, categoryId);
+            Long update = recruitService.update(recruitId, updateRequest,  new ArrayList<>());
 
             //then
             Recruitment updated = recruitmentRepository.findById(update).get();
@@ -178,7 +178,7 @@ class RecruitServiceTest {
                     .build();
 
             //when
-            Long update = recruitService.update(recruitId, updateRequest, categoryId);
+            Long update = recruitService.update(recruitId, updateRequest, new ArrayList<>());
 
             //then
             Recruitment updated = recruitmentRepository.findById(update).get();
@@ -203,7 +203,7 @@ class RecruitServiceTest {
                     .build();
 
             //when
-            List<Long> updatedCategoryId = categoryService.updateAndReturnId(updateRequest.category());
+            List<Long> updatedCategoryId = categoryService.updateAndReturnId(updateRequest.category()).get();
             Long update = recruitService.update(recruitId, updateRequest, updatedCategoryId);
 
             //then
