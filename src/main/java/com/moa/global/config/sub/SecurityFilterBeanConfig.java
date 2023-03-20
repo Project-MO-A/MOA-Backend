@@ -3,7 +3,7 @@ package com.moa.global.config.sub;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.moa.domain.user.UserRepository;
 import com.moa.global.auth.utils.JwtService;
-import com.moa.global.filter.JwtAuthorizationFilter;
+import com.moa.global.filter.JwtAuthenticationFilter;
 import com.moa.global.filter.LoginProcessFilter;
 import com.moa.global.filter.handler.GlobalFailureHandler;
 import com.moa.global.filter.handler.JwtProviderHandler;
@@ -31,7 +31,7 @@ public class SecurityFilterBeanConfig {
     }
 
     @Bean
-    public JwtAuthorizationFilter jwtAuthorizationFilter(JwtService jwtService, UserRepository userRepository, GlobalFailureHandler globalFailureHandler) {
-        return new JwtAuthorizationFilter(jwtService, userRepository, globalFailureHandler);
+    public JwtAuthenticationFilter jwtAuthenticationFilter(JwtService jwtService, UserRepository userRepository, GlobalFailureHandler globalFailureHandler) {
+        return new JwtAuthenticationFilter(jwtService, userRepository, globalFailureHandler);
     }
 }

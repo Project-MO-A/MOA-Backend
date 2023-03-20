@@ -2,10 +2,7 @@ package com.moa.service;
 
 import com.moa.domain.user.User;
 import com.moa.domain.user.UserRepository;
-import com.moa.dto.user.UserInfoResponse;
-import com.moa.dto.user.UserPwUpdateRequest;
-import com.moa.dto.user.UserSignupRequest;
-import com.moa.dto.user.UserUpdateRequest;
+import com.moa.dto.user.*;
 import com.moa.global.exception.auth.WrongPasswordException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -55,26 +52,19 @@ class UserServiceTest {
         userService.saveUser(testUser);
     }
 
-    @DisplayName("info - 유저의 개인 정보를 가져온다")
+    @DisplayName("info - 유저의 개인 정보를 가져온다 fail -> 모집 글 기능 구현시 테스트 재 구성 필")
     @Test
     void info() {
         //when
-        UserInfoResponse info = userService.getUserInfoByEmail(TEST_EMAIL);
+        User user = userRepository.findByEmail(TEST_EMAIL).get();
+        UserInfoResponse info = userService.getUserInfoById(user.getId());
 
         //then
-        assertThat(info.getEmail()).isEqualTo("test2@naver.com");
-        assertThat(info.getPopularity()).isEqualTo(0);
-        assertThat(info.getNickname()).isEqualTo("john");
-        assertThat(info.getDetails()).isEqualTo("Hello");
-        assertThat(info.getInterests()).containsOnly("Java", "Python");
-    }
-
-    @DisplayName("info - 유저의 개인 정보를 가져오는데 실패한다. (잘못된 이메일)")
-    @Test
-    void infoFail1() {
-        //when
-        assertThatThrownBy(() -> userService.getUserInfoByEmail("ssss@naver.com"))
-                .isInstanceOf(UsernameNotFoundException.class);
+        assertThat(info.getUserInfo().email()).isEqualTo("test2@naver.com");
+        assertThat(info.getUserInfo().popularity()).isEqualTo(0);
+        assertThat(info.getUserInfo().nickname()).isEqualTo("john");
+        assertThat(info.getUserInfo().details()).isEqualTo("Hello");
+        assertThat(info.getUserInfo().interests()).containsOnly("Java", "Python");
     }
 
     @DisplayName("update - 유저의 개인 정보를 수정한다.")

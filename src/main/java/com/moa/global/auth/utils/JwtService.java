@@ -72,15 +72,6 @@ public class JwtService {
                 .asString();
     }
 
-    public String extractUserEmail(HttpServletRequest request) {
-        return JWT.require(Algorithm.HMAC512(jwtProperties.secretKey()))
-                .build()
-                .verify(extractToken(request, "Authorization").orElseThrow(RuntimeException::new)
-                        .replace(PREFIX, BLANK))
-                .getClaim("email")
-                .asString();
-    }
-
     public boolean isTokenValid(String token) {
         try {
             JWT.require(Algorithm.HMAC512(jwtProperties.secretKey()))
