@@ -28,10 +28,13 @@ public class RecruitMember {
     private int totalRecruitCount;
 
     @Builder
-    public RecruitMember(Recruitment recruitment, String recruitField, int currentRecruitCount, int totalRecruitCount) {
-        this.recruitment = recruitment;
+    public RecruitMember(String recruitField, int totalRecruitCount) {
         this.recruitField = recruitField;
-        this.currentRecruitCount = currentRecruitCount;
+        this.currentRecruitCount = 0;
         this.totalRecruitCount = totalRecruitCount;
+    }
+
+    public void setParent(Recruitment recruitment) {
+        this.recruitment = recruitment;
     }
 }
