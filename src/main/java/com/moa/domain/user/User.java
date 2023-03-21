@@ -40,6 +40,9 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Interests> interests = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Alarm> alarms = new ArrayList<>();
+
     @Builder
     public User(String email, String password, String name, String nickname, double locationLatitude, double locationLongitude, int popularity, String details) {
         this.email = email;
@@ -68,6 +71,12 @@ public class User {
         if (interests != null) {
             this.interests = interests;
             interests.forEach(i -> i.setParent(this));
+        }
+    }
+
+    public void addAlarm(Alarm alarm) {
+        if (!alarms.contains(alarm)) {
+            alarms.add(alarm);
         }
     }
     
