@@ -18,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 @Transactional
 @Service
-public class RecruitService {
+public class RecruitmentService {
     private final RecruitmentRepository recruitmentRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
