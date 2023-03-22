@@ -6,28 +6,28 @@ import com.moa.domain.user.UserRepository;
 import com.moa.global.auth.model.JwtUser;
 import com.moa.global.auth.model.SecurityUser;
 import com.moa.global.auth.utils.JwtService;
-import com.moa.global.filter.exception.JwtTokenNotValidException;
+import com.moa.global.exception.custom.EntityNotFoundException;
+import com.moa.global.filter.exception.BusinessAuthenticationException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 import java.util.Optional;
+
+import static com.moa.global.exception.custom.ErrorCode.JWT_NOT_VALID;
+import static com.moa.global.exception.custom.ErrorCode.USER_NOT_FOUND;
 
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserRepository userRepository;
-    private final AuthenticationFailureHandler failureHandler;
 
     /**
      * accessToken 유효 -> authentication 저장
@@ -47,15 +47,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain, String accessToken) throws ServletException, IOException {
-        try {
-            if (jwtService.isTokenValid(accessToken)) {
-                saveAuthentication(accessToken);
-                return;
-            }
+        if (jwtService.isTokenValid(accessToken)) {
+            saveAuthentication(accessToken);
+        } else {
             checkRefreshToken(request, response, accessToken);
-        } catch (AuthenticationException exception) {
-            failureHandler.onAuthenticationFailure(request, response, exception);
-            return;
         }
         filterChain.doFilter(request, response);
     }
@@ -65,34 +60,34 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(createAuthentication(email));
     }
 
+    private UsernamePasswordAuthenticationToken createAuthentication(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+        SecurityUser securityUser = new SecurityUser(user);
+        return new UsernamePasswordAuthenticationToken(new JwtUser(user.getId()), null, securityUser.getAuthorities());
+    }
+
     private void checkRefreshToken(HttpServletRequest request, HttpServletResponse response, String accessToken) {
         String refreshToken = jwtService.extractToken(request, "AuthorizationRefresh")
                 .filter(jwtService::isTokenValid)
-                .orElseThrow(() -> new JwtTokenNotValidException("토큰이 유효하지 않습니다."));
+                .orElseThrow(() -> new BusinessAuthenticationException(JWT_NOT_VALID));
 
         User user = userRepository.findByRefreshToken(refreshToken)
-                .orElseThrow(() -> new JwtTokenNotValidException("토큰이 유효하지 않습니다."));
+                .orElseThrow(() -> new BusinessAuthenticationException(JWT_NOT_VALID));
         validateEmail(accessToken, user);
         String recreateAccessToken = jwtService.createAccessToken(user.getEmail());
         jwtService.setAccessTokenInHeader(response, recreateAccessToken);
         saveAuthentication(recreateAccessToken);
     }
 
-    private UsernamePasswordAuthenticationToken createAuthentication(String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("회원 정보를 찾을 수 없습니다"));
-        SecurityUser securityUser = new SecurityUser(user);
-        return new UsernamePasswordAuthenticationToken(new JwtUser(user.getId()), null, securityUser.getAuthorities());
-    }
-
     private void validateEmail(String accessToken, User user) {
         try {
             String email = jwtService.extractUserEmail(accessToken);
             if (!email.equals(user.getEmail())) {
-                throw new JwtTokenNotValidException("토큰이 유효하지 않습니다.");
+                throw new BusinessAuthenticationException(JWT_NOT_VALID);
             }
         } catch (JWTDecodeException exception) {
-            throw new JwtTokenNotValidException("토큰이 유효하지 않습니다.");
+            throw new BusinessAuthenticationException(JWT_NOT_VALID);
         }
     }
 }
