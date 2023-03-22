@@ -2,8 +2,8 @@ package com.moa.global.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.moa.global.exception.ErrorResponse;
+import com.moa.global.exception.custom.BusinessException;
 import com.moa.global.exception.custom.ErrorCode;
-import com.moa.global.filter.exception.BusinessAuthenticationException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,7 +24,7 @@ public class BusinessExceptionHandlerFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             filterChain.doFilter(request, response);
-        } catch (BusinessAuthenticationException exception) {
+        } catch (BusinessException exception) {
             ErrorCode errorCode = exception.getErrorCode();
             response.setStatus(errorCode.getStatusCode());
             response.setCharacterEncoding("UTF-8");

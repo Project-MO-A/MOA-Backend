@@ -20,8 +20,8 @@ public class SecurityFilterBeanConfig {
     }
 
     @Bean
-    public LoginFailureHandler loginFailureHandler(ObjectMapper objectMapper) {
-        return new LoginFailureHandler(objectMapper);
+    public LoginFailureHandler loginFailureHandler(ObjectMapper objectMapper, MessageSourceAccessor accessor) {
+        return new LoginFailureHandler(objectMapper, accessor);
     }
 
     @Bean

@@ -35,7 +35,7 @@ public class UserService implements UserDetailsService {
     @Transactional(readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         return new SecurityUser(userRepository.findByEmail(username)
-                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND)));
+                .orElseThrow(() -> new UsernameNotFoundException(USER_NOT_FOUND.getCode() + " " + USER_NOT_FOUND.getMessageCode())));
     }
 
     public UserEmailResponse saveUser(UserSignupRequest request) {

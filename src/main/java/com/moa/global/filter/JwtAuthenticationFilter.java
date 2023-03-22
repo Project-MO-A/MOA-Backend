@@ -73,7 +73,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 .orElseThrow(() -> new BusinessAuthenticationException(JWT_NOT_VALID));
 
         User user = userRepository.findByRefreshToken(refreshToken)
-                .orElseThrow(() -> new BusinessAuthenticationException(JWT_NOT_VALID));
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
         validateEmail(accessToken, user);
         String recreateAccessToken = jwtService.createAccessToken(user.getEmail());
         jwtService.setAccessTokenInHeader(response, recreateAccessToken);
