@@ -29,9 +29,9 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @SpringBootTest
 @Transactional
-class RecruitServiceTest {
+class RecruitmentServiceTest {
     @Autowired
-    RecruitService recruitService;
+    RecruitmentService recruitmentService;
     @Autowired
     RecruitmentRepository recruitmentRepository;
 
@@ -87,7 +87,7 @@ class RecruitServiceTest {
         List<Long> categoryId = categoryService.getId(category);
 
         //when
-        Long postId = recruitService.post(userId, request, categoryId);
+        Long postId = recruitmentService.post(userId, request, categoryId);
         em.flush();
         em.clear();
 
@@ -124,7 +124,7 @@ class RecruitServiceTest {
                     .build();
             categoryService.update(category);
             categoryId = categoryService.getId(category);
-            recruitId = recruitService.post(userId, request, categoryId);
+            recruitId = recruitmentService.post(userId, request, categoryId);
             em.flush();
             em.clear();
         }
@@ -133,7 +133,7 @@ class RecruitServiceTest {
         @Test
         void getInfo() {
             //when
-            RecruitInfoResponse info = recruitService.getInfo(recruitId);
+            RecruitInfoResponse info = recruitmentService.getInfo(recruitId);
 
             //then
             assertThat(info.getTitle()).isEqualTo("모집글 1");
@@ -155,7 +155,7 @@ class RecruitServiceTest {
                     .build();
 
             //when
-            Long update = recruitService.update(recruitId, updateRequest,  new ArrayList<>());
+            Long update = recruitmentService.update(recruitId, updateRequest,  new ArrayList<>());
 
             //then
             Recruitment updated = recruitmentRepository.findById(update).get();
@@ -178,7 +178,7 @@ class RecruitServiceTest {
                     .build();
 
             //when
-            Long update = recruitService.update(recruitId, updateRequest, new ArrayList<>());
+            Long update = recruitmentService.update(recruitId, updateRequest, new ArrayList<>());
 
             //then
             Recruitment updated = recruitmentRepository.findById(update).get();
@@ -204,7 +204,7 @@ class RecruitServiceTest {
 
             //when
             List<Long> updatedCategoryId = categoryService.updateAndReturnId(updateRequest.category()).get();
-            Long update = recruitService.update(recruitId, updateRequest, updatedCategoryId);
+            Long update = recruitmentService.update(recruitId, updateRequest, updatedCategoryId);
 
             //then
             Recruitment updated = recruitmentRepository.findById(update).get();
@@ -223,7 +223,7 @@ class RecruitServiceTest {
         @Test
         void delete() {
             //when
-            Long delete = recruitService.delete(recruitId);
+            Long delete = recruitmentService.delete(recruitId);
 
             //then
             assertThat(recruitmentRepository.findById(delete)).isEmpty();
@@ -233,7 +233,7 @@ class RecruitServiceTest {
         @Test
         void deleteFail() {
             //when
-            assertThatThrownBy(() -> recruitService.delete(Long.MAX_VALUE))
+            assertThatThrownBy(() -> recruitmentService.delete(Long.MAX_VALUE))
                     .isInstanceOf(RuntimeException.class);
         }
 
@@ -241,7 +241,7 @@ class RecruitServiceTest {
         @Test
         void updateState() {
             //when
-            Long update = recruitService.updateStatus(recruitId, 2);
+            Long update = recruitmentService.updateStatus(recruitId, 2);
 
             //then
             Recruitment updated = recruitmentRepository.findById(update).get();

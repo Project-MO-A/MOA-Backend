@@ -17,7 +17,10 @@ public record RecruitUpdateRequest(
     public List<RecruitMember> toMemberList() {
         if (memberFields == null || memberFields.isEmpty()) return null;
         return memberFields.stream()
-                .map(field -> new RecruitMember(field.field(), field.total()))
+                .map(field -> RecruitMember.builder()
+                        .recruitField(field.field())
+                        .totalRecruitCount(field.total())
+                        .build())
                 .toList();
     }
 }

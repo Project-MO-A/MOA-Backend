@@ -1,22 +1,18 @@
 package com.moa.domain.recruit.category;
 
+import com.moa.domain.base.BaseTimeEntity;
 import com.moa.domain.recruit.Recruitment;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.domain.Persistable;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
-import java.time.LocalDate;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@EntityListeners(AuditingEntityListener.class)
 @Table(name = "RECRUIT_CATEGORY")
 @Entity
-public class RecruitCategory implements Persistable<RecruitCategoryId> {
+public class RecruitCategory extends BaseTimeEntity implements Persistable<RecruitCategoryId> {
     @EmbeddedId
     private RecruitCategoryId id;
 
@@ -29,9 +25,6 @@ public class RecruitCategory implements Persistable<RecruitCategoryId> {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "RECRUIMENT_ID")
     private Recruitment recruitment;
-
-    @CreatedDate
-    private LocalDate created;
 
     public RecruitCategory(Category c) {
         this.category = c;
@@ -49,6 +42,6 @@ public class RecruitCategory implements Persistable<RecruitCategoryId> {
 
     @Override
     public boolean isNew() {
-        return created == null;
+        return createdDate == null;
     }
 }
