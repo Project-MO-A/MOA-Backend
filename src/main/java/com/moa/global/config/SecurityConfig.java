@@ -2,6 +2,7 @@ package com.moa.global.config;
 
 import com.moa.global.config.sub.SecurityFilterBeanConfig;
 import com.moa.global.config.sub.SecurityServiceBeanConfig;
+import com.moa.global.filter.BusinessExceptionHandlerFilter;
 import com.moa.global.filter.JwtAuthenticationFilter;
 import com.moa.global.filter.LoginProcessFilter;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ public class SecurityConfig {
 
     private final LoginProcessFilter loginProcessFilter;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final BusinessExceptionHandlerFilter businessExceptionHandlerFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -38,7 +40,8 @@ public class SecurityConfig {
                                 .anyRequest().permitAll()
                 );
 
-        http.addFilterAfter(loginProcessFilter, LogoutFilter.class);
+        http.addFilterAfter(businessExceptionHandlerFilter, LogoutFilter.class);
+        http.addFilterAfter(loginProcessFilter, BusinessExceptionHandlerFilter.class);
         http.addFilterAfter(jwtAuthenticationFilter, LoginProcessFilter.class);
         return http.build();
     }

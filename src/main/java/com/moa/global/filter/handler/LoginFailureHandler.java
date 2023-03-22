@@ -1,7 +1,7 @@
 package com.moa.global.filter.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.moa.global.filter.exception.ExceptionResponse;
+import com.moa.global.exception.ErrorResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +12,7 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import java.io.IOException;
 
 @RequiredArgsConstructor
-public class GlobalFailureHandler implements AuthenticationFailureHandler {
+public class LoginFailureHandler implements AuthenticationFailureHandler {
 
     private final ObjectMapper objectMapper;
 
@@ -20,6 +20,6 @@ public class GlobalFailureHandler implements AuthenticationFailureHandler {
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException {
         response.setStatus(HttpStatus.BAD_REQUEST.value());
         response.setCharacterEncoding("UTF-8");
-        response.getWriter().println(objectMapper.writeValueAsString(new ExceptionResponse(exception.getMessage())));
+        response.getWriter().println(objectMapper.writeValueAsString(new ErrorResponse("A0001", exception.getMessage())));
     }
 }
