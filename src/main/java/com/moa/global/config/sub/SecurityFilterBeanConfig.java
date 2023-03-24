@@ -3,11 +3,13 @@ package com.moa.global.config.sub;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.moa.domain.user.UserRepository;
 import com.moa.global.auth.utils.JwtService;
+import com.moa.global.filter.BusinessExceptionHandlerFilter;
 import com.moa.global.filter.JwtAuthenticationFilter;
 import com.moa.global.filter.LoginProcessFilter;
-import com.moa.global.filter.handler.GlobalFailureHandler;
+import com.moa.global.filter.handler.LoginFailureHandler;
 import com.moa.global.filter.handler.JwtProviderHandler;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.security.authentication.AuthenticationManager;
 
 public class SecurityFilterBeanConfig {
@@ -18,20 +20,25 @@ public class SecurityFilterBeanConfig {
     }
 
     @Bean
-    public GlobalFailureHandler globalFailureHandler(ObjectMapper objectMapper) {
-        return new GlobalFailureHandler(objectMapper);
+    public LoginFailureHandler loginFailureHandler(ObjectMapper objectMapper, MessageSourceAccessor accessor) {
+        return new LoginFailureHandler(objectMapper, accessor);
     }
 
     @Bean
-    public LoginProcessFilter loginProcessFilter(AuthenticationManager authenticationManager, ObjectMapper objectMapper, JwtProviderHandler jwtProviderHandler, GlobalFailureHandler globalFailureHandler) {
+    public LoginProcessFilter loginProcessFilter(AuthenticationManager authenticationManager, ObjectMapper objectMapper, JwtProviderHandler jwtProviderHandler, LoginFailureHandler loginFailureHandler) {
         LoginProcessFilter loginProcessFilter = new LoginProcessFilter(objectMapper, authenticationManager);
         loginProcessFilter.setAuthenticationSuccessHandler(jwtProviderHandler);
-        loginProcessFilter.setAuthenticationFailureHandler(globalFailureHandler);
+        loginProcessFilter.setAuthenticationFailureHandler(loginFailureHandler);
         return loginProcessFilter;
     }
 
     @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter(JwtService jwtService, UserRepository userRepository, GlobalFailureHandler globalFailureHandler) {
-        return new JwtAuthenticationFilter(jwtService, userRepository, globalFailureHandler);
+    public JwtAuthenticationFilter jwtAuthenticationFilter(JwtService jwtService, UserRepository userRepository) {
+        return new JwtAuthenticationFilter(jwtService, userRepository);
+    }
+
+    @Bean
+    public BusinessExceptionHandlerFilter businessExceptionHandlerFilter(ObjectMapper objectMapper, MessageSourceAccessor accessor) {
+        return new BusinessExceptionHandlerFilter(objectMapper, accessor);
     }
 }

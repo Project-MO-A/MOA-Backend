@@ -4,12 +4,12 @@ import com.moa.domain.user.User;
 import com.moa.domain.user.UserRepository;
 import com.moa.dto.user.*;
 import com.moa.global.exception.auth.WrongPasswordException;
+import com.moa.global.exception.custom.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -110,7 +110,7 @@ class UserServiceTest {
 
         //when
         assertThatThrownBy(() -> userService.updateUser(updateRequest))
-                .isInstanceOf(UsernameNotFoundException.class);
+                .isInstanceOf(EntityNotFoundException.class);
     }
 
     @DisplayName("changePassword - 유저 비밀번호 변경에 성공한다.")
@@ -144,7 +144,7 @@ class UserServiceTest {
 
         //when & then
         assertThatThrownBy(() -> userService.changePassword(pwUpdateRequest))
-                .isInstanceOf(UsernameNotFoundException.class);
+                .isInstanceOf(EntityNotFoundException.class);
     }
 
     @DisplayName("changePassword - 유저 비밀번호 변경에 실패한다. (잘못된 패스워드)")

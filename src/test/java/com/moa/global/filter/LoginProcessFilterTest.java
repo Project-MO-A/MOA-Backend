@@ -12,7 +12,6 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationContextProvider;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
@@ -89,7 +88,7 @@ class LoginProcessFilterTest {
         userService.saveUser(request);
 
         //when
-        ResultActions action = mvc.perform(post("/form-login")
+        ResultActions action = mvc.perform(post("/user/login")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(mapper.writeValueAsString(new Login("user@email.com", "password"))));
 
@@ -116,7 +115,7 @@ class LoginProcessFilterTest {
         userService.saveUser(request);
 
         //when
-        ResultActions action = mvc.perform(post("/form-login")
+        ResultActions action = mvc.perform(post("/user/login")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(mapper.writeValueAsString(new Login("incorrect@email.com", "password"))));
 
@@ -135,7 +134,7 @@ class LoginProcessFilterTest {
         userService.saveUser(request);
 
         //when
-        ResultActions action = mvc.perform(post("/form-login")
+        ResultActions action = mvc.perform(post("/user/login")
                 .contentType(MediaType.APPLICATION_JSON_VALUE)
                 .content(mapper.writeValueAsString(new Login("user@email.com", "password11"))));
 

@@ -113,8 +113,8 @@ class UserControllerTest extends AbstractControllerTest {
         //then
         action.andExpectAll(
                 status().isBadRequest(),
-                jsonPath("$.statusCode").value(400),
-                jsonPath("$.errorMessage").value("해당 이메일로 가입이 불가능합니다")
+                jsonPath("$.code").value("U0002"),
+                jsonPath("$.message").value("중복된 이메일 입니다")
         );
     }
 

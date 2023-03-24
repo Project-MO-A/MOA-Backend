@@ -4,6 +4,7 @@ import com.moa.base.AbstractServiceTest;
 import com.moa.domain.user.User;
 import com.moa.dto.user.UserEmailResponse;
 import com.moa.dto.user.UserSignupRequest;
+import com.moa.global.exception.custom.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -91,8 +92,7 @@ class UserServiceUnitTest extends AbstractServiceTest {
 
         //when & then
         assertThatThrownBy(() -> userService.deleteUser(INCORRECT_EMAIL))
-                .isInstanceOf(UsernameNotFoundException.class);
-
+                .isInstanceOf(EntityNotFoundException.class);
     }
 
 }
