@@ -1,7 +1,6 @@
 package com.moa.controller;
 
-import com.moa.domain.recruit.RecruitStatus;
-import com.moa.dto.StatusResponse;
+import com.moa.dto.recruit.StatusResponse;
 import com.moa.dto.recruit.RecruitApplyRequest;
 import com.moa.dto.recruit.RecruitInfoResponse;
 import com.moa.dto.recruit.RecruitPostRequest;

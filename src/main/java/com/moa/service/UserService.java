@@ -7,8 +7,8 @@ import com.moa.domain.user.UserRepository;
 import com.moa.dto.user.*;
 import com.moa.global.auth.model.SecurityUser;
 import com.moa.global.exception.auth.WrongPasswordException;
-import com.moa.global.exception.custom.BusinessException;
-import com.moa.global.exception.custom.EntityNotFoundException;
+import com.moa.global.exception.BusinessException;
+import com.moa.global.exception.service.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
-import static com.moa.global.exception.custom.ErrorCode.*;
+import static com.moa.global.exception.ErrorCode.*;
 
 @Transactional
 @Service

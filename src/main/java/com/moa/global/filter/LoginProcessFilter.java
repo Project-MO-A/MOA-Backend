@@ -1,7 +1,7 @@
 package com.moa.global.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.moa.global.filter.exception.BusinessAuthenticationException;
+import com.moa.global.exception.auth.BusinessAuthenticationException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,7 +13,7 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 
-import static com.moa.global.exception.custom.ErrorCode.*;
+import static com.moa.global.exception.ErrorCode.*;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 

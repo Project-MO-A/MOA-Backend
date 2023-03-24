@@ -1,7 +1,7 @@
-package com.moa.global.filter.exception;
+package com.moa.global.exception.auth;
 
-import com.moa.global.exception.custom.BusinessException;
-import com.moa.global.exception.custom.ErrorCode;
+import com.moa.global.exception.BusinessException;
+import com.moa.global.exception.ErrorCode;
 
 public class BusinessAuthenticationException extends BusinessException {
     private final ErrorCode errorCode;

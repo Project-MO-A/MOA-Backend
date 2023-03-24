@@ -1,4 +1,4 @@
-package com.moa.global.exception.custom;
+package com.moa.global.exception;
 
 public enum ErrorCode {
     BAD_HTTP_REQUEST(400, "bad.request", "A0002"),

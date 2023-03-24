@@ -4,7 +4,7 @@ import com.moa.base.AbstractServiceTest;
 import com.moa.domain.user.User;
 import com.moa.dto.user.UserEmailResponse;
 import com.moa.dto.user.UserSignupRequest;
-import com.moa.global.exception.custom.EntityNotFoundException;
+import com.moa.global.exception.service.EntityNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;

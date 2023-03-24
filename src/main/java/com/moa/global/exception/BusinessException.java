@@ -1,4 +1,6 @@
-package com.moa.global.exception.custom;
+package com.moa.global.exception;
+
+import com.moa.global.exception.ErrorCode;
 
 public class BusinessException extends RuntimeException{
     private final ErrorCode errorCode;

@@ -1,8 +1,6 @@
 package com.moa.global.exception;
 
 import com.moa.global.exception.auth.WrongPasswordException;
-import com.moa.global.exception.custom.BusinessException;
-import com.moa.global.exception.custom.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.MessageSourceAccessor;

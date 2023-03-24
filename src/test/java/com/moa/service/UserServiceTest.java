@@ -4,7 +4,7 @@ import com.moa.domain.user.User;
 import com.moa.domain.user.UserRepository;
 import com.moa.dto.user.*;
 import com.moa.global.exception.auth.WrongPasswordException;
-import com.moa.global.exception.custom.EntityNotFoundException;
+import com.moa.global.exception.service.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

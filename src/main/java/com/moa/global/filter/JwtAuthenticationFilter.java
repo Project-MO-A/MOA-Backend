@@ -6,8 +6,8 @@ import com.moa.domain.user.UserRepository;
 import com.moa.global.auth.model.JwtUser;
 import com.moa.global.auth.model.SecurityUser;
 import com.moa.global.auth.utils.JwtService;
-import com.moa.global.exception.custom.EntityNotFoundException;
-import com.moa.global.filter.exception.BusinessAuthenticationException;
+import com.moa.global.exception.service.EntityNotFoundException;
+import com.moa.global.exception.auth.BusinessAuthenticationException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,8 +20,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Optional;
 
-import static com.moa.global.exception.custom.ErrorCode.JWT_NOT_VALID;
-import static com.moa.global.exception.custom.ErrorCode.USER_NOT_FOUND;
+import static com.moa.global.exception.ErrorCode.JWT_NOT_VALID;
+import static com.moa.global.exception.ErrorCode.USER_NOT_FOUND;
 
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
