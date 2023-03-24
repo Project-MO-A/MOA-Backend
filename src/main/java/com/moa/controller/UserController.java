@@ -25,10 +25,10 @@ public class UserController {
                 .body(userService.saveUser(request));
     }
 
+    @ResponseStatus(OK)
     @DeleteMapping("/sign-out")
-    public ResponseEntity<Void> signOut(@RequestParam String email){
-        userService.deleteUser(email);
-        return new ResponseEntity<>(OK);
+    public void signOut(@AuthenticationPrincipal JwtUser user){
+        userService.deleteUser(user.id());
     }
     
     @GetMapping("/info")
