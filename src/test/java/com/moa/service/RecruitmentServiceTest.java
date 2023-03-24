@@ -241,10 +241,10 @@ class RecruitmentServiceTest {
         @Test
         void updateState() {
             //when
-            Long update = recruitmentService.updateStatus(recruitId, 2);
+            recruitmentService.updateStatus(recruitId, 2);
 
             //then
-            Recruitment updated = recruitmentRepository.findById(update).get();
+            Recruitment updated = recruitmentRepository.findById(recruitId).get();
             assertThat(updated.getStatus()).isEqualTo(COMPLETE);
         }
     }

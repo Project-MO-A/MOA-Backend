@@ -1,5 +1,6 @@
 package com.moa.controller;
 
+import com.moa.domain.recruit.RecruitStatus;
 import com.moa.dto.StatusResponse;
 import com.moa.dto.recruit.RecruitApplyRequest;
 import com.moa.dto.recruit.RecruitInfoResponse;
@@ -28,9 +29,9 @@ public class RecruitmentController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public Long post(@RequestBody @Valid RecruitPostRequest request, Long userId) {
+    public Long post(@RequestBody @Valid RecruitPostRequest request, @AuthenticationPrincipal JwtUser user) {
         List<Long> categoryId = categoryService.updateAndReturnId(request.category()).orElse(new ArrayList<>());
-        return recruitmentService.post(userId, request, categoryId);
+        return recruitmentService.post(user.id(), request, categoryId);
     }
 
     @GetMapping("/{recruitmentId}")
@@ -45,8 +46,8 @@ public class RecruitmentController {
     }
 
     @PostMapping("/{recruitmentId}")
-    public Long updateStatus(@PathVariable Long recruitmentId, @RequestParam Integer statusCode) {
-        return recruitmentService.updateStatus(recruitmentId, statusCode);
+    public StatusResponse updateStatus(@PathVariable Long recruitmentId, @RequestParam Integer status) {
+        return recruitmentService.updateStatus(recruitmentId, status);
     }
 
     @DeleteMapping("/{recruitmentId}")
