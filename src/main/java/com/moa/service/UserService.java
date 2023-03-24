@@ -6,7 +6,6 @@ import com.moa.domain.user.User;
 import com.moa.domain.user.UserRepository;
 import com.moa.dto.user.*;
 import com.moa.global.auth.model.SecurityUser;
-import com.moa.global.exception.auth.WrongPasswordException;
 import com.moa.global.exception.BusinessException;
 import com.moa.global.exception.service.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -55,8 +54,8 @@ public class UserService implements UserDetailsService {
         return new UserInfoResponse(applimentMembers);
     }
 
-    public void deleteUser(String email) {
-        Optional<User> findUser = userRepository.findByEmail(email);
+    public void deleteUser(Long id) {
+        Optional<User> findUser = userRepository.findById(id);
         if (findUser.isEmpty()) {
             throw new EntityNotFoundException(USER_NOT_FOUND);
         }
@@ -77,6 +76,6 @@ public class UserService implements UserDetailsService {
     }
 
     private void validatePassword(final String userPassword, final String givenPassword) {
-        if (!passwordEncoder.matches(givenPassword, userPassword)) throw new WrongPasswordException();
+        if (!passwordEncoder.matches(givenPassword, userPassword)) throw new BusinessException(USER_MISMATCH_PASSWORD);
     }
 }

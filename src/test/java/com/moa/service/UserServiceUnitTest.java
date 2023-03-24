@@ -75,10 +75,10 @@ class UserServiceUnitTest extends AbstractServiceTest {
     @DisplayName("유저 삭제")
     void deleteUser() {
         //given
-        given(userRepository.findByEmail(USER.getEmail())).willReturn(Optional.of(USER));
+        given(userRepository.findById(1L)).willReturn(Optional.of(USER));
 
         //when
-        userService.deleteUser(USER.getEmail());
+        userService.deleteUser(1L);
 
         //then
         verify(userRepository, times(1)).delete(USER);
@@ -88,10 +88,10 @@ class UserServiceUnitTest extends AbstractServiceTest {
     @DisplayName("잘못된 이메일로 유저 삭제 불가")
     void cannotDeleteUser() {
         //given
-        given(userRepository.findByEmail(INCORRECT_EMAIL)).willReturn(Optional.empty());
+        given(userRepository.findById(0L)).willReturn(Optional.empty());
 
         //when & then
-        assertThatThrownBy(() -> userService.deleteUser(INCORRECT_EMAIL))
+        assertThatThrownBy(() -> userService.deleteUser(0L))
                 .isInstanceOf(EntityNotFoundException.class);
     }
 
