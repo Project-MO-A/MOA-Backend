@@ -1,8 +1,11 @@
 package com.moa.domain.recruit;
 
+import com.moa.global.exception.service.InvalidCodeException;
 import lombok.Getter;
 
 import java.util.Arrays;
+
+import static com.moa.global.exception.ErrorCode.STATUS_CODE_INVALID;
 
 @Getter
 public enum RecruitStatus {
@@ -21,6 +24,6 @@ public enum RecruitStatus {
         return Arrays.stream(RecruitStatus.values())
                 .filter(state -> state.getCode() == stateCode)
                 .findFirst()
-                .orElseThrow(IllegalArgumentException::new);
+                .orElseThrow(() -> new InvalidCodeException(STATUS_CODE_INVALID));
     }
 }
