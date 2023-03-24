@@ -1,11 +1,13 @@
 package com.moa.service;
 
+import com.moa.domain.recruit.RecruitStatus;
 import com.moa.domain.recruit.Recruitment;
 import com.moa.domain.recruit.RecruitmentRepository;
 import com.moa.domain.recruit.category.CategoryRepository;
 import com.moa.domain.recruit.category.RecruitCategory;
 import com.moa.domain.user.User;
 import com.moa.domain.user.UserRepository;
+import com.moa.dto.StatusResponse;
 import com.moa.dto.recruit.RecruitInfoResponse;
 import com.moa.dto.recruit.RecruitPostRequest;
 import com.moa.dto.recruit.RecruitUpdateRequest;
@@ -41,10 +43,10 @@ public class RecruitmentService {
         return recruitment.getId();
     }
 
-    public Long updateStatus(final Long recruitId, final Integer statusCode) {
+    public StatusResponse updateStatus(final Long recruitId, final Integer statusCode) {
         Recruitment recruitment = recruitmentRepository.findById(recruitId).orElseThrow(IllegalArgumentException::new);
         recruitment.updateState(statusCode);
-        return recruitment.getId();
+        return new StatusResponse(recruitment.getStatus().name());
     }
 
     public Long delete(final Long recruitId) {
