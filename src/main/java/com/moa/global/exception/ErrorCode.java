@@ -7,6 +7,7 @@ public enum ErrorCode {
 
     USER_NOT_FOUND(404, "user.not.found", "U0001"),
     DUPLICATED_EMAIL(400, "user.duplicate.email", "U0002"),
+    USER_MISMATCH_PASSWORD(400, "user.mismatch.password", "U0003"),
     ;
 
     private final int statusCode;
