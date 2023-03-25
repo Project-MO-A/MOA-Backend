@@ -56,7 +56,7 @@ public class UserInfoResponse {
                     .id(recruitMember.getId())
                     .title(recruitMember.getRecruitment().getPost().getTitle())
                     .postState(recruitMember.getRecruitment().getStatus().name())
-                    .recruitState(applimentMember.getApproval().name())
+                    .recruitState(applimentMember.getStatus().name())
                     .build());
         }
         return infos;
