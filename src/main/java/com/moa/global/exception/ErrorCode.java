@@ -8,8 +8,12 @@ public enum ErrorCode {
     STATUS_CODE_INVALID(400, "status.code.invalid", "S0001"),
 
     USER_NOT_FOUND(404, "user.not.found", "U0001"),
-    DUPLICATED_EMAIL(400, "user.duplicate.email", "U0002"),
+    USER_DUPLICATED_EMAIL(400, "user.duplicate.email", "U0002"),
     USER_MISMATCH_PASSWORD(400, "user.mismatch.password", "U0003"),
+
+    RECRUITMENT_NOT_FOUND(404, "recruitment.not.found", "R0001"),
+
+    APPLIMENT_NOT_FOUND(404, "appliment.not.found", "P0001");
     ;
 
     private final int statusCode;
