@@ -38,4 +38,12 @@ public class RecruitMember {
     public void setParent(Recruitment recruitment) {
         this.recruitment = recruitment;
     }
+
+    public void addCount() {
+        currentRecruitCount += 1;
+    }
+
+    public void minusCount() {
+        currentRecruitCount -= 1;
+    }
 }
