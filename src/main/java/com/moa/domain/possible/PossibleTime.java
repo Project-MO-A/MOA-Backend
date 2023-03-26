@@ -1,6 +1,7 @@
 package com.moa.domain.possible;
 
 import com.moa.domain.member.ApplimentMember;
+import com.moa.global.exception.service.InvalidTimeException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -8,6 +9,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalTime;
+
+import static com.moa.global.exception.ErrorCode.TIME_INVALID;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -36,5 +39,13 @@ public class PossibleTime {
         this.day = day;
         this.startTime = startTime;
         this.endTime = endTime;
+        validateTime();
+    }
+
+    private void validateTime() {
+        if (this.startTime.getHour() > this.endTime.getHour() ||
+                (this.startTime.getHour() == this.endTime.getHour() && this.startTime.getMinute() >= this.endTime.getMinute())) {
+            throw new InvalidTimeException(TIME_INVALID);
+        }
     }
 }
