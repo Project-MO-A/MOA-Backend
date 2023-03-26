@@ -2,7 +2,10 @@ package com.moa.controller;
 
 import com.moa.domain.member.ApprovalStatus;
 import com.moa.dto.member.ApplimentMemberResponse;
+import com.moa.dto.member.ApprovedMemberResponse;
+import com.moa.dto.member.ApprovedPopularityRequest;
 import com.moa.service.AdminService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -26,5 +29,15 @@ public class AdminController {
     public String changeStatusMember(@PathVariable Long applyId, @RequestParam int statusCode) {
         ApprovalStatus status = getStatus(statusCode);
         return adminService.changeApplimentStatus(applyId, status);
+    }
+
+    @GetMapping("/approved/members")
+    public List<ApprovedMemberResponse> approvedMemberInfo (@PathVariable Long recruitmentId) {
+        return adminService.getApprovedMembers(recruitmentId);
+    }
+
+    @PostMapping("/approved/{applyId}/popularity")
+    public double setPopularity(@PathVariable Long applyId, @RequestBody @Valid ApprovedPopularityRequest popularityRequest) {
+        return adminService.setApprovedPopularity(applyId, popularityRequest);
     }
 }
