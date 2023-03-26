@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Profile("local-test")
-//@Component
+@Component
 @RequiredArgsConstructor
 public class InitData {
     private final Initialize initialize;
