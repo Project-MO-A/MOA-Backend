@@ -13,7 +13,9 @@ public enum ErrorCode {
 
     RECRUITMENT_NOT_FOUND(404, "recruitment.not.found", "R0001"),
 
-    APPLIMENT_NOT_FOUND(404, "appliment.not.found", "P0001");
+    APPLIMENT_NOT_FOUND(404, "appliment.not.found", "P0001"),
+
+    TIME_INVALID(400, "time.invalid", "T0001");
     ;
 
     private final int statusCode;
