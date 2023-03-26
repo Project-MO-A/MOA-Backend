@@ -5,7 +5,6 @@ import com.moa.domain.notice.NoticeRepository;
 import com.moa.domain.notice.Post;
 import com.moa.dto.member.ApplimentMemberResponse;
 import com.moa.dto.member.ApprovedMemberResponse;
-import com.moa.dto.recruit.RecruitApplyRequest;
 import com.moa.service.*;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 class AdminRepositoryTest {
     @Autowired
-    AdminRepository adminRepository;
+    ApplimentRepository adminRepository;
     @Autowired
     AdminService adminService;
 
@@ -55,7 +54,7 @@ class AdminRepositoryTest {
         @Test
         void getAppliment() {
             //when
-            List<ApplimentMemberResponse> appliment = adminRepository.findAllApplimentResponse(1L, null);
+            List<ApplimentMemberResponse> appliment = adminRepository.findAllApplimentMembers(1L, null);
 
             //then
             assertThat(appliment.get(0).recruitField()).isEqualTo("백엔드");
@@ -68,7 +67,7 @@ class AdminRepositoryTest {
         @Test
         void getApplimentOnStatusPENDING() {
             //when
-            List<ApplimentMemberResponse> pendingAppliment = adminRepository.findAllApplimentResponse(1L, PENDING);
+            List<ApplimentMemberResponse> pendingAppliment = adminRepository.findAllApplimentMembers(1L, PENDING);
 
             //then
             assertThat(pendingAppliment.get(0).status()).isEqualTo(PENDING);
@@ -87,7 +86,7 @@ class AdminRepositoryTest {
             adminService.changeApplimentStatus(applyId, APPROVED);
 
             //when
-            List<ApplimentMemberResponse> pendingAppliment = adminRepository.findAllApplimentResponse(1L, APPROVED);
+            List<ApplimentMemberResponse> pendingAppliment = adminRepository.findAllApplimentMembers(1L, APPROVED);
 
             //then
             assertThat(pendingAppliment.get(0).status()).isEqualTo(APPROVED);
@@ -102,7 +101,7 @@ class AdminRepositoryTest {
             adminService.changeApplimentStatus(applyId, REFUSE);
 
             //when
-            List<ApplimentMemberResponse> pendingAppliment = adminRepository.findAllApplimentResponse(1L, REFUSE);
+            List<ApplimentMemberResponse> pendingAppliment = adminRepository.findAllApplimentMembers(1L, REFUSE);
 
             //then
             assertThat(pendingAppliment.get(0).status()).isEqualTo(REFUSE);
@@ -125,7 +124,7 @@ class AdminRepositoryTest {
         @Test
         void getApproved() {
             //when
-            List<ApprovedMemberResponse> approvedMember = adminRepository.findAllApprovedResponse(RECRUITMENT1.getId());
+            List<ApprovedMemberResponse> approvedMember = adminRepository.findAllApprovedMembers(RECRUITMENT1.getId());
 
             //then
             assertThat(approvedMember.size()).isEqualTo(2);

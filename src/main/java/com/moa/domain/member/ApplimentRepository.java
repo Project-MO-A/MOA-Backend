@@ -22,7 +22,7 @@ import static com.moa.domain.user.QUser.user;
 
 @RequiredArgsConstructor
 @Repository
-public class AdminRepository implements AdminSearchRepository {
+public class ApplimentRepository implements ApplimentSearchRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
@@ -36,7 +36,7 @@ public class AdminRepository implements AdminSearchRepository {
     }
 
     @Override
-    public List<ApplimentMemberResponse> findAllApplimentResponse(final Long recruitmentId, final ApprovalStatus status) {
+    public List<ApplimentMemberResponse> findAllApplimentMembers(final Long recruitmentId, final ApprovalStatus status) {
         return queryFactory
                 .select(Projections.constructor(ApplimentMemberResponse.class,
                         user.id,
@@ -55,7 +55,7 @@ public class AdminRepository implements AdminSearchRepository {
     }
 
     @Override
-    public List<ApprovedMemberResponse> findAllApprovedResponse(final Long recruitmentId) {
+    public List<ApprovedMemberResponse> findAllApprovedMembers(final Long recruitmentId) {
         List<ApprovedMemberResponse> approvedMemberResponses = queryFactory
                 .select(Projections.constructor(ApprovedMemberResponse.class,
                         user.id,

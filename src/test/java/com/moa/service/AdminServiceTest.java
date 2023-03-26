@@ -1,6 +1,6 @@
 package com.moa.service;
 
-import com.moa.domain.member.AdminSearchRepository;
+import com.moa.domain.member.ApplimentSearchRepository;
 import com.moa.domain.member.ApplimentMember;
 import com.moa.domain.member.ApprovalStatus;
 import com.moa.domain.member.RecruitMember;
@@ -26,7 +26,7 @@ class AdminServiceTest {
 
     @BeforeAll
     static void setUp() {
-        adminService = new AdminService(new TestAdminSearchRepository());
+        adminService = new AdminService(new TestApplimentSearchRepository());
     }
 
     @DisplayName("getApplimentMembers - 신청한 멤버를 조회한다. (대기)")
@@ -115,7 +115,7 @@ class AdminServiceTest {
                 .isInstanceOf(EntityNotFoundException.class);
     }
 
-    static class TestAdminSearchRepository implements AdminSearchRepository {
+    static class TestApplimentSearchRepository implements ApplimentSearchRepository {
         @Override
         public Optional<ApplimentMember> findApplimentMemberById(Long applyId) {
             if (applyId == 10L) return Optional.empty();
@@ -134,7 +134,7 @@ class AdminServiceTest {
         }
 
         @Override
-        public List<ApplimentMemberResponse> findAllApplimentResponse(Long recruitmentId, ApprovalStatus status) {
+        public List<ApplimentMemberResponse> findAllApplimentMembers(Long recruitmentId, ApprovalStatus status) {
             if (recruitmentId == 10L) return new ArrayList<>();
             List<ApplimentMemberResponse> memberResponses = new ArrayList<>();
             memberResponses.add(ApplimentMemberResponse.builder()
@@ -156,7 +156,7 @@ class AdminServiceTest {
         }
 
         @Override
-        public List<ApprovedMemberResponse> findAllApprovedResponse(Long recruitmentId) {
+        public List<ApprovedMemberResponse> findAllApprovedMembers(Long recruitmentId) {
             if (recruitmentId == 10L) return new ArrayList<>();
             List<ApprovedMemberResponse> memberResponses = new ArrayList<>();
             ApprovedMemberResponse response1 = new ApprovedMemberResponse(1L, 1L, "nickname1", "백엔드", 3.5);

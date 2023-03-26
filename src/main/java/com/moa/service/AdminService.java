@@ -19,12 +19,12 @@ import static com.moa.global.exception.ErrorCode.RECRUITMENT_NOT_FOUND;
 @RequiredArgsConstructor
 @Service
 public class AdminService implements ApplimentHandler {
-    private final AdminSearchRepository adminRepository;
+    private final ApplimentSearchRepository adminRepository;
 
     @Transactional(readOnly = true)
     @Override
     public List<ApplimentMemberResponse> getApplimentMembers(final Long recruitmentId, final ApprovalStatus status) {
-        List<ApplimentMemberResponse> allApplimentResponse = adminRepository.findAllApplimentResponse(recruitmentId, status);
+        List<ApplimentMemberResponse> allApplimentResponse = adminRepository.findAllApplimentMembers(recruitmentId, status);
         if (allApplimentResponse.isEmpty()) throw new EntityNotFoundException(RECRUITMENT_NOT_FOUND);
         return allApplimentResponse;
     }
@@ -32,7 +32,7 @@ public class AdminService implements ApplimentHandler {
     @Transactional(readOnly = true)
     @Override
     public List<ApprovedMemberResponse> getApprovedMembers(final Long recruitmentId) {
-        List<ApprovedMemberResponse> allApprovedResponse = adminRepository.findAllApprovedResponse(recruitmentId);
+        List<ApprovedMemberResponse> allApprovedResponse = adminRepository.findAllApprovedMembers(recruitmentId);
         if (allApprovedResponse.isEmpty()) throw new EntityNotFoundException(RECRUITMENT_NOT_FOUND);
         return allApprovedResponse;
     }
