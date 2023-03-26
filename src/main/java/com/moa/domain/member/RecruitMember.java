@@ -35,6 +35,14 @@ public class RecruitMember {
         this.totalRecruitCount = totalRecruitCount;
     }
 
+    @Builder(builderMethodName = "Leader")
+    public RecruitMember(Recruitment recruitment) {
+        this.recruitment = recruitment;
+        this.recruitField = "LEADER";
+        this.currentRecruitCount = 1;
+        this.totalRecruitCount = 1;
+    }
+
     public void setParent(Recruitment recruitment) {
         this.recruitment = recruitment;
     }

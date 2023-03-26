@@ -2,6 +2,8 @@ package com.moa.domain.member;
 
 import com.moa.domain.notice.Notice;
 import com.moa.domain.user.User;
+import com.moa.global.exception.ErrorCode;
+import com.moa.global.exception.service.AssociationMisMatchException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -37,5 +39,15 @@ public class AttendMember {
         this.attendance = attendance;
         this.user = user;
         this.notice = notice;
+    }
+
+    public void changeAttendance(Attendance attendance) {
+        this.attendance = attendance;
+    }
+
+    public void checkRecruitment(Long recruitmentId) {
+        if (!this.notice.getRecruitment().getId().equals(recruitmentId)) {
+            throw new AssociationMisMatchException(ErrorCode.NOTICE_ASSOCIATION_MISMATCH);
+        }
     }
 }

@@ -1,5 +1,8 @@
 package com.moa.service;
 
+import com.moa.domain.member.ApplimentMember;
+import com.moa.domain.member.ApplimentMemberRepository;
+import com.moa.domain.member.RecruitMember;
 import com.moa.domain.recruit.Recruitment;
 import com.moa.domain.recruit.RecruitmentRepository;
 import com.moa.domain.recruit.category.CategoryRepository;
@@ -16,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.moa.domain.member.Approval.APPROVED;
+
 @RequiredArgsConstructor
 @Transactional
 @Service
@@ -23,10 +28,12 @@ public class RecruitmentService {
     private final RecruitmentRepository recruitmentRepository;
     private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
+    private final ApplimentMemberRepository applimentMemberRepository;
 
     public Long post(final Long userId, final RecruitPostRequest request, final List<Long> categoryId) {
         User user = userRepository.getReferenceById(userId);
         Recruitment recruitment = request.toEntity(user, request.toMemberList(), getRecruitCategories(categoryId));
+        applimentMemberRepository.save(new ApplimentMember(RecruitMember.Leader().recruitment(recruitment).build(), user, APPROVED));
         return recruitmentRepository.save(recruitment).getId();
     }
 
