@@ -35,6 +35,7 @@ public class PossibleTimeService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public PossibleTimeResponse getTimeList(final Long recruitmentId, final Long userId) {
         ApplimentMember applimentMember = applimentMemberRepository.findByRecruitIdAndUserId(recruitmentId, userId)
                 .orElseThrow(() -> new EntityNotFoundException(APPLIMENT_NOT_FOUND));
