@@ -26,7 +26,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 class AdminRepositoryTest {
     @Autowired
-    ApplimentRepository adminRepository;
+    AdminRepository adminRepository;
     @Autowired
     AdminService adminService;
 
@@ -169,25 +169,26 @@ class AdminRepositoryTest {
                         .notice(noticeVote1)
                         .user(USER1)
                         .build();
-                AttendMember User2Attend = AttendMember.builder()
-                        .attendance(ATTENDANCE)
-                        .notice(noticeVote1)
-                        .user(USER2)
-                        .build();
-                attendMemberRepository.save(User1Attend);
-                attendMemberRepository.save(User2Attend);
-
                 AttendMember User1Attend2 = AttendMember.builder()
                         .attendance(NONATTENDANCE)
                         .notice(noticeVote1)
                         .user(USER1)
+                        .build();
+
+                AttendMember User2Attend = AttendMember.builder()
+                        .attendance(ATTENDANCE)
+                        .notice(noticeVote1)
+                        .user(USER2)
                         .build();
                 AttendMember User2Attend2 = AttendMember.builder()
                         .attendance(ATTENDANCE)
                         .notice(noticeVote1)
                         .user(USER2)
                         .build();
+
+                attendMemberRepository.save(User1Attend);
                 attendMemberRepository.save(User1Attend2);
+                attendMemberRepository.save(User2Attend);
                 attendMemberRepository.save(User2Attend2);
             }
 
@@ -195,7 +196,7 @@ class AdminRepositoryTest {
             @Test
             void countTotalVote() {
                 //when
-                Long countTotalVote = adminRepository.countTotalVote(RECRUITMENT1.getId());
+                Long countTotalVote = adminRepository.countAttend(RECRUITMENT1.getId(), USER1.getId(), null);
 
                 //then
                 assertThat(countTotalVote).isEqualTo(2);
@@ -205,8 +206,8 @@ class AdminRepositoryTest {
             @Test
             void countAttend() {
                 //when
-                Long countAttend1 = adminRepository.countAttend(RECRUITMENT1.getId(), USER1.getId());
-                Long countAttend2 = adminRepository.countAttend(RECRUITMENT1.getId(), USER2.getId());
+                Long countAttend1 = adminRepository.countAttend(RECRUITMENT1.getId(), USER1.getId(), ATTENDANCE);
+                Long countAttend2 = adminRepository.countAttend(RECRUITMENT1.getId(), USER2.getId(), ATTENDANCE);
 
                 //then
                 assertThat(countAttend1).isEqualTo(1);

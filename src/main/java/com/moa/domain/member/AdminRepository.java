@@ -22,7 +22,7 @@ import static com.moa.domain.user.QUser.user;
 
 @RequiredArgsConstructor
 @Repository
-public class ApplimentRepository implements ApplimentSearchRepository {
+public class AdminRepository implements ApplimentSearchRepository {
     private final JPAQueryFactory queryFactory;
 
     @Override
@@ -72,34 +72,27 @@ public class ApplimentRepository implements ApplimentSearchRepository {
                         statusEq(APPROVED))
                 .fetch();
 
-        Long totalVote = countTotalVote(recruitmentId);
-
         for (ApprovedMemberResponse approvedMembers : approvedMemberResponses) {
-            approvedMembers.setTotalVote(totalVote);
-            approvedMembers.setAttend(countAttend(recruitmentId, approvedMembers.getUserId()));
+            approvedMembers.setTotalVote(countAttend(recruitmentId, approvedMembers.getUserId(), null));
+            approvedMembers.setAttend(countAttend(recruitmentId, approvedMembers.getUserId(), ATTENDANCE));
         }
 
         return approvedMemberResponses;
     }
 
-    public Long countTotalVote(final Long recruitmentId) {
-        return queryFactory
-                .select(notice.count())
-                .from(notice)
-                .where(notice.recruitment.id.eq(recruitmentId),
-                        notice.checkVote.isTrue())
-                .fetchOne();
-    }
-
-    public Long countAttend(final Long recruitmentId, final Long userId) {
+    public Long countAttend(final Long recruitmentId, final Long userId, final Attendance attendance) {
         return queryFactory
                 .select(attendMember.count())
                 .from(recruitment)
                 .join(notice).on(notice.recruitment.id.eq(recruitmentId))
                 .join(attendMember).on(attendMember.notice.eq(notice))
                 .where(attendMember.user.id.eq(userId),
-                        attendMember.attendance.eq(ATTENDANCE))
+                        attendanceEq(attendance))
                 .fetchOne();
+    }
+
+    private BooleanExpression attendanceEq(Attendance attendance) {
+        return attendance != null ? attendMember.attendance.eq(ATTENDANCE) : null;
     }
 
     private BooleanExpression statusEq(ApprovalStatus status) {
