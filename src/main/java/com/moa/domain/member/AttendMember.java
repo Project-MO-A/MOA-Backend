@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 
@@ -19,6 +20,8 @@ public class AttendMember {
     @Id
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
+
+    @Enumerated(STRING)
     private Attendance attendance;
 
     @ManyToOne(fetch = LAZY)
