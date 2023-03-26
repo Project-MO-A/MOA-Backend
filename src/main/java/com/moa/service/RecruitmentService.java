@@ -33,7 +33,7 @@ public class RecruitmentService {
     public Long post(final Long userId, final RecruitPostRequest request, final List<Long> categoryId) {
         User user = userRepository.getReferenceById(userId);
         Recruitment recruitment = request.toEntity(user, request.toMemberList(), getRecruitCategories(categoryId));
-        applimentMemberRepository.save(new ApplimentMember(RecruitMember.Leader().recruitment(recruitment).build(), user, APPROVED));
+        applimentMemberRepository.save(new ApplimentMember(new RecruitMember(recruitment), user, APPROVED));
         return recruitmentRepository.save(recruitment).getId();
     }
 

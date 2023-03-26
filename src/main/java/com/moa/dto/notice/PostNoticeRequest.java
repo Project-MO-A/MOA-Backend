@@ -13,7 +13,7 @@ import java.time.format.DateTimeFormatter;
 public record PostNoticeRequest(
         @NotBlank String title,
         @NotBlank String content,
-        @NotBlank @Pattern(regexp = "^(\\d{2}.\\d{2}.\\d{2}\\s\\d{2}:\\d{2}:\\d{2})$") String meetingTime,
+        @NotBlank @Pattern(regexp = "^(\\d{4}-\\d{2}-\\d{2}\\s\\d{2}:\\d{2}:\\d{2})$") String meetingTime,
         String confirmedLocation,
         @NotNull Boolean checkVote
 ) {
