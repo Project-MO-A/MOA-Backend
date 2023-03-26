@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalTime;
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -23,13 +25,13 @@ public class PossibleTime {
     private Day day;
 
     @Column(nullable = false)
-    private int startTime;
+    private LocalTime startTime;
 
     @Column(nullable = false)
-    private int endTime;
+    private LocalTime endTime;
 
     @Builder
-    public PossibleTime(ApplimentMember applimentMember, Day day, int startTime, int endTime) {
+    public PossibleTime(ApplimentMember applimentMember, Day day, LocalTime startTime, LocalTime endTime) {
         this.applimentMember = applimentMember;
         this.day = day;
         this.startTime = startTime;
