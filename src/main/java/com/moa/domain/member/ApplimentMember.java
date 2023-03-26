@@ -1,5 +1,6 @@
 package com.moa.domain.member;
 
+import com.moa.domain.user.Popularity;
 import com.moa.domain.user.User;
 import com.moa.global.exception.service.InvalidCodeException;
 import jakarta.persistence.*;
@@ -31,16 +32,30 @@ public class ApplimentMember {
     @Enumerated(EnumType.STRING)
     private ApprovalStatus status;
 
+    private Double popularity;
+
     @Builder
     public ApplimentMember(RecruitMember recruitMember, User user, ApprovalStatus status) {
         this.recruitMember = recruitMember;
         this.user = user;
         this.status = status;
+        this.popularity = null;
     }
 
     public String changeStatus(ApprovalStatus status) {
         if (status == PENDING) throw new InvalidCodeException(STATUS_CODE_INVALID);
         this.status = status;
         return this.status.name();
+    }
+
+    public void setPopularity(double rate) {
+        Popularity userPopularity = user.getPopularity();
+
+        if (this.popularity == null) {
+            userPopularity.addPopularity(rate);
+        } else {
+            userPopularity.updatePopularity(this.popularity, rate);
+        }
+        this.popularity = rate;
     }
 }

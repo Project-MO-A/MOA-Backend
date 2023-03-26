@@ -30,7 +30,8 @@ public class User {
     private double locationLatitude;
     @Column(columnDefinition = "decimal(18,10)")
     private double locationLongitude;
-    private int popularity;
+    @Embedded
+    private Popularity popularity;
     @Lob
     @Column(columnDefinition = "CLOB")
     private String details;
@@ -51,7 +52,7 @@ public class User {
         this.nickname = nickname;
         this.locationLatitude = locationLatitude;
         this.locationLongitude = locationLongitude;
-        this.popularity = popularity;
+        this.popularity = new Popularity();
         this.details = details;
     }
 

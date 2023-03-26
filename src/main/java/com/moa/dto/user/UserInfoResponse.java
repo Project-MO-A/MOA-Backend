@@ -40,7 +40,7 @@ public class UserInfoResponse {
                 .nickname(user.getNickname())
                 .locationLatitude(user.getLocationLatitude())
                 .locationLongitude(user.getLocationLongitude())
-                .popularity(user.getPopularity())
+                .popularity(user.getPopularity().getRate())
                 .details(user.getDetails())
                 .interests(interests)
                 .build();
@@ -82,7 +82,7 @@ public class UserInfoResponse {
             String nickname,
             double locationLatitude,
             double locationLongitude,
-            int popularity,
+            double popularity,
             String details,
             List<String> interests
     ) {
