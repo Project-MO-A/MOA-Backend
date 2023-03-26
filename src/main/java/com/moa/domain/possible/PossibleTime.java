@@ -1,5 +1,6 @@
 package com.moa.domain.possible;
 
+import com.moa.domain.member.ApplimentMember;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -15,11 +16,12 @@ public class PossibleTime {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "TIME_SELECTOR_ID")
-    private PossibleTimeSelector selector;
+    @JoinColumn(name = "APPLIMENT_MEMBER_ID")
+    private ApplimentMember applimentMember;
 
     @Column(name = "possible_day")
-    private String day;
+    private Day day;
+
     @Column(nullable = false)
     private int startTime;
 
@@ -27,8 +29,8 @@ public class PossibleTime {
     private int endTime;
 
     @Builder
-    public PossibleTime(PossibleTimeSelector selector, String day, int startTime, int endTime) {
-        this.selector = selector;
+    public PossibleTime(ApplimentMember applimentMember, Day day, int startTime, int endTime) {
+        this.applimentMember = applimentMember;
         this.day = day;
         this.startTime = startTime;
         this.endTime = endTime;
