@@ -1,5 +1,7 @@
 package com.moa.service;
 
+import com.moa.domain.member.ApplimentMember;
+import com.moa.domain.member.ApplimentMemberRepository;
 import com.moa.domain.recruit.Recruitment;
 import com.moa.domain.recruit.RecruitmentRepository;
 import com.moa.domain.user.User;
@@ -29,6 +31,7 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final RecruitmentRepository recruitmentRepository;
+    private final ApplimentMemberRepository applimentMemberRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -61,6 +64,12 @@ public class UserService implements UserDetailsService {
     public RecruitmentsInfo getUserWritingInfoById(final Long userId) {
         List<Recruitment> recruitments = recruitmentRepository.findListByIdFetchUser(userId);
         return new RecruitmentsInfo(recruitments);
+    }
+
+    @Transactional(readOnly = true)
+    public UserActivityInfo getUserActivityInfoById(Long userId) {
+        List<ApplimentMember> applimentMembers = applimentMemberRepository.findAllRecruitmentByUserId(userId);
+        return new UserActivityInfo(applimentMembers);
     }
 
     public void deleteUser(Long id) {

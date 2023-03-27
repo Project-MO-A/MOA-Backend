@@ -42,6 +42,11 @@ public class UserController {
         return userService.getUserWritingInfoById(user.id());
     }
 
+    @GetMapping("/info/activity")
+    public UserActivityInfo getActivityInfo(@AuthenticationPrincipal JwtUser user) {
+        return userService.getUserActivityInfoById(user.id());
+    }
+
     @ResponseStatus(NO_CONTENT)
     @PutMapping("/info")
     public void update(@RequestBody @Valid UserUpdateRequest updateRequest) {

@@ -7,7 +7,8 @@ import java.util.Arrays;
 @Getter
 public enum RecruitStatus {
     RECRUITING(1, "모집중"),
-    COMPLETE(2, "모집완료");
+    COMPLETE(2, "모집완료"),
+    FINISH(3, "종료");
 
     private final int code;
     private final String status;
