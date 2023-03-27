@@ -31,9 +31,9 @@ public class UserController {
         userService.deleteUser(user.id());
     }
     
-    @GetMapping("/info")
-    public UserInfoResponse getInfo(@AuthenticationPrincipal JwtUser user) {
-        return userService.getUserInfoById(user.id());
+    @GetMapping("/info/profile")
+    public UserInfo getProfileInfo(@AuthenticationPrincipal JwtUser user) {
+        return userService.getUserProfileInfoById(user.id());
     }
 
     @ResponseStatus(NO_CONTENT)

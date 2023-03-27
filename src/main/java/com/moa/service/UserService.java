@@ -1,7 +1,5 @@
 package com.moa.service;
 
-import com.moa.domain.member.ApplimentMember;
-import com.moa.domain.member.ApplimentMemberRepository;
 import com.moa.domain.user.User;
 import com.moa.domain.user.UserRepository;
 import com.moa.dto.user.*;
@@ -16,7 +14,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 
 import static com.moa.global.exception.ErrorCode.*;
@@ -27,7 +24,6 @@ import static com.moa.global.exception.ErrorCode.*;
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
-    private final ApplimentMemberRepository applimentMemberRepository;
     private final PasswordEncoder passwordEncoder;
 
     @Override
@@ -49,9 +45,11 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional(readOnly = true)
-    public UserInfoResponse getUserInfoById(final Long userId) {
-        List<ApplimentMember> applimentMembers = applimentMemberRepository.findAllByUserId(userId);
-        return new UserInfoResponse(applimentMembers);
+    public UserInfo getUserProfileInfoById(final Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+
+        return new UserInfo(user);
     }
 
     public void deleteUser(Long id) {
