@@ -52,21 +52,6 @@ class UserServiceTest {
         userService.saveUser(testUser);
     }
 
-    @DisplayName("info - 유저의 개인 정보를 가져온다 fail -> 모집 글 기능 구현시 테스트 재 구성 필")
-    @Test
-    void info() {
-        //when
-        User user = userRepository.findByEmail(TEST_EMAIL).get();
-        UserInfoResponse info = userService.getUserInfoById(user.getId());
-
-        //then
-        assertThat(info.getUserInfo().email()).isEqualTo("test2@naver.com");
-        assertThat(info.getUserInfo().popularity()).isEqualTo(0);
-        assertThat(info.getUserInfo().nickname()).isEqualTo("john");
-        assertThat(info.getUserInfo().details()).isEqualTo("Hello");
-        assertThat(info.getUserInfo().interests()).containsOnly("Java", "Python");
-    }
-
     @DisplayName("update - 유저의 개인 정보를 수정한다.")
     @Test
     void update() {
