@@ -13,6 +13,8 @@ public enum ErrorCode {
     NOTICE_ASSOCIATION_MISMATCH(404, "notice.association.mismatch", "N0002"),
 
     ATTENDMEMBER_NOT_FOUND(400, "attendmember.not.found", "AM0001"),
+    
+    RECRUITMENT_NOT_FOUND(404, "recruitment.not.found", "R0001"),
     ;
 
     private final int statusCode;

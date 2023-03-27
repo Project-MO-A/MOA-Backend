@@ -13,6 +13,7 @@ import com.moa.dto.recruit.StatusResponse;
 import com.moa.dto.recruit.RecruitInfoResponse;
 import com.moa.dto.recruit.RecruitPostRequest;
 import com.moa.dto.recruit.RecruitUpdateRequest;
+import com.moa.global.exception.service.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static com.moa.domain.member.Approval.APPROVED;
+import static com.moa.global.exception.ErrorCode.RECRUITMENT_NOT_FOUND;
 
 @RequiredArgsConstructor
 @Transactional
@@ -39,25 +41,29 @@ public class RecruitmentService {
 
     @Transactional(readOnly = true)
     public RecruitInfoResponse getInfo(final Long recruitId) {
-        Recruitment recruitment = recruitmentRepository.findByIdFetchUser(recruitId).orElseThrow(IllegalArgumentException::new);
+        Recruitment recruitment = recruitmentRepository.findByIdFetchUser(recruitId)
+                .orElseThrow(() -> new EntityNotFoundException(RECRUITMENT_NOT_FOUND));
         return new RecruitInfoResponse(recruitment);
     }
 
     public Long update(final Long recruitId, final RecruitUpdateRequest request, final List<Long> categoryId) {
-        Recruitment recruitment = recruitmentRepository.findById(recruitId).orElseThrow(IllegalArgumentException::new);
+        Recruitment recruitment = recruitmentRepository.findById(recruitId)
+                .orElseThrow(() -> new EntityNotFoundException(RECRUITMENT_NOT_FOUND));
         recruitment.update(request, getRecruitCategories(categoryId));
         return recruitment.getId();
     }
 
     public StatusResponse updateStatus(final Long recruitId, final Integer statusCode) {
-        Recruitment recruitment = recruitmentRepository.findById(recruitId).orElseThrow(IllegalArgumentException::new);
+        Recruitment recruitment = recruitmentRepository.findById(recruitId)
+                .orElseThrow(() -> new EntityNotFoundException(RECRUITMENT_NOT_FOUND));
         recruitment.updateState(statusCode);
         return new StatusResponse(recruitment.getStatus().name());
     }
 
     public Long delete(final Long recruitId) {
-        recruitmentRepository.findById(recruitId).orElseThrow(IllegalArgumentException::new);
-        recruitmentRepository.deleteById(recruitId);
+        Recruitment recruitment = recruitmentRepository.findById(recruitId)
+                .orElseThrow(() -> new EntityNotFoundException(RECRUITMENT_NOT_FOUND));
+        recruitmentRepository.delete(recruitment);
         return recruitId;
     }
 
