@@ -34,7 +34,7 @@ public record NoticesResponse(Map<Long, NoticeResponse> notices) {
                         notice -> notice));
     }
 
-    record NoticeResponse(
+    public record NoticeResponse(
             String title,
             String content,
             String createdAt,
