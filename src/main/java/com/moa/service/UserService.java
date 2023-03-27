@@ -72,6 +72,13 @@ public class UserService implements UserDetailsService {
         return new UserActivityInfo(applimentMembers);
     }
 
+    @Transactional(readOnly = true)
+    public UserRecruitmentInterestInfo getUserConcernInfoById(final Long userId) {
+        User user = userRepository.findRecruitmentInterestById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+        return new UserRecruitmentInterestInfo(user);
+    }
+
     public void deleteUser(Long id) {
         Optional<User> findUser = userRepository.findById(id);
         if (findUser.isEmpty()) {
