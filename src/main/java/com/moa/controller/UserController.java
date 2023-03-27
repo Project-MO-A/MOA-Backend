@@ -1,5 +1,6 @@
 package com.moa.controller;
 
+import com.moa.dto.recruit.RecruitmentsInfo;
 import com.moa.dto.user.*;
 import com.moa.global.auth.model.JwtUser;
 import com.moa.service.UserService;
@@ -34,6 +35,11 @@ public class UserController {
     @GetMapping("/info/profile")
     public UserInfo getProfileInfo(@AuthenticationPrincipal JwtUser user) {
         return userService.getUserProfileInfoById(user.id());
+    }
+
+    @GetMapping("/info/writing")
+    public RecruitmentsInfo getWritingInfo(@AuthenticationPrincipal JwtUser user) {
+        return userService.getUserWritingInfoById(user.id());
     }
 
     @ResponseStatus(NO_CONTENT)
