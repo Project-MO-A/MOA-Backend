@@ -78,6 +78,10 @@ public class User {
         }
     }
 
+    public void addRecruitmentInterests(RecruitmentInterest recruitmentInterest) {
+        this.recruitmentInterests.add(recruitmentInterest);
+    }
+
     public void addAlarm(Alarm alarm) {
         if (!alarms.contains(alarm)) {
             alarms.add(alarm);

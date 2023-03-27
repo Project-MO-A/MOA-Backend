@@ -28,7 +28,7 @@ public class UserRecruitmentInterestInfo {
         return result;
     }
 
-    record RecruitmentInfo(
+    public record RecruitmentInfo(
             String title,
             String redirectUri
     ) {}
