@@ -47,4 +47,9 @@ public class UserController {
     public void changePassword(@RequestBody @Valid UserPwUpdateRequest pwUpdateRequest) {
         userService.changePassword(pwUpdateRequest);
     }
+
+    @GetMapping("/check/email")
+    public Boolean checkEmailUnique(@RequestBody @Valid EmailDuplicateRequest request) {
+        return userService.checkEmailUnique(request.email());
+    }
 }
