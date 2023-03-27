@@ -40,7 +40,7 @@ public class UserInfoResponse {
                 .nickname(user.getNickname())
                 .locationLatitude(user.getLocationLatitude())
                 .locationLongitude(user.getLocationLongitude())
-                .popularity(user.getPopularity())
+                .popularity(user.getPopularity().getRate())
                 .details(user.getDetails())
                 .interests(interests)
                 .build();
@@ -56,7 +56,7 @@ public class UserInfoResponse {
                     .id(recruitMember.getId())
                     .title(recruitMember.getRecruitment().getPost().getTitle())
                     .postState(recruitMember.getRecruitment().getStatus().name())
-                    .recruitState(applimentMember.getApproval().name())
+                    .recruitState(applimentMember.getStatus().name())
                     .build());
         }
         return infos;
@@ -82,7 +82,7 @@ public class UserInfoResponse {
             String nickname,
             double locationLatitude,
             double locationLongitude,
-            int popularity,
+            double popularity,
             String details,
             List<String> interests
     ) {

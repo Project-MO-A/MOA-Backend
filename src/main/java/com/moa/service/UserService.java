@@ -40,7 +40,7 @@ public class UserService implements UserDetailsService {
     public UserEmailResponse saveUser(UserSignupRequest request) {
         Optional<User> findUser = userRepository.findByEmail(request.email());
         if (findUser.isPresent()) {
-            throw new BusinessException(DUPLICATED_EMAIL);
+            throw new BusinessException(USER_DUPLICATED_EMAIL);
         }
         User user = request.toEntity();
         user.encodePassword(passwordEncoder);
