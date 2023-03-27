@@ -31,7 +31,7 @@ public class PossibleTimeService {
         List<ApprovedMemberResponse> allMembers = applimentSearchRepository.findAllApprovedMembers(recruitmentId);
         return allMembers.stream().map(all -> PossibleTimeResponse.builder()
                     .nickname(all.getNickname())
-                    .possibleTimes(possibleTimeRepository.findAllByApplyId(all.getApplyId())).build())
+                    .possibleTimes(possibleTimeRepository.findAllByApplimentMemberId(all.getApplyId())).build())
                 .toList();
     }
 
@@ -39,7 +39,7 @@ public class PossibleTimeService {
     public PossibleTimeResponse getTimeList(final Long recruitmentId, final Long userId) {
         ApplimentMember applimentMember = applimentMemberRepository.findByRecruitIdAndUserId(recruitmentId, userId)
                 .orElseThrow(() -> new EntityNotFoundException(APPLIMENT_NOT_FOUND));
-        List<PossibleTime> allByApplyId = possibleTimeRepository.findAllByApplyId(applimentMember.getId());
+        List<PossibleTime> allByApplyId = possibleTimeRepository.findAllByApplimentMemberId(applimentMember.getId());
         return new PossibleTimeResponse("success", allByApplyId);
     }
 

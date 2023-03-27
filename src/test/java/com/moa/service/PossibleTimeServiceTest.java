@@ -141,7 +141,7 @@ class PossibleTimeServiceTest {
         possibleTimeService.setTime(possibleTimeRequest, RECRUITMENT1.getId(), USER1.getId());
 
         //then
-        List<PossibleTime> allByApplyId = possibleTimeRepository.findAllByApplyId(APPLIMENT1.getId());
+        List<PossibleTime> allByApplyId = possibleTimeRepository.findAllByApplimentMemberId(APPLIMENT1.getId());
         assertThat(allByApplyId.size()).isEqualTo(2);
         assertThat(allByApplyId.get(0).getStartTime().getHour()).isEqualTo(3);
         assertThat(allByApplyId.get(0).getEndTime().getHour()).isEqualTo(9);

@@ -13,6 +13,6 @@ public interface ApplimentMemberRepository extends JpaRepository<ApplimentMember
             type = EntityGraph.EntityGraphType.LOAD)
     List<ApplimentMember> findAllByUserId(Long userId);
 
-    @Query("select a from ApplimentMember a where a.recruitMember.id=:recruitId and a.user.id=:userId")
+    @Query("select a from ApplimentMember a join a.recruitMember m where m.recruitment.id=:recruitId and a.user.id=:userId")
     Optional<ApplimentMember> findByRecruitIdAndUserId(@Param("recruitId") Long recruitmentId, @Param("userId") Long userId);
 }
