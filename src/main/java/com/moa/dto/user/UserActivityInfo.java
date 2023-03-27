@@ -15,34 +15,53 @@ import static com.moa.domain.recruit.RecruitStatus.*;
 
 @Getter
 public class UserActivityInfo {
-    private final Map<String, List<RecruitmentInfo>> activity;
+    private Map<String, List<ApprovedInfo>> approvedProjects;
+    private List<EtcInfo> etcProjects;
 
     public UserActivityInfo(List<ApplimentMember> info) {
-        this.activity = setActivity(info);
+        setProjects(info);
     }
 
-    private Map<String, List<RecruitmentInfo>> setActivity(List<ApplimentMember> info) {
-        Map<String, List<RecruitmentInfo>> result = new HashMap<>();
-        result.put(COMPLETE.name(), new ArrayList<>());
-        result.put(FINISH.name(), new ArrayList<>());
+    private void setProjects(List<ApplimentMember> info) {
+        Map<String, List<ApprovedInfo>> approved = new HashMap<>();
+        List<EtcInfo> etc = new ArrayList<>();
+        approved.put(COMPLETE.name(), new ArrayList<>());
+        approved.put(FINISH.name(), new ArrayList<>());
         for (ApplimentMember applimentMember : info) {
             if (applimentMember.getApproval().equals(APPROVED)) {
                 RecruitStatus key = applimentMember.getRecruitMember().getRecruitment().getStatus();
-                result.put(key.name(), setRecruitmentInfo(result.get(key), applimentMember.getRecruitMember().getRecruitment()));
+                approved.put(key.name(), setRecruitmentInfo(approved.get(key.name()), applimentMember.getRecruitMember().getRecruitment()));
+                continue;
             }
+            etc.add(setEtcInfo(applimentMember));
         }
-        return result;
+        this.approvedProjects = approved;
+        this.etcProjects = etc;
     }
 
-    private static List<RecruitmentInfo> setRecruitmentInfo(List<RecruitmentInfo> applimentInfos, Recruitment recruitment) {
+    private static List<ApprovedInfo> setRecruitmentInfo(List<ApprovedInfo> applimentInfos, Recruitment recruitment) {
         String title = recruitment.getPost().getTitle();
-        String redirectUri = "/recruitment/".concat(String.valueOf(recruitment.getId()));
-        applimentInfos.add(new RecruitmentInfo(title, redirectUri));
+        String detailsUri = "/recruitment/".concat(String.valueOf(recruitment.getId()));
+        applimentInfos.add(new ApprovedInfo(title, detailsUri));
         return applimentInfos;
     }
 
-    record RecruitmentInfo(
+    private static EtcInfo setEtcInfo(ApplimentMember applimentMember) {
+        Recruitment recruitment = applimentMember.getRecruitMember().getRecruitment();
+        String cancelUri = "/recruitment/cancel/".concat(String.valueOf(recruitment.getId()));
+        String detailsUri = "/recruitment/".concat(String.valueOf(recruitment.getId()));
+        return new EtcInfo(recruitment.getPost().getTitle(), cancelUri, detailsUri, applimentMember.getApproval().name());
+    }
+
+    public record ApprovedInfo(
             String title,
-            String redirectUri
+            String detailsUri
+    ) {}
+
+    public record EtcInfo(
+            String title,
+            String cancelUri,
+            String detailsUri,
+            String status
     ) {}
 }
