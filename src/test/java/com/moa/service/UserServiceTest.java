@@ -146,4 +146,24 @@ class UserServiceTest {
         assertThatThrownBy(() -> userService.changePassword(pwUpdateRequest))
                 .isInstanceOf(BusinessException.class);
     }
+
+    @DisplayName("checkDuplicateEmail - 이메일이 중복되었다면 false 를 반환한다.")
+    @Test
+    void checkEmailUnique() {
+        //when
+        Boolean isDuplicate = userService.checkEmailUnique(TEST_EMAIL);
+
+        //then
+        assertThat(isDuplicate).isFalse();
+    }
+
+    @DisplayName("checkDuplicateEmail - 이메일이 중복되지 않았는다면 true 를 반환한다.")
+    @Test
+    void checkDuplicateEmailFalse() {
+        //when
+        Boolean isDuplicate = userService.checkEmailUnique("unique@email.com");
+
+        //then
+        assertThat(isDuplicate).isTrue();
+    }
 }

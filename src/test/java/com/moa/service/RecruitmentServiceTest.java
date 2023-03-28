@@ -9,6 +9,7 @@ import com.moa.dto.recruit.RecruitInfoResponse;
 import com.moa.dto.recruit.RecruitPostRequest;
 import com.moa.dto.recruit.RecruitUpdateRequest;
 import com.moa.dto.user.UserSignupRequest;
+import com.moa.global.exception.service.EntityNotFoundException;
 import jakarta.persistence.EntityManager;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
@@ -234,7 +235,7 @@ class RecruitmentServiceTest {
         void deleteFail() {
             //when
             assertThatThrownBy(() -> recruitmentService.delete(Long.MAX_VALUE))
-                    .isInstanceOf(RuntimeException.class);
+                    .isInstanceOf(EntityNotFoundException.class);
         }
 
         @DisplayName("updateStatus - 모집글 상태 변경에 성공한다.")

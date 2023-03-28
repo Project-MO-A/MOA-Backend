@@ -16,7 +16,6 @@ public class TestConst {
             .nickname("nickname")
             .locationLatitude(23.23)
             .locationLongitude(34.3443)
-            .popularity(0)
             .details("details")
             .build();
 

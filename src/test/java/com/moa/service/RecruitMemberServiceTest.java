@@ -10,7 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 
-import static com.moa.domain.member.Approval.PENDING;
+import static com.moa.domain.member.ApprovalStatus.PENDING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
@@ -35,6 +35,6 @@ class RecruitMemberServiceTest extends AbstractServiceTest {
         String status = service.applyMember(request);
 
         //then
-        assertThat(status).isEqualTo(applimentMember.getApproval().name());
+        assertThat(status).isEqualTo(applimentMember.getStatus().name());
     }
 }

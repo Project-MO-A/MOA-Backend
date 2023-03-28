@@ -10,7 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.moa.domain.member.Approval.APPROVED;
+import static com.moa.domain.member.ApprovalStatus.APPROVED;
 import static com.moa.domain.recruit.RecruitStatus.*;
 
 @Getter
@@ -28,7 +28,7 @@ public class UserActivityInfo {
         approved.put(COMPLETE.name(), new ArrayList<>());
         approved.put(FINISH.name(), new ArrayList<>());
         for (ApplimentMember applimentMember : info) {
-            if (applimentMember.getApproval().equals(APPROVED)) {
+            if (applimentMember.getStatus().equals(APPROVED)) {
                 RecruitStatus key = applimentMember.getRecruitMember().getRecruitment().getStatus();
                 approved.put(key.name(), setRecruitmentInfo(approved.get(key.name()), applimentMember.getRecruitMember().getRecruitment()));
                 continue;
@@ -50,7 +50,7 @@ public class UserActivityInfo {
         Recruitment recruitment = applimentMember.getRecruitMember().getRecruitment();
         String cancelUri = "/recruitment/cancel/".concat(String.valueOf(recruitment.getId()));
         String detailsUri = "/recruitment/".concat(String.valueOf(recruitment.getId()));
-        return new EtcInfo(recruitment.getPost().getTitle(), cancelUri, detailsUri, applimentMember.getApproval().name());
+        return new EtcInfo(recruitment.getPost().getTitle(), cancelUri, detailsUri, applimentMember.getStatus().name());
     }
 
     public record ApprovedInfo(

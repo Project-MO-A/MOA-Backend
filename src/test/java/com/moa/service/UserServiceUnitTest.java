@@ -2,7 +2,7 @@ package com.moa.service;
 
 import com.moa.base.AbstractServiceTest;
 import com.moa.domain.member.ApplimentMember;
-import com.moa.domain.member.Approval;
+import com.moa.domain.member.ApprovalStatus;
 import com.moa.domain.member.RecruitMember;
 import com.moa.domain.notice.Post;
 import com.moa.domain.recruit.RecruitStatus;
@@ -154,11 +154,11 @@ class UserServiceUnitTest extends AbstractServiceTest {
                 new ApplimentMember(
                         new RecruitMember(recruitment1,"backend", 2),
                         USER,
-                        Approval.APPROVED),
+                        ApprovalStatus.APPROVED),
                 new ApplimentMember(
                         new RecruitMember(recruitment2,"backend", 2),
                         USER,
-                        Approval.PENDING)
+                        ApprovalStatus.PENDING)
                 );
         given(applimentMemberRepository.findAllRecruitmentByUserId(1L)).willReturn(value);
 

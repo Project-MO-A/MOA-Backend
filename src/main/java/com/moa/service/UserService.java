@@ -44,7 +44,7 @@ public class UserService implements UserDetailsService {
     public UserEmailResponse saveUser(UserSignupRequest request) {
         Optional<User> findUser = userRepository.findByEmail(request.email());
         if (findUser.isPresent()) {
-            throw new BusinessException(DUPLICATED_EMAIL);
+            throw new BusinessException(USER_DUPLICATED_EMAIL);
         }
         User user = request.toEntity();
         user.encodePassword(passwordEncoder);
@@ -98,6 +98,11 @@ public class UserService implements UserDetailsService {
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
         validatePassword(user.getPassword(), pwUpdateRequest.currentPassword());
         user.changePassword(passwordEncoder, pwUpdateRequest.newPassword());
+    }
+
+    @Transactional(readOnly = true)
+    public Boolean checkEmailUnique(final String email) {
+        return userRepository.findByEmail(email).isEmpty();
     }
 
     private void validatePassword(final String userPassword, final String givenPassword) {

@@ -13,12 +13,12 @@ public record UserInfo(
         String nickname,
         double locationLatitude,
         double locationLongitude,
-        int popularity,
+        double popularity,
         String details,
         List<String> interests
 ) {
     public UserInfo(User user) {
         this(user.getEmail(), user.getName(), user.getNickname(), user.getLocationLatitude(),
-                user.getLocationLongitude(), user.getPopularity(), user.getDetails(), user.getInterests().stream().map(Interests::getName).toList());
+                user.getLocationLongitude(), user.getPopularity().getRate(), user.getDetails(), user.getInterests().stream().map(Interests::getName).toList());
     }
 }
