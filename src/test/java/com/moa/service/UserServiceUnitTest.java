@@ -5,6 +5,7 @@ import com.moa.domain.member.ApplimentMember;
 import com.moa.domain.member.ApprovalStatus;
 import com.moa.domain.member.RecruitMember;
 import com.moa.domain.notice.Post;
+import com.moa.domain.recruit.Category;
 import com.moa.domain.recruit.RecruitStatus;
 import com.moa.domain.recruit.Recruitment;
 import com.moa.domain.user.User;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.moa.constant.TestConst.*;
+import static com.moa.domain.recruit.Category.PROGRAMMING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.*;
@@ -122,9 +124,9 @@ class UserServiceUnitTest extends AbstractServiceTest {
     void getUserWriting() {
         //given
         List<Recruitment> value = List.of(
-                new Recruitment(USER, new Post("title1", "content1"), RecruitStatus.RECRUITING),
-                new Recruitment(USER, new Post("title2", "content2"), RecruitStatus.RECRUITING),
-                new Recruitment(USER, new Post("title3", "content3"), RecruitStatus.COMPLETE)
+                new Recruitment(USER, new Post("title1", "content1"), RecruitStatus.RECRUITING, PROGRAMMING),
+                new Recruitment(USER, new Post("title2", "content2"), RecruitStatus.RECRUITING, PROGRAMMING),
+                new Recruitment(USER, new Post("title3", "content3"), RecruitStatus.COMPLETE, PROGRAMMING)
         );
         given(recruitmentRepository.findListByIdFetchUser(1L)).willReturn(value);
 
@@ -144,11 +146,11 @@ class UserServiceUnitTest extends AbstractServiceTest {
         Recruitment recruitment1 = new Recruitment(
                 User.builder().email("admin@email.com").build(),
                 new Post("recruitTitle", "content"),
-                RecruitStatus.COMPLETE);
+                RecruitStatus.COMPLETE, PROGRAMMING);
         Recruitment recruitment2 = new Recruitment(
                 User.builder().email("admin@email.com").build(),
                 new Post("recruitTitle1", "content1"),
-                RecruitStatus.RECRUITING);
+                RecruitStatus.RECRUITING, PROGRAMMING);
 
         List<ApplimentMember> value = List.of(
                 new ApplimentMember(
