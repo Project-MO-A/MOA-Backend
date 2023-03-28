@@ -49,14 +49,14 @@ public class User {
     private List<RecruitmentInterest> recruitmentInterests = new ArrayList<>();
 
     @Builder
-    public User(String email, String password, String name, String nickname, double locationLatitude, double locationLongitude, String details) {
+    public User(String email, String password, Popularity popularity, String name, String nickname, double locationLatitude, double locationLongitude, String details) {
         this.email = email;
         this.password = password;
         this.name = name;
         this.nickname = nickname;
         this.locationLatitude = locationLatitude;
         this.locationLongitude = locationLongitude;
-        this.popularity = new Popularity();
+        this.popularity = popularity != null ? popularity : new Popularity() ;
         this.details = details;
     }
 

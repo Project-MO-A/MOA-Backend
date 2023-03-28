@@ -4,6 +4,7 @@ import com.moa.domain.interests.RecruitmentInterest;
 import com.moa.domain.notice.Post;
 import com.moa.domain.recruit.RecruitStatus;
 import com.moa.domain.recruit.Recruitment;
+import com.moa.domain.user.Popularity;
 import com.moa.domain.user.User;
 
 public class TestConst {
@@ -29,7 +30,7 @@ public class TestConst {
                 .nickname("nickname")
                 .locationLatitude(23.23)
                 .locationLongitude(34.3443)
-                .popularity(0)
+                .popularity(new Popularity())
                 .details("details")
                 .build();
         ASSOCIATION_USER
