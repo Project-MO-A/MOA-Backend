@@ -1,5 +1,6 @@
 package com.moa.controller;
 
+import com.moa.dto.recruit.RecruitmentsInfo;
 import com.moa.dto.user.*;
 import com.moa.global.auth.model.JwtUser;
 import com.moa.service.UserService;
@@ -31,9 +32,24 @@ public class UserController {
         userService.deleteUser(user.id());
     }
     
-    @GetMapping("/info")
-    public UserInfoResponse getInfo(@AuthenticationPrincipal JwtUser user) {
-        return userService.getUserInfoById(user.id());
+    @GetMapping("/info/profile")
+    public UserInfo getProfileInfo(@AuthenticationPrincipal JwtUser user) {
+        return userService.getUserProfileInfoById(user.id());
+    }
+
+    @GetMapping("/info/writing")
+    public RecruitmentsInfo getWritingInfo(@AuthenticationPrincipal JwtUser user) {
+        return userService.getUserWritingInfoById(user.id());
+    }
+
+    @GetMapping("/info/activity")
+    public UserActivityInfo getActivityInfo(@AuthenticationPrincipal JwtUser user) {
+        return userService.getUserActivityInfoById(user.id());
+    }
+
+    @GetMapping("/info/concern")
+    public UserRecruitmentInterestInfo getConcernInfo(@AuthenticationPrincipal JwtUser user) {
+        return userService.getUserConcernInfoById(user.id());
     }
 
     @ResponseStatus(NO_CONTENT)
@@ -46,5 +62,10 @@ public class UserController {
     @PutMapping("/pw")
     public void changePassword(@RequestBody @Valid UserPwUpdateRequest pwUpdateRequest) {
         userService.changePassword(pwUpdateRequest);
+    }
+
+    @GetMapping("/check/email")
+    public Boolean checkEmailUnique(@RequestBody @Valid EmailDuplicateRequest request) {
+        return userService.checkEmailUnique(request.email());
     }
 }

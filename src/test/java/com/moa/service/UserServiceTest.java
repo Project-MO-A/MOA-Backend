@@ -52,21 +52,6 @@ class UserServiceTest {
         userService.saveUser(testUser);
     }
 
-    @DisplayName("info - 유저의 개인 정보를 가져온다 fail -> 모집 글 기능 구현시 테스트 재 구성 필")
-    @Test
-    void info() {
-        //when
-        User user = userRepository.findByEmail(TEST_EMAIL).get();
-        UserInfoResponse info = userService.getUserInfoById(user.getId());
-
-        //then
-        assertThat(info.getUserInfo().email()).isEqualTo("test2@naver.com");
-        assertThat(info.getUserInfo().popularity()).isEqualTo(0);
-        assertThat(info.getUserInfo().nickname()).isEqualTo("john");
-        assertThat(info.getUserInfo().details()).isEqualTo("Hello");
-        assertThat(info.getUserInfo().interests()).containsOnly("Java", "Python");
-    }
-
     @DisplayName("update - 유저의 개인 정보를 수정한다.")
     @Test
     void update() {
@@ -160,5 +145,25 @@ class UserServiceTest {
         //when
         assertThatThrownBy(() -> userService.changePassword(pwUpdateRequest))
                 .isInstanceOf(BusinessException.class);
+    }
+
+    @DisplayName("checkDuplicateEmail - 이메일이 중복되었다면 false 를 반환한다.")
+    @Test
+    void checkEmailUnique() {
+        //when
+        Boolean isDuplicate = userService.checkEmailUnique(TEST_EMAIL);
+
+        //then
+        assertThat(isDuplicate).isFalse();
+    }
+
+    @DisplayName("checkDuplicateEmail - 이메일이 중복되지 않았는다면 true 를 반환한다.")
+    @Test
+    void checkDuplicateEmailFalse() {
+        //when
+        Boolean isDuplicate = userService.checkEmailUnique("unique@email.com");
+
+        //then
+        assertThat(isDuplicate).isTrue();
     }
 }
