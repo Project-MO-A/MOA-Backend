@@ -120,7 +120,8 @@ class NoticeServiceTest {
                 true
         ));
 
-        UpdateNoticeRequest request = new UpdateNoticeRequest("new Title", "", "2023-03-30 12:00:00", null, null);
+        LocalDateTime dateTime = LocalDateTime.of(2023, 3, 30, 12, 0);
+        UpdateNoticeRequest request = new UpdateNoticeRequest("new Title", "", dateTime, null, null);
 
         //when
         Long updateNoticeId = noticeService.update(recruitmentId, noticeId, request);
@@ -138,7 +139,8 @@ class NoticeServiceTest {
     @DisplayName("notice update fail - has no notice id")
     void noticeUpdateFail() {
         //given
-        UpdateNoticeRequest request = new UpdateNoticeRequest("new Title", "", "2023-03-30 12:00:00", null, null);
+        LocalDateTime dateTime = LocalDateTime.of(2023, 3, 30, 12, 0);
+        UpdateNoticeRequest request = new UpdateNoticeRequest("new Title", "", dateTime, null, null);
 
         //when & then
         assertThatThrownBy(() -> noticeService.update(recruitmentId, 0L, request))

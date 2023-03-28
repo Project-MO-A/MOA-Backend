@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 import static com.moa.global.exception.ErrorCode.NOTICE_ASSOCIATION_MISMATCH;
 
@@ -54,9 +53,9 @@ public class Notice extends BaseTimeEntity {
         updateCheckVote(request.checkVote());
     }
 
-    private void updateConfirmedTime(String meetingTime) {
-        if (StringUtils.hasText(meetingTime)) {
-            this.confirmedTime = LocalDateTime.parse(meetingTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+    private void updateConfirmedTime(LocalDateTime meetingTime) {
+        if (meetingTime != null) {
+            this.confirmedTime = meetingTime;
         }
     }
 
