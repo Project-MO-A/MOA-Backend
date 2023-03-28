@@ -101,9 +101,12 @@ querydsl {
 sourceSets {
 	main.java.srcDir generated
 }
+
+tasks.compileQuerydsl.dependsOn(clean);
 compileQuerydsl{
 	options.annotationProcessorPath = configurations.querydsl
 }
+
 configurations {
 	compileOnly {
 		extendsFrom annotationProcessor
