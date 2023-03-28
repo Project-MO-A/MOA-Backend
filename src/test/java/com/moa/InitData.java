@@ -7,7 +7,7 @@ import com.moa.domain.user.UserRepository;
 import com.moa.dto.member.RecruitMemberRequest;
 import com.moa.dto.recruit.RecruitPostRequest;
 import com.moa.dto.user.UserSignupRequest;
-import com.moa.service.CategoryService;
+import com.moa.service.TagService;
 import com.moa.service.RecruitmentService;
 import com.moa.service.UserService;
 import jakarta.annotation.PostConstruct;
@@ -27,6 +27,7 @@ public class InitData {
 
     public static User USER1;
     public static User USER2;
+    public static User USER3;
     public static Recruitment RECRUITMENT1;
 
     @PostConstruct
@@ -41,7 +42,7 @@ public class InitData {
         private final UserRepository userRepository;
         private final RecruitmentService recruitmentService;
         private final RecruitmentRepository recruitmentRepository;
-        private final CategoryService categoryService;
+        private final TagService tagService;
 
         @Transactional
         public void initUser() {
@@ -74,6 +75,21 @@ public class InitData {
                     .interests(interest)
                     .build();
 
+            UserSignupRequest userRequest3 = UserSignupRequest
+                    .builder()
+                    .email("test3@email.com")
+                    .password("password")
+                    .name("name3")
+                    .nickname("nickname3")
+                    .details("details")
+                    .locationLatitude(34.1234124)
+                    .locationLongitude(22.1234124)
+                    .interests(interest)
+                    .build();
+
+            userService.saveUser(userRequest3);
+            USER3 = userRepository.findByEmail("test3@email.com").get();
+
             userService.saveUser(userRequest);
             USER1 = userRepository.findByEmail("test@email.com").get();
 
@@ -87,9 +103,9 @@ public class InitData {
                     .memberFields(List.of(new RecruitMemberRequest("백엔드", 5),
                             new RecruitMemberRequest("프론트엔드", 5)
                     ))
-                    .category(List.of("프로젝트", "웹", "Java", "MySQL"))
+                    .tags(List.of("프로젝트", "웹", "Java", "MySQL"))
                     .build();
-            List<Long> categoryId = categoryService.updateAndReturnId(request.category()).orElse(new ArrayList<>());
+            List<Long> categoryId = tagService.updateAndReturnId(request.tags()).orElse(new ArrayList<>());
             Long recruitId1 = recruitmentService.post(USER1.getId(), request, categoryId);
             RECRUITMENT1 = recruitmentRepository.findById(recruitId1).get();
         }

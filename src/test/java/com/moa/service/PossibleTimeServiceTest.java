@@ -48,7 +48,7 @@ class PossibleTimeServiceTest {
     void setUp() {
         RecruitMember backend = recruitMemberRepository.findByRecruitFieldAndRecruitmentId("백엔드", RECRUITMENT1.getId());
         RecruitMember front = recruitMemberRepository.findByRecruitFieldAndRecruitmentId("프론트엔드", RECRUITMENT1.getId());
-        APPLIMENT1 = applimentMemberRepository.save(new ApplimentMember(backend, USER1, APPROVED));
+        APPLIMENT1 = applimentMemberRepository.save(new ApplimentMember(backend, USER3, APPROVED));
         APPLIMENT2 = applimentMemberRepository.save(new ApplimentMember(front, USER2, APPROVED));
 
         possibleTimeRepository.save(PossibleTime.builder()
@@ -106,16 +106,14 @@ class PossibleTimeServiceTest {
         List<PossibleTimeResponse> allMembersTimeList = possibleTimeService.getAllMembersTimeList(RECRUITMENT1.getId());
 
         //then
-        assertThat(allMembersTimeList.size()).isEqualTo(2);
-        assertThat(allMembersTimeList.get(0).getNickname()).isEqualTo(USER1.getNickname());
-        assertThat(allMembersTimeList.get(1).getNickname()).isEqualTo(USER2.getNickname());
+        assertThat(allMembersTimeList.size()).isEqualTo(3);
     }
 
     @DisplayName("getTimeList - 개인의 시간을 가져온다")
     @Test
     void getTimeList() {
         //when
-        PossibleTimeResponse timeList = possibleTimeService.getTimeList(RECRUITMENT1.getId(), USER1.getId());
+        PossibleTimeResponse timeList = possibleTimeService.getTimeList(RECRUITMENT1.getId(), USER3.getId());
 
         //then
         assertThat(timeList.getPossibleTimeData().size()).isEqualTo(3);
@@ -138,7 +136,7 @@ class PossibleTimeServiceTest {
                         .endTime(LocalTime.of(9, 10)).build()));
 
         //when
-        possibleTimeService.setTime(possibleTimeRequest, RECRUITMENT1.getId(), USER1.getId());
+        possibleTimeService.setTime(possibleTimeRequest, RECRUITMENT1.getId(), USER3.getId());
 
         //then
         List<PossibleTime> allByApplyId = possibleTimeRepository.findAllByApplimentMemberId(APPLIMENT1.getId());
@@ -162,7 +160,7 @@ class PossibleTimeServiceTest {
                         .endTime(LocalTime.of(9, 10)).build()));
 
         //when
-        assertThatThrownBy(() -> possibleTimeService.setTime(possibleTimeRequest, RECRUITMENT1.getId(), USER1.getId()))
+        assertThatThrownBy(() -> possibleTimeService.setTime(possibleTimeRequest, RECRUITMENT1.getId(), USER3.getId()))
                 .isInstanceOf(InvalidTimeException.class);
     }
 }

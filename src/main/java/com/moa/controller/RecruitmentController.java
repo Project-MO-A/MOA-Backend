@@ -1,12 +1,12 @@
 package com.moa.controller;
 
-import com.moa.dto.recruit.StatusResponse;
+import com.moa.dto.StatusResponse;
 import com.moa.dto.recruit.RecruitApplyRequest;
 import com.moa.dto.recruit.RecruitInfoResponse;
 import com.moa.dto.recruit.RecruitPostRequest;
 import com.moa.dto.recruit.RecruitUpdateRequest;
 import com.moa.global.auth.model.JwtUser;
-import com.moa.service.CategoryService;
+import com.moa.service.TagService;
 import com.moa.service.RecruitMemberService;
 import com.moa.service.RecruitmentService;
 import jakarta.validation.Valid;
@@ -24,13 +24,13 @@ import java.util.List;
 public class RecruitmentController {
     private final RecruitMemberService recruitMemberService;
     private final RecruitmentService recruitmentService;
-    private final CategoryService categoryService;
+    private final TagService tagService;
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public Long post(@RequestBody @Valid RecruitPostRequest request, @AuthenticationPrincipal JwtUser user) {
-        List<Long> categoryId = categoryService.updateAndReturnId(request.category()).orElse(new ArrayList<>());
-        return recruitmentService.post(user.id(), request, categoryId);
+        List<Long> tagId = tagService.updateAndReturnId(request.tags()).orElse(new ArrayList<>());
+        return recruitmentService.post(user.id(), request, tagId);
     }
 
     @GetMapping("/{recruitmentId}")
@@ -40,8 +40,8 @@ public class RecruitmentController {
 
     @PatchMapping("/{recruitmentId}")
     public Long updatePost(@PathVariable Long recruitmentId, @RequestBody @Valid RecruitUpdateRequest request) {
-        List<Long> categoryId = categoryService.updateAndReturnId(request.category()).orElse(new ArrayList<>());
-        return recruitmentService.update(recruitmentId, request, categoryId);
+        List<Long> tagId = tagService.updateAndReturnId(request.tags()).orElse(new ArrayList<>());
+        return recruitmentService.update(recruitmentId, request, tagId);
     }
 
     @PostMapping("/{recruitmentId}")

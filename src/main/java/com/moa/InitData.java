@@ -5,7 +5,7 @@ import com.moa.domain.user.UserRepository;
 import com.moa.dto.member.RecruitMemberRequest;
 import com.moa.dto.recruit.RecruitPostRequest;
 import com.moa.dto.user.UserSignupRequest;
-import com.moa.service.CategoryService;
+import com.moa.service.TagService;
 import com.moa.service.RecruitmentService;
 import com.moa.service.UserService;
 import jakarta.annotation.PostConstruct;
@@ -34,7 +34,7 @@ public class InitData {
         private final UserService userService;
         private final UserRepository userRepository;
         private final RecruitmentService recruitmentService;
-        private final CategoryService categoryService;
+        private final TagService tagService;
 
         @Transactional
         public void initUser() {
@@ -65,9 +65,9 @@ public class InitData {
                     .memberFields(List.of(new RecruitMemberRequest("백엔드", 5),
                             new RecruitMemberRequest("프론트엔드", 5)
                     ))
-                    .category(List.of("프로젝트", "웹", "Java", "MySQL"))
+                    .tags(List.of("프로젝트", "웹", "Java", "MySQL"))
                     .build();
-            List<Long> categoryId = categoryService.updateAndReturnId(request.category()).orElse(new ArrayList<>());
+            List<Long> categoryId = tagService.updateAndReturnId(request.tags()).orElse(new ArrayList<>());
             recruitmentService.post(user.getId(), request, categoryId);
         }
     }

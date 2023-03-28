@@ -3,7 +3,7 @@ package com.moa.dto.recruit;
 import com.moa.domain.member.RecruitMember;
 import com.moa.domain.recruit.RecruitStatus;
 import com.moa.domain.recruit.Recruitment;
-import com.moa.domain.recruit.category.RecruitCategory;
+import com.moa.domain.recruit.tag.RecruitTag;
 import com.moa.domain.user.User;
 import com.moa.dto.member.RecruitMemberResponse;
 import com.moa.dto.user.UserIdNameResponse;
@@ -17,7 +17,7 @@ public class RecruitInfoResponse {
     private final String content;
     private final RecruitStatus state;
     private UserIdNameResponse postUser;
-    private List<String> categories;
+    private List<String> tags;
     private List<RecruitMemberResponse> members;
 
     public RecruitInfoResponse(Recruitment recruitment) {
@@ -25,7 +25,7 @@ public class RecruitInfoResponse {
         this.content = recruitment.getPost().getContent();
         this.state = recruitment.getStatus();
         setPostUser(recruitment.getUser());
-        setCategories(recruitment.getCategory());
+        setTags(recruitment.getTags());
         setMembers(recruitment.getMembers());
     }
 
@@ -33,9 +33,9 @@ public class RecruitInfoResponse {
         this.postUser = new UserIdNameResponse(user.getId(), user.getName());
     }
 
-    private void setCategories(List<RecruitCategory> categories) {
-        this.categories = categories.stream()
-                .map(c -> c.getCategory().getName())
+    private void setTags(List<RecruitTag> tags) {
+        this.tags = tags.stream()
+                .map(c -> c.getTag().getName())
                 .toList();
     }
 

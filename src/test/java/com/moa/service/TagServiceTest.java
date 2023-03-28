@@ -1,7 +1,7 @@
 package com.moa.service;
 
-import com.moa.domain.recruit.category.Category;
-import com.moa.domain.recruit.category.CategoryRepository;
+import com.moa.domain.recruit.tag.Tag;
+import com.moa.domain.recruit.tag.TagRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,16 +15,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @Transactional
 @SpringBootTest
-class CategoryServiceTest {
+class TagServiceTest {
     @Autowired
-    CategoryService categoryService;
+    TagService tagService;
 
     @Autowired
-    CategoryRepository categoryRepository;
+    TagRepository tagRepository;
 
     @BeforeEach
     void setUp() {
-        categoryRepository.save(new Category("개발"));
+        tagRepository.save(new Tag("개발"));
     }
 
     @DisplayName("update - 카테고리 저장에 성공한다.")
@@ -34,10 +34,10 @@ class CategoryServiceTest {
         List<String> list = List.of("프로젝트", "웹");
 
         //when
-        categoryService.update(list);
+        tagService.update(list);
 
         //then
-        List<Long> idList = categoryRepository.findIdByName(list);
+        List<Long> idList = tagRepository.findIdByName(list);
         assertThat(idList.get(0)).isGreaterThan(1);
         assertThat(idList.size()).isEqualTo(2);
     }
@@ -49,10 +49,10 @@ class CategoryServiceTest {
         List<String> list = List.of("개발", "프로젝트", "웹");
 
         //when
-        List<Category> save = categoryService.update(list);
+        List<Tag> save = tagService.update(list);
 
         //then
-        List<Long> idList = categoryRepository.findIdByName(list);
+        List<Long> idList = tagRepository.findIdByName(list);
         assertThat(idList.size()).isEqualTo(3);
         assertThat(save.size()).isEqualTo(2);
     }
@@ -64,10 +64,10 @@ class CategoryServiceTest {
         List<String> list = List.of("개발", "프로젝트", "웹");
 
         //when
-        List<Long> idList = categoryService.updateAndReturnId(list).get();
+        List<Long> idList = tagService.updateAndReturnId(list).get();
 
         //then
-        List<String> existName = categoryRepository.findExistName(list);
+        List<String> existName = tagRepository.findExistName(list);
         assertThat(idList.size()).isEqualTo(3);
         assertThat(existName.size()).isEqualTo(3);
         assertThat(existName).containsOnly("개발", "프로젝트", "웹");
@@ -80,6 +80,6 @@ class CategoryServiceTest {
         List<String> list = null;
 
         //when & then
-        assertThat(categoryService.updateAndReturnId(list).isEmpty()).isTrue();
+        assertThat(tagService.updateAndReturnId(list).isEmpty()).isTrue();
     }
 }

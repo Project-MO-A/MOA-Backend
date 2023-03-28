@@ -5,14 +5,14 @@ import com.moa.domain.member.ApplimentMemberRepository;
 import com.moa.domain.member.RecruitMember;
 import com.moa.domain.recruit.Recruitment;
 import com.moa.domain.recruit.RecruitmentRepository;
-import com.moa.domain.recruit.category.CategoryRepository;
-import com.moa.domain.recruit.category.RecruitCategory;
+import com.moa.domain.recruit.tag.RecruitTag;
+import com.moa.domain.recruit.tag.TagRepository;
 import com.moa.domain.user.User;
 import com.moa.domain.user.UserRepository;
-import com.moa.dto.recruit.StatusResponse;
 import com.moa.dto.recruit.RecruitInfoResponse;
 import com.moa.dto.recruit.RecruitPostRequest;
 import com.moa.dto.recruit.RecruitUpdateRequest;
+import com.moa.dto.StatusResponse;
 import com.moa.global.exception.service.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.moa.domain.member.Approval.APPROVED;
+import static com.moa.domain.member.ApprovalStatus.APPROVED;
 import static com.moa.global.exception.ErrorCode.RECRUITMENT_NOT_FOUND;
 
 @RequiredArgsConstructor
@@ -29,7 +29,7 @@ import static com.moa.global.exception.ErrorCode.RECRUITMENT_NOT_FOUND;
 public class RecruitmentService {
     private final RecruitmentRepository recruitmentRepository;
     private final UserRepository userRepository;
-    private final CategoryRepository categoryRepository;
+    private final TagRepository tagRepository;
     private final ApplimentMemberRepository applimentMemberRepository;
 
     public Long post(final Long userId, final RecruitPostRequest request, final List<Long> categoryId) {
@@ -67,12 +67,12 @@ public class RecruitmentService {
         return recruitId;
     }
 
-    private List<RecruitCategory> getRecruitCategories(List<Long> categoryId) {
+    private List<RecruitTag> getRecruitCategories(List<Long> categoryId) {
         return categoryId.stream()
-                .map(categoryRepository::getReferenceById)
+                .map(tagRepository::getReferenceById)
                 .toList()
                 .stream()
-                .map(RecruitCategory::new)
+                .map(RecruitTag::new)
                 .toList();
     }
 }

@@ -1,4 +1,4 @@
-package com.moa.domain.recruit.category;
+package com.moa.domain.recruit.tag;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,19 +12,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest
 @Transactional
-class CategoryRepositoryTest {
+class TagRepositoryTest {
     @Autowired
-    CategoryRepository categoryRepository;
+    TagRepository tagRepository;
 
     @BeforeEach
     void setUp() {
-        categoryRepository.save(new Category("개발"));
+        tagRepository.save(new Tag("개발"));
     }
 
     @Test
     void findExistName() {
         List<String> categories = List.of("개발", "웹", "프로젝트");
-        List<String> existName = categoryRepository.findExistName(categories);
+        List<String> existName = tagRepository.findExistName(categories);
 
         assertThat(existName).containsOnly("개발");
     }
@@ -32,8 +32,8 @@ class CategoryRepositoryTest {
     @Test
     void findIdByName() {
         List<String> categories = List.of("웹", "프로젝트");
-        categoryRepository.saveAll(categories.stream().map(Category::new).toList());
-        List<Long> id = categoryRepository.findIdByName(categories);
+        tagRepository.saveAll(categories.stream().map(Tag::new).toList());
+        List<Long> id = tagRepository.findIdByName(categories);
 
         assertThat(id.size()).isEqualTo(2);
         assertThat(id.get(0)).isGreaterThan(1);
