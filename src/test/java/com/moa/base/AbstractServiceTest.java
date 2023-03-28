@@ -2,6 +2,7 @@ package com.moa.base;
 
 import com.moa.domain.member.ApplimentMemberRepository;
 import com.moa.domain.member.RecruitMemberRepository;
+import com.moa.domain.recruit.RecruitmentRepository;
 import com.moa.domain.user.UserRepository;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -19,4 +20,6 @@ public abstract class AbstractServiceTest {
     protected PasswordEncoder passwordEncoder;
     @Mock
     protected RecruitMemberRepository recruitMemberRepository;
+    @Mock
+    protected RecruitmentRepository recruitmentRepository;
 }

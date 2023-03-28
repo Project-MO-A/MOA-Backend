@@ -1,5 +1,7 @@
 package com.moa;
 
+import com.moa.domain.recruit.Recruitment;
+import com.moa.domain.recruit.RecruitmentRepository;
 import com.moa.domain.user.User;
 import com.moa.domain.user.UserRepository;
 import com.moa.dto.member.RecruitMemberRequest;
@@ -17,11 +19,15 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
-@Profile("local-test")
+@Profile("data")
 @Component
 @RequiredArgsConstructor
 public class InitData {
     private final Initialize initialize;
+
+    public static User USER1;
+    public static User USER2;
+    public static Recruitment RECRUITMENT1;
 
     @PostConstruct
     public void init() {
@@ -34,6 +40,7 @@ public class InitData {
         private final UserService userService;
         private final UserRepository userRepository;
         private final RecruitmentService recruitmentService;
+        private final RecruitmentRepository recruitmentRepository;
         private final CategoryService categoryService;
 
         @Transactional
@@ -55,8 +62,23 @@ public class InitData {
                     .interests(interest)
                     .build();
 
+            UserSignupRequest userRequest2 = UserSignupRequest
+                    .builder()
+                    .email("test2@email.com")
+                    .password("password")
+                    .name("name2")
+                    .nickname("nickname2")
+                    .details("details")
+                    .locationLatitude(34.1234124)
+                    .locationLongitude(22.1234124)
+                    .interests(interest)
+                    .build();
+
             userService.saveUser(userRequest);
-            User user = userRepository.findByEmail("test@email.com").get();
+            USER1 = userRepository.findByEmail("test@email.com").get();
+
+            userService.saveUser(userRequest2);
+            USER2 = userRepository.findByEmail("test2@email.com").get();
 
             RecruitPostRequest request = RecruitPostRequest
                     .builder()
@@ -68,7 +90,8 @@ public class InitData {
                     .category(List.of("프로젝트", "웹", "Java", "MySQL"))
                     .build();
             List<Long> categoryId = categoryService.updateAndReturnId(request.category()).orElse(new ArrayList<>());
-            recruitmentService.post(user.getId(), request, categoryId);
+            Long recruitId1 = recruitmentService.post(USER1.getId(), request, categoryId);
+            RECRUITMENT1 = recruitmentRepository.findById(recruitId1).get();
         }
     }
 }
