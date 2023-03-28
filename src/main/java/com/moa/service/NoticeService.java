@@ -10,15 +10,12 @@ import com.moa.dto.notice.NoticesResponse;
 import com.moa.dto.notice.PostNoticeRequest;
 import com.moa.dto.notice.UpdateNoticeRequest;
 import com.moa.global.exception.service.EntityNotFoundException;
-import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.moa.domain.member.Approval.APPROVED;
-import static com.moa.domain.member.Attendance.*;
 import static com.moa.global.exception.ErrorCode.NOTICE_NOT_FOUND;
 
 @Service
@@ -29,22 +26,11 @@ public class NoticeService {
     private final NoticeRepository noticeRepository;
     private final RecruitmentRepository recruitmentRepository;
     private final AttendMemberRepository attendMemberRepository;
-    private final EntityManager em;
 
     public Long post(Long recruitmentId, PostNoticeRequest request) {
         Recruitment recruitment = recruitmentRepository.getReferenceById(recruitmentId);
         Notice savedNotice = noticeRepository.save(request.toEntity(recruitment));
-        em.createQuery("insert into AttendMember (attendance, user, notice) " +
-                        "select :attendance, am.user, :notice " +
-                        "from ApplimentMember am " +
-                        "left join am.recruitMember rm " +
-                        "where am.approval = :approval " +
-                        "and rm.recruitment.id = :recruitmentId")
-                .setParameter("attendance", NONE)
-                .setParameter("notice", savedNotice)
-                .setParameter("approval", APPROVED)
-                .setParameter("recruitmentId", recruitmentId)
-                .executeUpdate();
+        attendMemberRepository.saveFromApplimentMember(savedNotice, recruitmentId);
         return savedNotice.getId();
     }
 

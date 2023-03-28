@@ -89,7 +89,7 @@ class NoticeServiceTest {
         Long noticeId = noticeService.post(recruitmentId, new PostNoticeRequest(
                 "notice Title",
                 "notice content",
-                "2023-03-27 19:00:00",
+                LocalDateTime.parse("2023-03-27T19:00:00"),
                 "서울역",
                 true
         ));
@@ -115,7 +115,7 @@ class NoticeServiceTest {
         Long noticeId = noticeService.post(recruitmentId, new PostNoticeRequest(
                 "notice Title",
                 "notice content",
-                "2023-03-27 19:00:00",
+                LocalDateTime.parse("2023-03-27T19:00:00"),
                 "서울역",
                 true
         ));
@@ -152,7 +152,7 @@ class NoticeServiceTest {
         Long noticeId = noticeService.post(recruitmentId, new PostNoticeRequest(
                 "notice Title",
                 "notice content",
-                "2023-03-27 19:00:00",
+                LocalDateTime.parse("2023-03-27T19:00:00"),
                 "서울역",
                 true
         ));
@@ -183,7 +183,7 @@ class NoticeServiceTest {
             Long noticeId = noticeService.post(recruitmentId, new PostNoticeRequest(
                     "notice Title" + i,
                     "notice content" + i,
-                    "2023-03-27 19:00:00",
+                    LocalDateTime.parse("2023-03-27T19:00:00"),
                     "서울역",
                     true
             ));
