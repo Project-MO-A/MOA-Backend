@@ -2,7 +2,7 @@ package com.moa.domain.recruit;
 
 import com.moa.domain.member.RecruitMember;
 import com.moa.domain.notice.Post;
-import com.moa.domain.recruit.category.RecruitCategory;
+import com.moa.domain.recruit.tag.RecruitTag;
 import com.moa.domain.user.User;
 import com.moa.dto.recruit.RecruitUpdateRequest;
 import jakarta.persistence.*;
@@ -13,6 +13,8 @@ import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static jakarta.persistence.EnumType.STRING;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -29,27 +31,31 @@ public class Recruitment {
     @Embedded
     private Post post;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(STRING)
+    private Category category;
+
+    @Enumerated(STRING)
     private RecruitStatus status;
 
     @OneToMany(mappedBy = "recruitment", orphanRemoval = true, cascade = CascadeType.ALL)
-    private List<RecruitCategory> category = new ArrayList<>();
+    private List<RecruitTag> tags = new ArrayList<>();
 
     @OneToMany(mappedBy = "recruitment", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<RecruitMember> members = new ArrayList<>();
 
     @Builder
-    public Recruitment(User user, Post post, RecruitStatus status) {
+    public Recruitment(User user, Post post, RecruitStatus status, Category category) {
         this.user = user;
         this.post = post;
         this.status = status;
+        this.category = category;
     }
 
-    public void setCategory(List<RecruitCategory> list) {
-        for (RecruitCategory recruitCategory : list) {
-            if (!this.category.contains(recruitCategory)) {
-                this.category.add(recruitCategory);
-                recruitCategory.setParent(this);
+    public void setTags(List<RecruitTag> list) {
+        for (RecruitTag recruitTag : list) {
+            if (!this.tags.contains(recruitTag)) {
+                this.tags.add(recruitTag);
+                recruitTag.setParent(this);
             }
         }
     }
@@ -63,7 +69,7 @@ public class Recruitment {
         }
     }
 
-    public void update(RecruitUpdateRequest updateRequest, List<RecruitCategory> categories) {
+    public void update(RecruitUpdateRequest updateRequest, List<RecruitTag> categories) {
         this.post.updateTitle(updateRequest.title());
         this.post.updateContent(updateRequest.content());
         updateState(updateRequest.state());
@@ -77,10 +83,10 @@ public class Recruitment {
         this.setMembers(memberList);
     }
 
-    private void updateCategory(List<RecruitCategory> categories) {
+    private void updateCategory(List<RecruitTag> categories) {
         if (categories == null || categories.isEmpty()) return;
-        this.category.clear();
-        this.setCategory(categories);
+        this.tags.clear();
+        this.setTags(categories);
     }
 
     public void updateState(Integer stateCode) {

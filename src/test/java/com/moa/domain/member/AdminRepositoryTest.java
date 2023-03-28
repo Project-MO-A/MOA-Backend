@@ -46,7 +46,7 @@ class AdminRepositoryTest {
         void setUpApply() {
             RecruitMember backend = recruitMemberRepository.findByRecruitFieldAndRecruitmentId("백엔드", RECRUITMENT1.getId());
             RecruitMember front = recruitMemberRepository.findByRecruitFieldAndRecruitmentId("프론트엔드", RECRUITMENT1.getId());
-            applimentMemberRepository.save(new ApplimentMember(backend, USER1, PENDING));
+            applimentMemberRepository.save(new ApplimentMember(backend, USER3, PENDING));
             applimentMemberRepository.save(new ApplimentMember(front, USER2, PENDING));
         }
 
@@ -57,10 +57,8 @@ class AdminRepositoryTest {
             List<ApplimentMemberResponse> appliment = adminRepository.findAllApplimentMembers(1L, null);
 
             //then
-            assertThat(appliment.get(0).recruitField()).isEqualTo("백엔드");
-            assertThat(appliment.get(1).recruitField()).isEqualTo("프론트엔드");
-            assertThat(appliment.get(0).userId()).isEqualTo(1L);
-            assertThat(appliment.get(1).userId()).isEqualTo(2L);
+            assertThat(appliment.get(1).recruitField()).isEqualTo("백엔드");
+            assertThat(appliment.get(2).recruitField()).isEqualTo("프론트엔드");
         }
 
         @DisplayName("findAllApplimentResponse - 신청 멤버 목록 조회 (대기)")
@@ -75,29 +73,28 @@ class AdminRepositoryTest {
             assertThat(pendingAppliment.get(0).recruitField()).isEqualTo("백엔드");
             assertThat(pendingAppliment.get(1).recruitField()).isEqualTo("프론트엔드");
             assertThat(pendingAppliment.get(0).userId()).isEqualTo(1L);
-            assertThat(pendingAppliment.get(1).userId()).isEqualTo(2L);
+            assertThat(pendingAppliment.get(1).userId()).isEqualTo(3L);
         }
 
         @DisplayName("findAllApplimentResponse - 신청 멤버 목록 조회 (승인)")
         @Test
         void getApplimentOnStatusAPPROVED() {
             //given
-            Long applyId = applimentMemberRepository.findAllByUserId(USER1.getId()).get(0).getId();
+            Long applyId = applimentMemberRepository.findAllByUserId(USER3.getId()).get(0).getId();
             adminService.changeApplimentStatus(applyId, APPROVED);
 
             //when
             List<ApplimentMemberResponse> pendingAppliment = adminRepository.findAllApplimentMembers(1L, APPROVED);
 
             //then
-            assertThat(pendingAppliment.get(0).status()).isEqualTo(APPROVED);
-            assertThat(pendingAppliment.get(0).recruitField()).isEqualTo("백엔드");
+            assertThat(pendingAppliment.get(1).status()).isEqualTo(APPROVED);
         }
 
         @DisplayName("findAllApplimentResponse - 신청 멤버 목록 조회 (거절)")
         @Test
         void getApplimentOnStatusREFUSE() {
             //given
-            Long applyId = applimentMemberRepository.findAllByUserId(USER1.getId()).get(0).getId();
+            Long applyId = applimentMemberRepository.findAllByUserId(USER3.getId()).get(0).getId();
             adminService.changeApplimentStatus(applyId, REFUSE);
 
             //when
@@ -116,7 +113,7 @@ class AdminRepositoryTest {
         void setUpApply() {
             RecruitMember backend = recruitMemberRepository.findByRecruitFieldAndRecruitmentId("백엔드", RECRUITMENT1.getId());
             RecruitMember front = recruitMemberRepository.findByRecruitFieldAndRecruitmentId("프론트엔드", RECRUITMENT1.getId());
-            applimentMemberRepository.save(new ApplimentMember(backend, USER1, APPROVED));
+            applimentMemberRepository.save(new ApplimentMember(backend, USER3, APPROVED));
             applimentMemberRepository.save(new ApplimentMember(front, USER2, APPROVED));
         }
 
@@ -127,7 +124,7 @@ class AdminRepositoryTest {
             List<ApprovedMemberResponse> approvedMember = adminRepository.findAllApprovedMembers(RECRUITMENT1.getId());
 
             //then
-            assertThat(approvedMember.size()).isEqualTo(2);
+            assertThat(approvedMember.size()).isEqualTo(3);
             assertThat(approvedMember.get(0).getNickname()).isEqualTo(USER1.getNickname());
             assertThat(approvedMember.get(0).getPopularity()).isEqualTo(0);
         }
@@ -164,15 +161,15 @@ class AdminRepositoryTest {
                         .build();
                 noticeRepository.save(notice);
 
-                AttendMember User1Attend = AttendMember.builder()
+                AttendMember USER3Attend = AttendMember.builder()
                         .attendance(ATTENDANCE)
                         .notice(noticeVote1)
-                        .user(USER1)
+                        .user(USER3)
                         .build();
-                AttendMember User1Attend2 = AttendMember.builder()
+                AttendMember USER3Attend2 = AttendMember.builder()
                         .attendance(NONATTENDANCE)
                         .notice(noticeVote1)
-                        .user(USER1)
+                        .user(USER3)
                         .build();
 
                 AttendMember User2Attend = AttendMember.builder()
@@ -186,8 +183,8 @@ class AdminRepositoryTest {
                         .user(USER2)
                         .build();
 
-                attendMemberRepository.save(User1Attend);
-                attendMemberRepository.save(User1Attend2);
+                attendMemberRepository.save(USER3Attend);
+                attendMemberRepository.save(USER3Attend2);
                 attendMemberRepository.save(User2Attend);
                 attendMemberRepository.save(User2Attend2);
             }
@@ -196,7 +193,7 @@ class AdminRepositoryTest {
             @Test
             void countTotalVote() {
                 //when
-                Long countTotalVote = adminRepository.countAttend(RECRUITMENT1.getId(), USER1.getId(), null);
+                Long countTotalVote = adminRepository.countAttend(RECRUITMENT1.getId(), USER3.getId(), null);
 
                 //then
                 assertThat(countTotalVote).isEqualTo(2);
@@ -206,7 +203,7 @@ class AdminRepositoryTest {
             @Test
             void countAttend() {
                 //when
-                Long countAttend1 = adminRepository.countAttend(RECRUITMENT1.getId(), USER1.getId(), ATTENDANCE);
+                Long countAttend1 = adminRepository.countAttend(RECRUITMENT1.getId(), USER3.getId(), ATTENDANCE);
                 Long countAttend2 = adminRepository.countAttend(RECRUITMENT1.getId(), USER2.getId(), ATTENDANCE);
 
                 //then

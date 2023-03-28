@@ -44,7 +44,7 @@ class RecruitmentServiceTest {
     @Autowired
     UserRepository userRepository;
     @Autowired
-    CategoryService categoryService;
+    TagService tagService;
 
     private static final String TEST_EMAIL = "test2@naver.com";
 
@@ -82,10 +82,10 @@ class RecruitmentServiceTest {
                 .title("모집글 1")
                 .content("네이스")
                 .memberFields(list)
-                .category(category)
+                .tags(category)
                 .build();
-        categoryService.update(category);
-        List<Long> categoryId = categoryService.getId(category);
+        tagService.update(category);
+        List<Long> categoryId = tagService.getId(category);
 
         //when
         Long postId = recruitmentService.post(userId, request, categoryId);
@@ -96,7 +96,7 @@ class RecruitmentServiceTest {
         Recruitment recruitment = recruitmentRepository.findById(postId).orElseThrow();
         assertThat(recruitment.getUser().getName()).isEqualTo("기우");
         assertThat(recruitment.getStatus()).isEqualTo(RECRUITING);
-        assertThat(recruitment.getCategory().size()).isEqualTo(3);
+        assertThat(recruitment.getTags().size()).isEqualTo(3);
         assertThat(recruitment.getMembers().size()).isEqualTo(3);
         assertThat(recruitment.getMembers().get(0).getRecruitField()).containsAnyOf("LEADER", "백엔드", "프론트엔드");
     }
@@ -121,10 +121,10 @@ class RecruitmentServiceTest {
                     .title("모집글 1")
                     .content("네이스")
                     .memberFields(list)
-                    .category(category)
+                    .tags(category)
                     .build();
-            categoryService.update(category);
-            categoryId = categoryService.getId(category);
+            tagService.update(category);
+            categoryId = tagService.getId(category);
             recruitId = recruitmentService.post(userId, request, categoryId);
             em.flush();
             em.clear();
@@ -141,7 +141,7 @@ class RecruitmentServiceTest {
             assertThat(info.getContent()).isEqualTo("네이스");
             assertThat(info.getState()).isEqualTo(RECRUITING);
             assertThat(info.getPostUser().userName()).isEqualTo("기우");
-            assertThat(info.getCategories().size()).isEqualTo(3);
+            assertThat(info.getTags().size()).isEqualTo(3);
             assertThat(info.getMembers().size()).isEqualTo(3);
             assertThat(info.getMembers().get(1).recruitField()).contains("프론트엔드");
             assertThat(info.getMembers().get(0).recruitField()).contains("LEADER");
@@ -164,7 +164,7 @@ class RecruitmentServiceTest {
             assertThat(updated.getPost().getTitle()).isEqualTo("web project");
             assertThat(updated.getPost().getContent()).isEqualTo("welcome");
             assertThat(updated.getMembers().size()).isEqualTo(3);
-            assertThat(updated.getCategory().size()).isEqualTo(3);
+            assertThat(updated.getTags().size()).isEqualTo(3);
         }
 
         @DisplayName("update - 모집글 수정에 성공한다. (모집 멤버 그룹)")
@@ -190,7 +190,7 @@ class RecruitmentServiceTest {
 
             assertThat(updated.getPost().getTitle()).isEqualTo("모집글 1");
             assertThat(updated.getPost().getContent()).isEqualTo("네이스");
-            assertThat(updated.getCategory().size()).isEqualTo(3);
+            assertThat(updated.getTags().size()).isEqualTo(3);
             assertThat(fileds.size()).isEqualTo(3);
             assertThat(fileds).containsOnly("백엔드", "프론트엔드", "디자이너");
         }
@@ -201,17 +201,17 @@ class RecruitmentServiceTest {
             //given
             List<String> updateCategory = List.of("API", "백엔드", "크롤링", "자기개발");
             RecruitUpdateRequest updateRequest = RecruitUpdateRequest.builder()
-                    .category(updateCategory)
+                    .tags(updateCategory)
                     .build();
 
             //when
-            List<Long> updatedCategoryId = categoryService.updateAndReturnId(updateRequest.category()).get();
+            List<Long> updatedCategoryId = tagService.updateAndReturnId(updateRequest.tags()).get();
             Long update = recruitmentService.update(recruitId, updateRequest, updatedCategoryId);
 
             //then
             Recruitment updated = recruitmentRepository.findById(update).get();
-            List<String> updatedCategory = updated.getCategory().stream()
-                    .map(rc -> rc.getCategory().getName())
+            List<String> updatedCategory = updated.getTags().stream()
+                    .map(rc -> rc.getTag().getName())
                     .toList();
 
             assertThat(updated.getPost().getTitle()).isEqualTo("모집글 1");

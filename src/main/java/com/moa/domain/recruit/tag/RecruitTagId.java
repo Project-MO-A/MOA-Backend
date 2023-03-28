@@ -1,4 +1,4 @@
-package com.moa.domain.recruit.category;
+package com.moa.domain.recruit.tag;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
@@ -10,15 +10,15 @@ import java.io.Serializable;
 @Embeddable
 @NoArgsConstructor
 @EqualsAndHashCode
-public class RecruitCategoryId implements Serializable {
+public class RecruitTagId implements Serializable {
     @Column(name = "RECRUIMENT_ID")
     private Long recruitId;
 
-    @Column(name = "CATEGORY_ID")
-    private Long categoryId;
+    @Column(name = "TAG_ID")
+    private Long tagId;
 
-    public RecruitCategoryId(Long recruitId, Long categoryId) {
+    public RecruitTagId(Long recruitId, Long tagId) {
         this.recruitId = recruitId;
-        this.categoryId = categoryId;
+        this.tagId = tagId;
     }
 }

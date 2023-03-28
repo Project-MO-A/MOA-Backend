@@ -4,7 +4,7 @@ import com.moa.domain.member.AttendMember;
 import com.moa.domain.member.AttendMemberRepository;
 import com.moa.domain.notice.Notice;
 import com.moa.domain.notice.NoticeRepository;
-import com.moa.domain.recruit.category.Category;
+import com.moa.domain.recruit.tag.Tag;
 import com.moa.domain.user.User;
 import com.moa.domain.user.UserRepository;
 import com.moa.dto.member.RecruitMemberRequest;
@@ -45,7 +45,7 @@ class NoticeServiceTest {
     RecruitmentService recruitmentService;
 
     @Autowired
-    CategoryService categoryService;
+    TagService tagService;
 
     @Autowired
     UserService userService;
@@ -65,9 +65,9 @@ class NoticeServiceTest {
         User user = userRepository.findByEmail(email).get();
 
         List<String> categoryString = List.of("프로젝트", "스터디");
-        List<Category> category = categoryService.update(categoryString);
-        List<Long> categoryIds = category.stream()
-                .map(Category::getId)
+        List<Tag> tag = tagService.update(categoryString);
+        List<Long> categoryIds = tag.stream()
+                .map(Tag::getId)
                 .toList();
 
         List<RecruitMemberRequest> memberFields = List.of(

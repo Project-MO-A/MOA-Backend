@@ -1,4 +1,4 @@
-package com.moa.domain.recruit.category;
+package com.moa.domain.recruit.tag;
 
 import com.moa.domain.base.BaseTimeEntity;
 import com.moa.domain.recruit.Recruitment;
@@ -12,31 +12,31 @@ import org.springframework.data.domain.Persistable;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "RECRUIT_CATEGORY")
 @Entity
-public class RecruitCategory extends BaseTimeEntity implements Persistable<RecruitCategoryId> {
+public class RecruitTag extends BaseTimeEntity implements Persistable<RecruitTagId> {
     @EmbeddedId
-    private RecruitCategoryId id;
+    private RecruitTagId id;
 
     @MapsId("categoryId")
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "CATEGORY_ID")
-    private Category category;
+    @JoinColumn(name = "TAG_ID")
+    private Tag tag;
 
     @MapsId("recruitId")
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "RECRUIMENT_ID")
     private Recruitment recruitment;
 
-    public RecruitCategory(Category c) {
-        this.category = c;
+    public RecruitTag(Tag tag) {
+        this.tag = tag;
     }
 
     public void setParent(Recruitment recruitment) {
         this.recruitment = recruitment;
-        this.id = new RecruitCategoryId(recruitment.getId(), category.getId());
+        this.id = new RecruitTagId(recruitment.getId(), tag.getId());
     }
 
     @Override
-    public RecruitCategoryId getId() {
+    public RecruitTagId getId() {
         return id;
     }
 

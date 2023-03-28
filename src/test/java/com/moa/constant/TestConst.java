@@ -2,10 +2,13 @@ package com.moa.constant;
 
 import com.moa.domain.interests.RecruitmentInterest;
 import com.moa.domain.notice.Post;
+import com.moa.domain.recruit.Category;
 import com.moa.domain.recruit.RecruitStatus;
 import com.moa.domain.recruit.Recruitment;
 import com.moa.domain.user.Popularity;
 import com.moa.domain.user.User;
+
+import static com.moa.domain.recruit.Category.PROGRAMMING;
 
 public class TestConst {
     public static final String EMAIL = "user@email.com";
@@ -35,7 +38,7 @@ public class TestConst {
                 .build();
         ASSOCIATION_USER
                 .addRecruitmentInterests(new RecruitmentInterest(ASSOCIATION_USER, new Recruitment(USER,
-                        new Post("title", "content"), RecruitStatus.RECRUITING))
+                        new Post("title", "content"), RecruitStatus.RECRUITING, PROGRAMMING))
                 );
     }
 }

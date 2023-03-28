@@ -12,7 +12,7 @@ public record RecruitUpdateRequest(
         String content,
         Integer state,
         List<RecruitMemberRequest> memberFields,
-        List<String> category
+        List<String> tags
 ) {
     public List<RecruitMember> toMemberList() {
         if (memberFields == null || memberFields.isEmpty()) return null;

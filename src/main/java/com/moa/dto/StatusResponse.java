@@ -1,4 +1,4 @@
-package com.moa.dto.recruit;
+package com.moa.dto;
 
 public record StatusResponse(String status) {
 }
