@@ -2,8 +2,11 @@ package com.moa.service;
 
 import com.moa.domain.member.ApplimentMember;
 import com.moa.domain.member.ApplimentMemberRepository;
+import com.moa.domain.recruit.Recruitment;
+import com.moa.domain.recruit.RecruitmentRepository;
 import com.moa.domain.user.User;
 import com.moa.domain.user.UserRepository;
+import com.moa.dto.recruit.RecruitmentsInfo;
 import com.moa.dto.user.*;
 import com.moa.global.auth.model.SecurityUser;
 import com.moa.global.exception.BusinessException;
@@ -27,6 +30,7 @@ import static com.moa.global.exception.ErrorCode.*;
 public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
+    private final RecruitmentRepository recruitmentRepository;
     private final ApplimentMemberRepository applimentMemberRepository;
     private final PasswordEncoder passwordEncoder;
 
@@ -49,9 +53,30 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional(readOnly = true)
-    public UserInfoResponse getUserInfoById(final Long userId) {
-        List<ApplimentMember> applimentMembers = applimentMemberRepository.findAllByUserId(userId);
-        return new UserInfoResponse(applimentMembers);
+    public UserInfo getUserProfileInfoById(final Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+
+        return new UserInfo(user);
+    }
+
+    @Transactional(readOnly = true)
+    public RecruitmentsInfo getUserWritingInfoById(final Long userId) {
+        List<Recruitment> recruitments = recruitmentRepository.findListByIdFetchUser(userId);
+        return new RecruitmentsInfo(recruitments);
+    }
+
+    @Transactional(readOnly = true)
+    public UserActivityInfo getUserActivityInfoById(Long userId) {
+        List<ApplimentMember> applimentMembers = applimentMemberRepository.findAllRecruitmentByUserId(userId);
+        return new UserActivityInfo(applimentMembers);
+    }
+
+    @Transactional(readOnly = true)
+    public UserRecruitmentInterestInfo getUserConcernInfoById(final Long userId) {
+        User user = userRepository.findRecruitmentInterestById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+        return new UserRecruitmentInterestInfo(user);
     }
 
     public void deleteUser(Long id) {

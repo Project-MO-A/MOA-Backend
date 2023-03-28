@@ -9,8 +9,10 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ApplimentMemberRepository extends JpaRepository<ApplimentMember, Long> {
-    @EntityGraph(attributePaths = {"user", "user.interests", "recruitMember", "recruitMember.recruitment"},
+    @EntityGraph(attributePaths = {"recruitMember", "recruitMember.recruitment"},
             type = EntityGraph.EntityGraphType.LOAD)
+    List<ApplimentMember> findAllRecruitmentByUserId(Long userId);
+
     List<ApplimentMember> findAllByUserId(Long userId);
 
     @Query("select a from ApplimentMember a join a.recruitMember m where m.recruitment.id=:recruitId and a.user.id=:userId")
