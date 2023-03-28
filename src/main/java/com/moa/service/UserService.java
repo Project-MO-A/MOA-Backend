@@ -75,6 +75,11 @@ public class UserService implements UserDetailsService {
         user.changePassword(passwordEncoder, pwUpdateRequest.newPassword());
     }
 
+    @Transactional(readOnly = true)
+    public Boolean checkEmailUnique(final String email) {
+        return userRepository.findByEmail(email).isEmpty();
+    }
+
     private void validatePassword(final String userPassword, final String givenPassword) {
         if (!passwordEncoder.matches(givenPassword, userPassword)) throw new BusinessException(USER_MISMATCH_PASSWORD);
     }
