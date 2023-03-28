@@ -1,6 +1,7 @@
 package com.moa.controller;
 
 import com.moa.base.AbstractControllerTest;
+import com.moa.base.WithMockCustomUser;
 import com.moa.dto.user.UserPwUpdateRequest;
 import com.moa.dto.user.UserSignupRequest;
 import com.moa.dto.user.UserUpdateRequest;
@@ -120,7 +121,7 @@ class UserControllerTest extends AbstractControllerTest {
 
     @Test
     @DisplayName("signOut - 인증 된 사용자 접근 성공")
-    @WithMockUser(roles = "USER")
+    @WithMockCustomUser
     void signOutSuccess() throws Exception {
         //given
         String email = "user@email.com";

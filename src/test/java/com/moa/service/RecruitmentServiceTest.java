@@ -97,8 +97,8 @@ class RecruitmentServiceTest {
         assertThat(recruitment.getUser().getName()).isEqualTo("기우");
         assertThat(recruitment.getStatus()).isEqualTo(RECRUITING);
         assertThat(recruitment.getCategory().size()).isEqualTo(3);
-        assertThat(recruitment.getMembers().size()).isEqualTo(2);
-        assertThat(recruitment.getMembers().get(0).getRecruitField()).containsAnyOf("백엔드", "프론트엔드");
+        assertThat(recruitment.getMembers().size()).isEqualTo(3);
+        assertThat(recruitment.getMembers().get(0).getRecruitField()).containsAnyOf("LEADER", "백엔드", "프론트엔드");
     }
 
     @DisplayName("모집글 수정, 확인, 삭제 테스트")
@@ -142,8 +142,9 @@ class RecruitmentServiceTest {
             assertThat(info.getState()).isEqualTo(RECRUITING);
             assertThat(info.getPostUser().userName()).isEqualTo("기우");
             assertThat(info.getCategories().size()).isEqualTo(3);
-            assertThat(info.getMembers().size()).isEqualTo(2);
-            assertThat(info.getMembers().get(0).recruitField()).containsAnyOf("프론트엔드");
+            assertThat(info.getMembers().size()).isEqualTo(3);
+            assertThat(info.getMembers().get(1).recruitField()).contains("프론트엔드");
+            assertThat(info.getMembers().get(0).recruitField()).contains("LEADER");
         }
 
         @DisplayName("update - 모집글 수정에 성공한다. (타이틀, 내용)")
@@ -162,7 +163,7 @@ class RecruitmentServiceTest {
             Recruitment updated = recruitmentRepository.findById(update).get();
             assertThat(updated.getPost().getTitle()).isEqualTo("web project");
             assertThat(updated.getPost().getContent()).isEqualTo("welcome");
-            assertThat(updated.getMembers().size()).isEqualTo(2);
+            assertThat(updated.getMembers().size()).isEqualTo(3);
             assertThat(updated.getCategory().size()).isEqualTo(3);
         }
 
@@ -215,7 +216,7 @@ class RecruitmentServiceTest {
 
             assertThat(updated.getPost().getTitle()).isEqualTo("모집글 1");
             assertThat(updated.getPost().getContent()).isEqualTo("네이스");
-            assertThat(updated.getMembers().size()).isEqualTo(2);
+            assertThat(updated.getMembers().size()).isEqualTo(3);
             assertThat(updatedCategory.size()).isEqualTo(4);
             assertThat(updatedCategory).containsOnly("API", "백엔드", "크롤링", "자기개발");
         }

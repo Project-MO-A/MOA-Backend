@@ -9,8 +9,10 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import static com.moa.global.exception.ErrorCode.NOTICE_ASSOCIATION_MISMATCH;
 
@@ -53,19 +55,19 @@ public class Notice extends BaseTimeEntity {
     }
 
     private void updateConfirmedTime(String meetingTime) {
-        if (confirmedLocation != null) {
-            this.confirmedLocation = meetingTime;
+        if (StringUtils.hasText(meetingTime)) {
+            this.confirmedTime = LocalDateTime.parse(meetingTime, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
         }
     }
 
     private void updateConfirmedLocation(String confirmedLocation) {
-        if (confirmedLocation != null) {
+        if (StringUtils.hasText(confirmedLocation)) {
             this.confirmedLocation = confirmedLocation;
         }
     }
 
-    private void updateCheckVote(boolean checkVote) {
-        if (this.checkVote != checkVote) {
+    private void updateCheckVote(Boolean checkVote) {
+        if (checkVote != null && this.checkVote != checkVote) {
             this.checkVote = checkVote;
         }
     }

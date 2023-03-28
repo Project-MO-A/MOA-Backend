@@ -11,6 +11,11 @@ public enum ErrorCode {
     USER_DUPLICATED_EMAIL(400, "user.duplicate.email", "U0002"),
     USER_MISMATCH_PASSWORD(400, "user.mismatch.password", "U0003"),
 
+    NOTICE_NOT_FOUND(404, "notice.not.found", "N0001"),
+    NOTICE_ASSOCIATION_MISMATCH(404, "notice.association.mismatch", "N0002"),
+
+    ATTENDMEMBER_NOT_FOUND(400, "attendmember.not.found", "AM0001"),
+    
     RECRUITMENT_NOT_FOUND(404, "recruitment.not.found", "R0001"),
 
     APPLIMENT_NOT_FOUND(404, "appliment.not.found", "P0001"),

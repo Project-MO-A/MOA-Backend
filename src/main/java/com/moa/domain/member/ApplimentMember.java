@@ -21,7 +21,7 @@ public class ApplimentMember {
     @Column(name = "APPLIMENT_MEMBER_ID")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "RECRUIT_MEMBER_ID")
     private RecruitMember recruitMember;
 
