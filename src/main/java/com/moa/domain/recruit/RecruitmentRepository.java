@@ -11,6 +11,6 @@ public interface RecruitmentRepository extends JpaRepository<Recruitment, Long> 
     @Query("select r from Recruitment r join fetch r.user where r.id = :id")
     Optional<Recruitment> findByIdFetchUser(@Param("id") Long recruitId);
 
-    @Query("select r from Recruitment r join fetch r.user where r.id = :id")
-    List<Recruitment> findListByIdFetchUser(@Param("id") Long recruitId);
+    @Query("select r from Recruitment r join fetch r.user u where u.id = :id")
+    List<Recruitment> findListByIdFetchUser(@Param("id") Long userId);
 }
