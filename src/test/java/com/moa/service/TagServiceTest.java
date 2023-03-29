@@ -2,84 +2,181 @@ package com.moa.service;
 
 import com.moa.domain.recruit.tag.Tag;
 import com.moa.domain.recruit.tag.TagRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.anyCollection;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
-@Transactional
-@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class TagServiceTest {
-    @Autowired
-    TagService tagService;
-
-    @Autowired
+    @Mock
     TagRepository tagRepository;
 
-    @BeforeEach
-    void setUp() {
-        tagRepository.save(new Tag("개발"));
-    }
+    @InjectMocks
+    TagService tagService;
 
-    @DisplayName("update - 카테고리 저장에 성공한다.")
+    @DisplayName("getTargetTag - 이미 존재하는 태그를 제외한 리스트를 반환한다")
     @Test
-    void update1() {
+    void getTargetTag() {
         //given
-        List<String> list = List.of("프로젝트", "웹");
+        List<String> tagNames = List.of("프로젝트", "웹", "백엔드");
+        List<String> exists = List.of("프로젝트", "웹");
 
         //when
-        tagService.update(list);
+        List<Tag> targetTag = getTargetTag(tagNames, exists);
 
         //then
-        List<Long> idList = tagRepository.findIdByName(list);
-        assertThat(idList.get(0)).isGreaterThan(1);
-        assertThat(idList.size()).isEqualTo(2);
+        assertAll(
+                () -> assertThat(targetTag.size()).isEqualTo(1),
+                () -> assertThat(targetTag.get(0).getName()).isEqualTo("백엔드")
+        );
     }
 
-    @DisplayName("update - 중복되는 카테고리를 제외하고 저장한다.")
+    @DisplayName("update - 태그 저장에 성공한다.")
     @Test
-    void update2() {
+    void updateSuccess() {
         //given
-        List<String> list = List.of("개발", "프로젝트", "웹");
+        List<String> tagNames = List.of("프로젝트", "웹");
+
+        given(tagRepository.findExistName(tagNames))
+                .willReturn(tagNames);
+        given(tagRepository.saveAll(anyCollection()))
+                .willReturn(tagNames.stream()
+                        .map(Tag::new)
+                        .toList());
 
         //when
-        List<Tag> save = tagService.update(list);
+        List<Tag> saveTags = tagService.update(tagNames);
 
         //then
-        List<Long> idList = tagRepository.findIdByName(list);
-        assertThat(idList.size()).isEqualTo(3);
-        assertThat(save.size()).isEqualTo(2);
+        assertAll(
+                () -> assertThat(saveTags.size()).isEqualTo(2),
+                () -> verify(tagRepository).findExistName(tagNames),
+                () -> verify(tagRepository).saveAll(anyCollection())
+        );
     }
 
-    @DisplayName("updateAndReturnId - 중복된 카테고리 제외하고 저장 - 요청으로 들어온 카테고리 ID 값을 반환한다")
+    @DisplayName("update - 저장된 태그명을 제외하고 저장한다.")
+    @Test
+    void updateSuccessDistinct() {
+        //given
+        List<String> tagNames = List.of("프로젝트", "웹", "백엔드");
+        List<String> exists = List.of("프로젝트", "웹");
+        List<Tag> targetTag = getTargetTag(tagNames, exists);
+
+        given(tagRepository.findExistName(tagNames))
+                .willReturn(exists);
+        given(tagRepository.saveAll(anyCollection()))
+                .willReturn(targetTag);
+
+        //when
+        List<Tag> saveTags = tagService.update(tagNames);
+
+        //then
+        assertAll(
+                () -> assertThat(saveTags.size()).isEqualTo(1),
+                () -> verify(tagRepository).findExistName(tagNames),
+                () -> verify(tagRepository).saveAll(anyCollection())
+        );
+    }
+
+    @DisplayName("update - 모든 태그가 이미 DB에 있다면 Empty List를 반환한다.")
+    @Test
+    void updateSuccessEmpty() {
+        //given
+        List<String> tagNames = List.of("프로젝트", "웹", "백엔드");
+        List<String> exists = List.of("프로젝트", "웹", "백엔드");
+        List<Tag> targetTag = getTargetTag(tagNames, exists);
+
+        given(tagRepository.findExistName(tagNames))
+                .willReturn(exists);
+        given(tagRepository.saveAll(anyCollection()))
+                .willReturn(targetTag);
+
+        //when
+        List<Tag> saveTags = tagService.update(tagNames);
+
+        //then
+        assertAll(
+                () -> assertThat(saveTags).isEmpty(),
+                () -> verify(tagRepository).findExistName(tagNames),
+                () -> verify(tagRepository).saveAll(anyCollection())
+        );
+    }
+
+    @DisplayName("updateAndReturnId - 주어진 태그를 저장한뒤 주어진 태그의 ID 값을 반환한다")
     @Test
     void updateAndReturnIdSuccess() {
         //given
-        List<String> list = List.of("개발", "프로젝트", "웹");
+        List<String> tagNames = List.of("프로젝트", "웹", "백엔드");
+        List<String> exists = List.of("프로젝트");
+        List<Tag> targetTag = getTargetTag(tagNames, exists);
+
+        given(tagRepository.findExistName(tagNames))
+                .willReturn(exists);
+        given(tagRepository.findIdByName(tagNames))
+                .willReturn(List.of(1L, 2L, 5L));
+        given(tagRepository.saveAll(anyCollection()))
+                .willReturn(targetTag);
 
         //when
-        List<Long> idList = tagService.updateAndReturnId(list).get();
+        List<Long> idList = tagService.updateAndReturnId(tagNames).get();
 
         //then
-        List<String> existName = tagRepository.findExistName(list);
-        assertThat(idList.size()).isEqualTo(3);
-        assertThat(existName.size()).isEqualTo(3);
-        assertThat(existName).containsOnly("개발", "프로젝트", "웹");
+        assertAll(
+                () -> assertThat(idList.size()).isEqualTo(3),
+                () -> verify(tagRepository).saveAll(anyCollection()),
+                () -> verify(tagRepository).findExistName(tagNames),
+                () -> verify(tagRepository).findIdByName(tagNames)
+        );
     }
 
     @DisplayName("updateAndReturnId - 요청 리스트가 null 일 경우 Optional.empty 가 반환된다.")
     @Test
     void updateAndReturnIdNull() {
         //given
-        List<String> list = null;
+        List<String> tagNames = null;
 
         //when & then
-        assertThat(tagService.updateAndReturnId(list).isEmpty()).isTrue();
+        assertAll(
+                () -> assertThat(tagService.updateAndReturnId(tagNames)).isEmpty(),
+                () -> verify(tagRepository, times(0)).findExistName(tagNames),
+                () -> verify(tagRepository, times(0)).saveAll(anyCollection()),
+                () -> verify(tagRepository, times(0)).findIdByName(tagNames)
+        );
+    }
+
+    @DisplayName("updateAndReturnId - 요청 리스트가 empty List 일 경우 Optional.empty 가 반환된다.")
+    @Test
+    void updateAndReturnIdEmpty() {
+        //given
+        List<String> tagNames = new ArrayList<>();
+
+        //when & then
+        assertAll(
+                () -> assertThat(tagService.updateAndReturnId(tagNames)).isEmpty(),
+                () -> verify(tagRepository, times(0)).findExistName(tagNames),
+                () -> verify(tagRepository, times(0)).saveAll(anyCollection()),
+                () -> verify(tagRepository, times(0)).findIdByName(tagNames)
+        );
+    }
+
+    private List<Tag> getTargetTag(List<String> givenTag, List<String> exist) {
+        return givenTag.stream()
+                .filter(tag -> !exist.contains(tag))
+                .map(Tag::new)
+                .toList();
     }
 }
