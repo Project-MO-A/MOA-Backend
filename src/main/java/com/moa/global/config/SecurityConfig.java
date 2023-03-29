@@ -5,6 +5,7 @@ import com.moa.global.config.sub.SecurityServiceBeanConfig;
 import com.moa.global.filter.BusinessExceptionHandlerFilter;
 import com.moa.global.filter.JwtAuthenticationFilter;
 import com.moa.global.filter.LoginProcessFilter;
+import com.moa.global.filter.handler.RecruitmentAuthorizationManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -23,6 +24,7 @@ public class SecurityConfig {
     private final LoginProcessFilter loginProcessFilter;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final BusinessExceptionHandlerFilter businessExceptionHandlerFilter;
+    private final RecruitmentAuthorizationManager recruitmentAuthorizationManager;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -37,6 +39,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize ->
                         authorize
                                 .requestMatchers(DELETE, "/user/sign-out").hasRole("USER")
+                                .requestMatchers("/recruitment/*/**").access(recruitmentAuthorizationManager)
                                 .anyRequest().permitAll()
                 );
 

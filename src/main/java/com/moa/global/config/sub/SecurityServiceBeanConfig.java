@@ -1,5 +1,7 @@
 package com.moa.global.config.sub;
 
+import com.moa.domain.member.ApplimentMemberRepository;
+import com.moa.global.filter.handler.RecruitmentAuthorizationManager;
 import com.moa.service.UserService;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -29,5 +31,10 @@ public class SecurityServiceBeanConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public RecruitmentAuthorizationManager recruitmentAuthorizationManager(ApplimentMemberRepository applimentMemberRepository) {
+        return new RecruitmentAuthorizationManager(applimentMemberRepository);
     }
 }
