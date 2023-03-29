@@ -5,7 +5,8 @@ import com.moa.global.config.sub.SecurityServiceBeanConfig;
 import com.moa.global.filter.BusinessExceptionHandlerFilter;
 import com.moa.global.filter.JwtAuthenticationFilter;
 import com.moa.global.filter.LoginProcessFilter;
-import com.moa.global.filter.handler.RecruitmentAuthorizationManager;
+import com.moa.global.filter.handler.RecruitmentAuthorizationManagerForApplimentMember;
+import com.moa.global.filter.handler.RecruitmentAuthorizationManagerForAuthor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +15,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
 
-import static org.springframework.http.HttpMethod.DELETE;
+import static org.springframework.http.HttpMethod.*;
 
 @Configuration
 @RequiredArgsConstructor
@@ -24,7 +25,8 @@ public class SecurityConfig {
     private final LoginProcessFilter loginProcessFilter;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final BusinessExceptionHandlerFilter businessExceptionHandlerFilter;
-    private final RecruitmentAuthorizationManager recruitmentAuthorizationManager;
+    private final RecruitmentAuthorizationManagerForApplimentMember forApplimentMember;
+    private final RecruitmentAuthorizationManagerForAuthor forAuthor;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -39,7 +41,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize ->
                         authorize
                                 .requestMatchers(DELETE, "/user/sign-out").hasRole("USER")
-                                .requestMatchers("/recruitment/*/**").access(recruitmentAuthorizationManager)
+                                //admin
+                                .requestMatchers("/recruitment/*", "/recruitment/*/apply/**", "/recruitment/*/approved/**", "/recruitment/*/notice/*").access(forAuthor)
+                                .requestMatchers(POST, "/recruitment/*/notice").access(forAuthor)
+                                //appliment member
+                                .requestMatchers("/recruitment/*/time/**", "/recruitment/*/notice/*/vote/**").access(forApplimentMember)
+                                .requestMatchers(GET, "/recruitment/*/notice").access(forApplimentMember)
                                 .anyRequest().permitAll()
                 );
 

@@ -1,7 +1,9 @@
 package com.moa.global.config.sub;
 
 import com.moa.domain.member.ApplimentMemberRepository;
-import com.moa.global.filter.handler.RecruitmentAuthorizationManager;
+import com.moa.domain.recruit.RecruitmentRepository;
+import com.moa.global.filter.handler.RecruitmentAuthorizationManagerForApplimentMember;
+import com.moa.global.filter.handler.RecruitmentAuthorizationManagerForAuthor;
 import com.moa.service.UserService;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
@@ -34,7 +36,12 @@ public class SecurityServiceBeanConfig {
     }
 
     @Bean
-    public RecruitmentAuthorizationManager recruitmentAuthorizationManager(ApplimentMemberRepository applimentMemberRepository) {
-        return new RecruitmentAuthorizationManager(applimentMemberRepository);
+    public RecruitmentAuthorizationManagerForApplimentMember forApplimentMember(ApplimentMemberRepository applimentMemberRepository) {
+        return new RecruitmentAuthorizationManagerForApplimentMember(applimentMemberRepository);
+    }
+
+    @Bean
+    public RecruitmentAuthorizationManagerForAuthor forAuthor(RecruitmentRepository recruitmentRepository) {
+        return new RecruitmentAuthorizationManagerForAuthor(recruitmentRepository);
     }
 }

@@ -11,7 +11,7 @@ import org.springframework.security.web.access.intercept.RequestAuthorizationCon
 import java.util.function.Supplier;
 
 @RequiredArgsConstructor
-public class RecruitmentAuthorizationManager implements AuthorizationManager<RequestAuthorizationContext> {
+public class RecruitmentAuthorizationManagerForApplimentMember implements AuthorizationManager<RequestAuthorizationContext> {
 
     private final ApplimentMemberRepository applimentMemberRepository;
 
