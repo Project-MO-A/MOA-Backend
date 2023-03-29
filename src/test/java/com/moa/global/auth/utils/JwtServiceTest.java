@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -33,10 +34,10 @@ class JwtServiceTest {
     @DisplayName("토큰 생성")
     void createToken() {
         //given
-        String email = "user@email.com";
+        Long id = 1L;
 
         //when
-        TokenMapping token = jwtService.createToken(email);
+        TokenMapping token = jwtService.createToken(id, List.of(() -> "ROLE_USER"));
 
         //then
         assertThat(token.accessToken()).isNotNull();
@@ -47,10 +48,10 @@ class JwtServiceTest {
     @DisplayName("토큰 헤더 통해 전달")
     void sendToken() {
         //given
-        String email = "user@email.com";
+        Long id = 1L;
 
         //when
-        TokenMapping token = jwtService.createToken(email);
+        TokenMapping token = jwtService.createToken(id,  List.of(() -> "ROLE_USER"));
         MockHttpServletResponse response = new MockHttpServletResponse();
         jwtService.sendBothToken(response, token.accessToken(), token.refreshToken());
 
@@ -108,22 +109,22 @@ class JwtServiceTest {
     @DisplayName("유저 이메일 정보 확인")
     void extractUserEmail() {
         //given
-        String email = "user@email.com";
-        String accessToken = jwtService.createAccessToken(email);
+        Long id = 1L;
+        String accessToken = jwtService.createAccessToken(id,  List.of(() -> "ROLE_USER"));
 
         //when
-        String extractEmail = jwtService.extractUserEmail(accessToken);
+        Long userId = jwtService.extractClaims(accessToken).userId();
 
         //then
-        assertThat(extractEmail).isEqualTo(email);
+        assertThat(userId).isEqualTo(id);
     }
 
     @Test
     @DisplayName("유효 시간 지나지 않은 토큰 사용")
     void useValidToken() {
         //given
-        String email = "user@email.com";
-        TokenMapping token = jwtService.createToken(email);
+        Long id = 1L;
+        TokenMapping token = jwtService.createToken(id,  List.of(() -> "ROLE_USER"));
 
         //when
         boolean isAccessTokenValid = jwtService.isTokenValid(token.accessToken().replace("Bearer ", ""));
@@ -138,8 +139,8 @@ class JwtServiceTest {
     @DisplayName("유효 시간 지난 토큰 사용 검증 실패")
     void useInvalidToken() throws InterruptedException {
         //given
-        String email = "user@email.com";
-        TokenMapping token = jwtService.createToken(email);
+        Long id = 1L;
+        TokenMapping token = jwtService.createToken(id, List.of(() -> "ROLE_USER"));
 
         //when
         sleep(1000);
