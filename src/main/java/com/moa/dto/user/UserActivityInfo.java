@@ -50,7 +50,7 @@ public class UserActivityInfo {
         Recruitment recruitment = applimentMember.getRecruitMember().getRecruitment();
         String cancelUri = "/recruitment/cancel/".concat(String.valueOf(recruitment.getId()));
         String detailsUri = "/recruitment/".concat(String.valueOf(recruitment.getId()));
-        return new EtcInfo(recruitment.getPost().getTitle(), cancelUri, detailsUri, applimentMember.getStatus().name());
+        return new EtcInfo(recruitment.getPost().getTitle(), cancelUri, detailsUri, applimentMember.getStatus().getStatus());
     }
 
     public record ApprovedInfo(

@@ -21,7 +21,7 @@ public class RecruitmentsInfo {
             infos.add(RecruitmentInfo.builder()
                     .id(recruitment.getId())
                     .title(recruitment.getPost().getTitle())
-                    .recruitStatus(recruitment.getStatus().name())
+                    .recruitStatus(recruitment.getStatus().getStatus())
                     .build());
         }
         return infos;
