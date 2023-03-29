@@ -3,6 +3,7 @@ package com.moa.global.filter;
 import com.auth0.jwt.exceptions.JWTDecodeException;
 import com.moa.domain.user.User;
 import com.moa.domain.user.UserRepository;
+import com.moa.global.auth.model.Claims;
 import com.moa.global.auth.model.JwtUser;
 import com.moa.global.auth.model.SecurityUser;
 import com.moa.global.auth.utils.JwtService;
@@ -14,10 +15,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import static com.moa.global.exception.ErrorCode.JWT_NOT_VALID;
@@ -47,24 +52,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain, String accessToken) throws ServletException, IOException {
-        if (jwtService.isTokenValid(accessToken)) {
-            saveAuthentication(accessToken);
-        } else {
+        if (!jwtService.isTokenValid(accessToken)) {
             checkRefreshToken(request, response, accessToken);
         }
+        saveAuthentication(accessToken);
         filterChain.doFilter(request, response);
-    }
-
-    private void saveAuthentication(String accessToken) {
-        String email = jwtService.extractUserEmail(accessToken);
-        SecurityContextHolder.getContext().setAuthentication(createAuthentication(email));
-    }
-
-    private UsernamePasswordAuthenticationToken createAuthentication(String email) {
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
-        SecurityUser securityUser = new SecurityUser(user);
-        return new UsernamePasswordAuthenticationToken(new JwtUser(user.getId()), null, securityUser.getAuthorities());
     }
 
     private void checkRefreshToken(HttpServletRequest request, HttpServletResponse response, String accessToken) {
@@ -75,19 +67,33 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         User user = userRepository.findByRefreshToken(refreshToken)
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
         validateEmail(accessToken, user);
-        String recreateAccessToken = jwtService.createAccessToken(user.getEmail());
+        String recreateAccessToken = jwtService.createAccessToken(user.getId(), (List<GrantedAuthority>) new SecurityUser(user).getAuthorities());
         jwtService.setAccessTokenInHeader(response, recreateAccessToken);
-        saveAuthentication(recreateAccessToken);
     }
 
     private void validateEmail(String accessToken, User user) {
         try {
-            String email = jwtService.extractUserEmail(accessToken);
-            if (!email.equals(user.getEmail())) {
+            Long userId = jwtService.extractClaims(accessToken).userId();
+            if (userId.equals(user.getId())) {
                 throw new BusinessAuthenticationException(JWT_NOT_VALID);
             }
         } catch (JWTDecodeException exception) {
             throw new BusinessAuthenticationException(JWT_NOT_VALID);
         }
+    }
+
+    private void saveAuthentication(String accessToken) {
+        Claims claims = jwtService.extractClaims(accessToken);
+        SecurityContextHolder.getContext().setAuthentication(createAuthentication(claims));
+    }
+
+    private UsernamePasswordAuthenticationToken createAuthentication(Claims claims) {
+        return new UsernamePasswordAuthenticationToken(new JwtUser(claims.userId()), null, convertRole(claims.role()));
+    }
+
+    private Collection<? extends GrantedAuthority> convertRole(List<String> role) {
+        return role.stream()
+                .map(SimpleGrantedAuthority::new)
+                .toList();
     }
 }
