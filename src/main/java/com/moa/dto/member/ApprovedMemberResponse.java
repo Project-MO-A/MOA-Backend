@@ -11,11 +11,11 @@ public class ApprovedMemberResponse {
     private final String nickname;
     private final String recruitField;
     private final double popularity;
-    private Long totalVote;
+    private Long totalAttend;
     private Long attend;
 
-    public void setTotalVote(Long totalVote) {
-        this.totalVote = totalVote;
+    public void setTotalAttend(Long totalAttend) {
+        this.totalAttend = totalAttend;
     }
 
     public void setAttend(Long attend) {

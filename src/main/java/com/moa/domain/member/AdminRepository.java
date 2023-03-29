@@ -73,7 +73,7 @@ public class AdminRepository implements ApplimentSearchRepository {
                 .fetch();
 
         for (ApprovedMemberResponse approvedMembers : approvedMemberResponses) {
-            approvedMembers.setTotalVote(countAttend(recruitmentId, approvedMembers.getUserId(), null));
+            approvedMembers.setTotalAttend(countAttend(recruitmentId, approvedMembers.getUserId(), null));
             approvedMembers.setAttend(countAttend(recruitmentId, approvedMembers.getUserId(), ATTENDANCE));
         }
 

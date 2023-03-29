@@ -70,7 +70,7 @@ class AdminServiceTest {
         //then
         assertThat(approvedMembers.size()).isEqualTo(2);
         assertThat(approvedMembers.get(0).getPopularity()).isGreaterThan(1.0);
-        assertThat(approvedMembers.get(0).getTotalVote()).isGreaterThan(1L);
+        assertThat(approvedMembers.get(0).getTotalAttend()).isGreaterThan(1L);
     }
 
     @DisplayName("getApprovedMembers - 승인된 멤버들을 조회하는데 실패한다. (잘못된 모집글 ID)")
@@ -160,12 +160,12 @@ class AdminServiceTest {
             if (recruitmentId == 10L) return new ArrayList<>();
             List<ApprovedMemberResponse> memberResponses = new ArrayList<>();
             ApprovedMemberResponse response1 = new ApprovedMemberResponse(1L, 1L, "nickname1", "백엔드", 3.5);
-            response1.setTotalVote(4L);
+            response1.setTotalAttend(4L);
             response1.setAttend(3L);
             memberResponses.add(response1);
 
             ApprovedMemberResponse response2 = new ApprovedMemberResponse(2L, 2L, "nickname2", "프론트엔드", 4.5);
-            response2.setTotalVote(4L);
+            response2.setTotalAttend(4L);
             response2.setAttend(2L);
             memberResponses.add(response2);
 
