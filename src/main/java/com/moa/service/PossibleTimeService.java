@@ -40,7 +40,7 @@ public class PossibleTimeService {
         ApplimentMember applimentMember = applimentMemberRepository.findByRecruitIdAndUserId(recruitmentId, userId)
                 .orElseThrow(() -> new EntityNotFoundException(APPLIMENT_NOT_FOUND));
         List<PossibleTime> allByApplyId = possibleTimeRepository.findAllByApplimentMemberId(applimentMember.getId());
-        return new PossibleTimeResponse("success", allByApplyId);
+        return new PossibleTimeResponse(null, allByApplyId);
     }
 
     public void setTime(final PossibleTimeRequest timeRequestList, final Long recruitmentId, final Long userId) {
