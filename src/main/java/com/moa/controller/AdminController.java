@@ -7,16 +7,14 @@ import com.moa.dto.member.ApprovedPopularityRequest;
 import com.moa.service.AdminService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
-import static com.moa.domain.member.ApprovalStatus.*;
+import static com.moa.domain.member.ApprovalStatus.getStatus;
 
 @RequestMapping("/recruitment/{recruitmentId}")
 @RequiredArgsConstructor
-@Controller
+@RestController
 public class AdminController {
     private final AdminService adminService;
 
