@@ -1,13 +1,11 @@
 package com.moa.controller;
 
 import com.moa.dto.StatusResponse;
-import com.moa.dto.recruit.RecruitApplyRequest;
 import com.moa.dto.recruit.RecruitInfoResponse;
 import com.moa.dto.recruit.RecruitPostRequest;
 import com.moa.dto.recruit.RecruitUpdateRequest;
 import com.moa.global.auth.model.JwtUser;
 import com.moa.service.TagService;
-import com.moa.service.RecruitMemberService;
 import com.moa.service.RecruitmentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +20,6 @@ import java.util.List;
 @RequestMapping("/recruitment")
 @RequiredArgsConstructor
 public class RecruitmentController {
-    private final RecruitMemberService recruitMemberService;
     private final RecruitmentService recruitmentService;
     private final TagService tagService;
 
@@ -53,11 +50,5 @@ public class RecruitmentController {
     public Long delete(@PathVariable Long recruitmentId) {
         return recruitmentService.delete(recruitmentId);
     }
-    
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/{recruitmentId}/apply")
-    public StatusResponse applyToRecruit(@PathVariable Long recruitmentId, @RequestParam String position, @AuthenticationPrincipal JwtUser user) {
-        RecruitApplyRequest request = new RecruitApplyRequest(recruitmentId, position, user.id());
-        return new StatusResponse(recruitMemberService.applyMember(request));
-    }
+
 }
