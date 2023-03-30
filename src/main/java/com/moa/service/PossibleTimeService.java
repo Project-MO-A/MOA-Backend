@@ -48,6 +48,10 @@ public class PossibleTimeService {
                 .orElseThrow(() -> new EntityNotFoundException(APPLIMENT_NOT_FOUND));
         possibleTimeRepository.deleteAllByApplimentMember(applimentMember);
 
+        saveTime(timeRequestList, applimentMember);
+    }
+
+    private void saveTime(PossibleTimeRequest timeRequestList, ApplimentMember applimentMember) {
         timeRequestList.possibleTimeDataList().stream()
                 .map(time -> PossibleTime.builder()
                         .applimentMember(applimentMember)
