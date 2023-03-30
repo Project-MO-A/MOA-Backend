@@ -18,10 +18,11 @@ public enum ErrorCode {
     
     RECRUITMENT_NOT_FOUND(404, "recruitment.not.found", "R0001"),
 
+    RECRUITMEMEBER_NO_FIELD(404, "recruitmemeber.no.field", "R0002"),
+
     APPLIMENT_NOT_FOUND(404, "appliment.not.found", "P0001"),
 
     TIME_INVALID(400, "time.invalid", "T0001");
-    ;
 
     private final int statusCode;
     private final String messageCode;
