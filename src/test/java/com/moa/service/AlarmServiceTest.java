@@ -1,15 +1,15 @@
 package com.moa.service;
 
-import com.moa.domain.user.Alarm;
-import com.moa.domain.user.AlarmRepository;
-import com.moa.domain.user.User;
-import com.moa.domain.user.UserRepository;
+import com.moa.domain.user.*;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -20,6 +20,8 @@ import static com.moa.constant.TestConst.USER;
 import static com.moa.domain.user.AlarmType.NOTICE_POST;
 import static com.moa.domain.user.AlarmType.RECRUITMENT_COMPLETE;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 @Transactional
 @SpringBootTest
@@ -30,8 +32,6 @@ class AlarmServiceTest {
     private AlarmRepository alarmRepository;
     @Autowired
     private UserRepository userRepository;
-    @Autowired
-    EntityManager em;
 
     private static final Long RELATE_ID = 15L;
     @BeforeEach
@@ -49,15 +49,24 @@ class AlarmServiceTest {
         Long alarmId = alarmService.post(RECRUITMENT_COMPLETE, user.getId(), RELATE_ID);
 
         //then
-        Alarm findAlarm = alarmRepository.findById(alarmId).orElseThrow();
+        Alarm findAlarm = alarmRepository.findById(alarmId).get();
+        assertAll(
+                () -> assertThat(findAlarm.getAlarmType()).isEqualTo(RECRUITMENT_COMPLETE),
+                () -> assertThat(findAlarm.getRedirectURI()).isEqualTo(RECRUITMENT_COMPLETE.getRedirectURI(RELATE_ID)),
+                () -> assertThat(findAlarm.getMessage()).isEqualTo(RECRUITMENT_COMPLETE.getMessage(RELATE_ID)),
+                () -> assertThat(user.getAlarms().contains(findAlarm)).isTrue()
+        );
+    }
 
-        System.out.println(findAlarm.getMessage());
-        System.out.println(findAlarm.getRedirectURI());
+    @DisplayName("post - 존재하지 않는 UserId를 전달받을 경우 예외가 발생한다.")
+    @Test
+    void postFail() {
+        //given
+        Long userId = 100L;
 
-        assertThat(findAlarm.getAlarmType()).isEqualTo(RECRUITMENT_COMPLETE);
-        assertThat(findAlarm.getRedirectURI()).isEqualTo(RECRUITMENT_COMPLETE.getRedirectURI(RELATE_ID));
-        assertThat(findAlarm.getMessage()).isEqualTo(RECRUITMENT_COMPLETE.getMessage(RELATE_ID));
-        assertThat(user.getAlarms().contains(findAlarm)).isTrue();
+        //when & then
+        assertThatThrownBy(() -> alarmService.post(NOTICE_POST, RELATE_ID, userId))
+                .isInstanceOf(EntityNotFoundException.class);
     }
 
     @DisplayName("postAll - 여러개의 알람 생성에 성공한다.")
@@ -81,13 +90,23 @@ class AlarmServiceTest {
         //then
         Alarm findAlarm = alarmRepository.findById(alarmId.get(0)).orElseThrow();
 
-        System.out.println(findAlarm.getMessage());
-        System.out.println(findAlarm.getRedirectURI());
+        assertAll(
+                () -> assertThat(user1.getAlarms().get(0).getAlarmType())
+                        .isEqualTo(user2.getAlarms().get(0).getAlarmType())
+                        .isEqualTo(user3.getAlarms().get(0).getAlarmType()),
+                () -> assertThat(findAlarm.getMessage()).isEqualTo(NOTICE_POST.getMessage(RELATE_ID)),
+                () -> assertThat(findAlarm.getRedirectURI()).isEqualTo(NOTICE_POST.getRedirectURI(RELATE_ID))
+        );
+    }
 
-        assertThat(user1.getAlarms().get(0).getAlarmType())
-                .isEqualTo(user2.getAlarms().get(0).getAlarmType())
-                .isEqualTo(user3.getAlarms().get(0).getAlarmType());
-        assertThat(findAlarm.getMessage()).isEqualTo(NOTICE_POST.getMessage(RELATE_ID));
-        assertThat(findAlarm.getRedirectURI()).isEqualTo(NOTICE_POST.getRedirectURI(RELATE_ID));
+    @DisplayName("postAll - 존재하지 않는 UserId List를 전달받을 경우 예외가 발생한다.")
+    @Test
+    void postAllFail() {
+        //given
+        List<Long> userIds = List.of(99L, 100L, 101L);
+
+        //when & then
+        assertThatThrownBy(() -> alarmService.postAll(NOTICE_POST, userIds, RELATE_ID))
+                .isInstanceOf(EntityNotFoundException.class);
     }
 }
