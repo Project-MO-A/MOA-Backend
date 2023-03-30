@@ -1,4 +1,4 @@
-package com.moa.support;
+package com.moa.support.fixture;
 
 import com.moa.domain.interests.Interests;
 import com.moa.domain.user.Popularity;
@@ -15,7 +15,11 @@ public enum UserFixture {
     JHS("jhs123@email.com", "asdfsqwe1234!", "주홍석", "jhs",
             34.123124, 31.123451, "개발하고싶어요"),
     PINGU("pingu123@email.com", "asdfsqwe1234!", "박신비", "pingu",
-            34.123124, 31.123451, "핑구 좋아하세요?");
+            34.123124, 31.123451, "핑구 좋아하세요?"),
+    LION("lion123@email.com", "asdfsqwe1234!", "김사자", "lion",
+                  34.123124, 31.123451, "사장"),
+    TIGER("tiger@email.com", "asdfsqwe1234!", "박호랑", "tiger",
+            34.123124, 31.123451, "호랑");
 
     private final String email;
     private final String password;

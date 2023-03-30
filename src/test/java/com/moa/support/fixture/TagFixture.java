@@ -1,4 +1,4 @@
-package com.moa.support;
+package com.moa.support.fixture;
 
 import com.moa.domain.recruit.tag.Tag;
 

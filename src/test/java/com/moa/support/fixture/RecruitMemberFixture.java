@@ -1,4 +1,4 @@
-package com.moa.support;
+package com.moa.support.fixture;
 
 import com.moa.domain.member.RecruitMember;
 import com.moa.domain.recruit.Recruitment;
