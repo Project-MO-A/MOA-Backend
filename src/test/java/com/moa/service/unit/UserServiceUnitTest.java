@@ -1,17 +1,17 @@
-package com.moa.service;
+package com.moa.service.unit;
 
 import com.moa.base.AbstractServiceTest;
 import com.moa.domain.member.ApplimentMember;
 import com.moa.domain.member.ApprovalStatus;
 import com.moa.domain.member.RecruitMember;
 import com.moa.domain.notice.Post;
-import com.moa.domain.recruit.Category;
 import com.moa.domain.recruit.RecruitStatus;
 import com.moa.domain.recruit.Recruitment;
 import com.moa.domain.user.User;
 import com.moa.dto.recruit.RecruitmentsInfo;
 import com.moa.dto.user.*;
 import com.moa.global.exception.service.EntityNotFoundException;
+import com.moa.service.UserService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
