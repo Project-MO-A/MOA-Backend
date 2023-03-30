@@ -32,9 +32,9 @@ public class RecruitmentService {
     private final TagRepository tagRepository;
     private final ApplimentMemberRepository applimentMemberRepository;
 
-    public Long post(final Long userId, final RecruitPostRequest request, final List<Long> categoryId) {
+    public Long post(final Long userId, final RecruitPostRequest request, final List<Long> tagId) {
         User user = userRepository.getReferenceById(userId);
-        Recruitment recruitment = request.toEntity(user, request.toMemberList(), getRecruitCategories(categoryId));
+        Recruitment recruitment = request.toEntity(user, request.toMemberList(), getRecruitTags(tagId));
         applimentMemberRepository.save(new ApplimentMember(new RecruitMember(recruitment), user, APPROVED));
         return recruitmentRepository.save(recruitment).getId();
     }
@@ -46,10 +46,10 @@ public class RecruitmentService {
         return new RecruitInfoResponse(recruitment);
     }
 
-    public Long update(final Long recruitId, final RecruitUpdateRequest request, final List<Long> categoryId) {
+    public Long update(final Long recruitId, final RecruitUpdateRequest request, final List<Long> tagId) {
         Recruitment recruitment = recruitmentRepository.findById(recruitId)
                 .orElseThrow(() -> new EntityNotFoundException(RECRUITMENT_NOT_FOUND));
-        recruitment.update(request, getRecruitCategories(categoryId));
+        recruitment.update(request, getRecruitTags(tagId));
         return recruitment.getId();
     }
 
@@ -67,8 +67,8 @@ public class RecruitmentService {
         return recruitId;
     }
 
-    private List<RecruitTag> getRecruitCategories(List<Long> categoryId) {
-        return categoryId.stream()
+    private List<RecruitTag> getRecruitTags(List<Long> tagId) {
+        return tagId.stream()
                 .map(tagRepository::getReferenceById)
                 .toList()
                 .stream()

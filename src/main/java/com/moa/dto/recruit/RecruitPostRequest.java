@@ -19,7 +19,7 @@ public record RecruitPostRequest (
         List<RecruitMemberRequest> memberFields,
         List<String> tags
 ) {
-    public Recruitment toEntity(User user, List<RecruitMember> members, List<RecruitTag> categories) {
+    public Recruitment toEntity(User user, List<RecruitMember> members, List<RecruitTag> tags) {
         Post post = Post.builder()
                 .title(title)
                 .content(content)
@@ -30,7 +30,7 @@ public record RecruitPostRequest (
                 .status(RecruitStatus.RECRUITING)
                 .build();
         if (members != null) recruitment.setMembers(members);
-        if (categories != null) recruitment.setTags(categories);
+        if (tags != null) recruitment.setTags(tags);
         return recruitment;
     }
 
