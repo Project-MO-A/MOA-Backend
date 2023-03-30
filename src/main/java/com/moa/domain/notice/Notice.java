@@ -5,10 +5,7 @@ import com.moa.domain.recruit.Recruitment;
 import com.moa.dto.notice.UpdateNoticeRequest;
 import com.moa.global.exception.service.AssociationMisMatchException;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
@@ -18,6 +15,7 @@ import static com.moa.global.exception.ErrorCode.NOTICE_ASSOCIATION_MISMATCH;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
+@EqualsAndHashCode(of = "id", callSuper = false)
 public class Notice extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "NOTICE_ID")
