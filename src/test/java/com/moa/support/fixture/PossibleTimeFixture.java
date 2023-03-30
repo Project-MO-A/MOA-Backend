@@ -44,8 +44,17 @@ public enum PossibleTimeFixture {
                 .build();
     }
 
+    public PossibleTime 빈_객체_생성() {
+        return PossibleTime.builder()
+                .day(this.day)
+                .startTime(LocalTime.of(this.startHour, 0))
+                .endTime(LocalTime.of(this.endHour, 0))
+                .build();
+    }
+
     private PossibleTime.PossibleTimeBuilder 기본_빌더_생성(ApplimentMember applimentMember) {
         return PossibleTime.builder()
+                .day(this.day)
                 .applimentMember(applimentMember);
     }
 }

@@ -34,6 +34,10 @@ public enum RecruitmentFixture {
         return recruitment;
     }
 
+    public Recruitment 생성() {
+        return 기본_빌더_생성().build();
+    }
+
     private Recruitment 기본_엔티티_생성(final User postUser) {
         return Recruitment.builder()
                 .user(postUser)
@@ -41,5 +45,12 @@ public enum RecruitmentFixture {
                 .status(RECRUITING)
                 .category(this.category)
                 .build();
+    }
+
+    private Recruitment.RecruitmentBuilder 기본_빌더_생성() {
+        return Recruitment.builder()
+                .post(new Post(this.title, this.content))
+                .status(RECRUITING)
+                .category(this.category);
     }
 }
