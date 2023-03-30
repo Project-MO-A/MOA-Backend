@@ -46,8 +46,8 @@ class PossibleTimeServiceTest {
 
     @BeforeEach
     void setUp() {
-        RecruitMember backend = recruitMemberRepository.findByRecruitFieldAndRecruitmentId("백엔드", RECRUITMENT1.getId());
-        RecruitMember front = recruitMemberRepository.findByRecruitFieldAndRecruitmentId("프론트엔드", RECRUITMENT1.getId());
+        RecruitMember backend = recruitMemberRepository.findByRecruitFieldAndRecruitmentId("백엔드", RECRUITMENT1.getId()).get();
+        RecruitMember front = recruitMemberRepository.findByRecruitFieldAndRecruitmentId("프론트엔드", RECRUITMENT1.getId()).get();
         APPLIMENT1 = applimentMemberRepository.save(new ApplimentMember(backend, USER3, APPROVED));
         APPLIMENT2 = applimentMemberRepository.save(new ApplimentMember(front, USER2, APPROVED));
 
