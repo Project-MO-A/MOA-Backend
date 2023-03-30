@@ -1,9 +1,6 @@
 package com.moa.domain.recruit.tag;
 
-import com.moa.domain.RepositoryTest;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import org.junit.jupiter.api.BeforeEach;
+import com.moa.base.RepositoryTest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,29 +15,25 @@ class TagRepositoryTest {
     @Autowired
     private TagRepository tagRepository;
 
-    @BeforeEach
-    void setUp() {
-        tagRepository.save(new Tag("개발"));
-    }
-
     @DisplayName("findExistName - 이미 DB에 존재하는 태그명을 조회한다.")
     @Test
     void findExistName() {
         //given
-        List<String> tags = List.of("개발", "웹", "프로젝트");
+        List<String> tags = List.of("tag1", "tag2", "tag3");
+        tagRepository.save(new Tag("tag1"));
 
         //when
         List<String> existName = tagRepository.findExistName(tags);
 
         //then
-        assertThat(existName).containsOnly("개발");
+        assertThat(existName).containsOnly("tag1");
     }
 
     @DisplayName("findExistName - 주어진 태그명이 모두 DB에 없을때 빈 List가 반환된다.")
     @Test
     void findExistNameEmpty() {
         //given
-        List<String> tags = List.of("백엔드", "웹", "프로젝트");
+        List<String> tags = List.of("tag1", "tag2", "tag3");
 
         //when
         List<String> existName = tagRepository.findExistName(tags);
@@ -53,15 +46,15 @@ class TagRepositoryTest {
     @Test
     void findIdByName() {
         //given
-        List<String> categories = List.of("웹", "프로젝트");
-        tagRepository.saveAll(categories.stream().map(Tag::new).toList());
+        List<String> tags = List.of("tag1", "tag2", "tag3");
+        tagRepository.saveAll(tags.stream().map(Tag::new).toList());
 
         //when
-        List<Long> id = tagRepository.findIdByName(categories);
+        List<Long> id = tagRepository.findIdByName(tags);
 
         //then
         assertAll(
-                () -> assertThat(id.size()).isEqualTo(2),
+                () -> assertThat(id.size()).isEqualTo(3),
                 () -> assertThat(id.get(0)).isGreaterThan(1)
         );
     }
@@ -70,10 +63,10 @@ class TagRepositoryTest {
     @Test
     void findIdByNameEmpty() {
         //given
-        List<String> categories = List.of("웹", "프로젝트");
+        List<String> tags = List.of("tag1", "tag2", "tag3");
 
         //when
-        List<Long> id = tagRepository.findIdByName(categories);
+        List<Long> id = tagRepository.findIdByName(tags);
 
         assertThat(id).isEmpty();
     }
