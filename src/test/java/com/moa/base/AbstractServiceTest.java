@@ -1,7 +1,9 @@
 package com.moa.base;
 
 import com.moa.domain.member.ApplimentMemberRepository;
+import com.moa.domain.member.AttendMemberRepository;
 import com.moa.domain.member.RecruitMemberRepository;
+import com.moa.domain.notice.NoticeRepository;
 import com.moa.domain.recruit.RecruitmentRepository;
 import com.moa.domain.user.UserRepository;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,4 +24,9 @@ public abstract class AbstractServiceTest {
     protected RecruitMemberRepository recruitMemberRepository;
     @Mock
     protected RecruitmentRepository recruitmentRepository;
+
+    @Mock
+    protected NoticeRepository noticeRepository;
+    @Mock
+    protected AttendMemberRepository attendMemberRepository;
 }
