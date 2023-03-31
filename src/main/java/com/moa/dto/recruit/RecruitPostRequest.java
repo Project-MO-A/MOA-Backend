@@ -7,10 +7,14 @@ import com.moa.domain.recruit.Recruitment;
 import com.moa.domain.recruit.tag.RecruitTag;
 import com.moa.domain.user.User;
 import com.moa.dto.member.RecruitMemberRequest;
+import com.moa.global.exception.ErrorCode;
+import com.moa.global.exception.service.InvalidRequestException;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Builder;
 
 import java.util.List;
+
+import static com.moa.global.exception.ErrorCode.REQUEST_INVALID;
 
 @Builder
 public record RecruitPostRequest (
@@ -35,7 +39,7 @@ public record RecruitPostRequest (
     }
 
     public List<RecruitMember> toMemberList() {
-        if (memberFields == null || memberFields.isEmpty()) return null;
+        if (memberFields == null || memberFields.isEmpty()) throw new InvalidRequestException(REQUEST_INVALID);
         return memberFields.stream()
                 .map(field -> RecruitMember.builder()
                         .recruitField(field.field())
