@@ -15,5 +15,5 @@ public interface AttendMemberRepository extends JpaRepository<AttendMember, Long
     List<AttendMember> findAllByNoticeIdIn(Collection<Long> noticeId);
 
     @EntityGraph(attributePaths = {"notice"})
-    Optional<AttendMember> findByIdAndUserId(Long noticeId, Long userId);
+    Optional<AttendMember> findByNoticeIdAndUserId(Long noticeId, Long userId);
 }
