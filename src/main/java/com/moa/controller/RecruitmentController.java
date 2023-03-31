@@ -1,5 +1,6 @@
 package com.moa.controller;
 
+import com.moa.domain.recruit.tag.Tag;
 import com.moa.dto.StatusResponse;
 import com.moa.dto.recruit.RecruitApplyRequest;
 import com.moa.dto.recruit.RecruitInfoResponse;
@@ -29,8 +30,8 @@ public class RecruitmentController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
     public Long post(@RequestBody @Valid RecruitPostRequest request, @AuthenticationPrincipal JwtUser user) {
-        List<Long> tagId = tagService.updateAndReturnId(request.tags()).orElse(new ArrayList<>());
-        return recruitmentService.post(user.id(), request, tagId);
+        List<Tag> tags = tagService.updateAndReturn(request.tags()).orElse(new ArrayList<>());
+        return recruitmentService.post(user.id(), request, tags);
     }
 
     @GetMapping("/{recruitmentId}")
@@ -40,8 +41,8 @@ public class RecruitmentController {
 
     @PatchMapping("/{recruitmentId}")
     public Long updatePost(@PathVariable Long recruitmentId, @RequestBody @Valid RecruitUpdateRequest request) {
-        List<Long> tagId = tagService.updateAndReturnId(request.tags()).orElse(new ArrayList<>());
-        return recruitmentService.update(recruitmentId, request, tagId);
+        List<Tag> tags = tagService.updateAndReturn(request.tags()).orElse(new ArrayList<>());
+        return recruitmentService.update(recruitmentId, request, tags);
     }
 
     @PostMapping("/{recruitmentId}")

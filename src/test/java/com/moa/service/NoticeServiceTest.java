@@ -79,7 +79,7 @@ class NoticeServiceTest {
                 new RecruitPostRequest("title",
                         "content",
                         memberFields,
-                        categoryString), categoryIds);
+                        categoryString), tag);
     }
 
     @Test

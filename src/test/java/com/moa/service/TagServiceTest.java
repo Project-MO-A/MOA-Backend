@@ -116,49 +116,50 @@ class TagServiceTest {
         );
     }
 
-    @DisplayName("updateAndReturnId - 주어진 태그를 저장한뒤 주어진 태그의 ID 값을 반환한다")
+    @DisplayName("updateAndReturn - 주어진 태그를 저장한뒤 주어진 태그의 ID 값을 반환한다")
     @Test
-    void updateAndReturnIdSuccess() {
+    void updateAndReturnSuccess() {
         //given
         List<String> tagNames = List.of("프로젝트", "웹", "백엔드");
         List<String> exists = List.of("프로젝트");
+        List<Tag> allTag = tagNames.stream().map(Tag::new).toList();
         List<Tag> targetTag = getTargetTag(tagNames, exists);
 
         given(tagRepository.findExistName(tagNames))
                 .willReturn(exists);
-        given(tagRepository.findIdByName(tagNames))
-                .willReturn(List.of(1L, 2L, 5L));
+        given(tagRepository.findAllByName(tagNames))
+                .willReturn(allTag);
         given(tagRepository.saveAll(anyCollection()))
                 .willReturn(targetTag);
 
         //when
-        List<Long> idList = tagService.updateAndReturnId(tagNames).get();
+        List<Tag> idList = tagService.updateAndReturn(tagNames).get();
 
         //then
         assertAll(
                 () -> assertThat(idList.size()).isEqualTo(3),
                 () -> verify(tagRepository).saveAll(anyCollection()),
                 () -> verify(tagRepository).findExistName(tagNames),
-                () -> verify(tagRepository).findIdByName(tagNames)
+                () -> verify(tagRepository).findAllByName(tagNames)
         );
     }
 
-    @DisplayName("updateAndReturnId - 요청 리스트가 null 일 경우 Optional.empty 가 반환된다.")
+    @DisplayName("updateAndReturn - 요청 리스트가 null 일 경우 Optional.empty 가 반환된다.")
     @Test
-    void updateAndReturnIdNull() {
+    void updateAndReturnNull() {
         //given
         List<String> tagNames = null;
 
         //when & then
         assertAll(
-                () -> assertThat(tagService.updateAndReturnId(tagNames)).isEmpty(),
+                () -> assertThat(tagService.updateAndReturn(tagNames)).isEmpty(),
                 () -> verify(tagRepository, times(0)).findExistName(tagNames),
                 () -> verify(tagRepository, times(0)).saveAll(anyCollection()),
-                () -> verify(tagRepository, times(0)).findIdByName(tagNames)
+                () -> verify(tagRepository, times(0)).findAllByName(tagNames)
         );
     }
 
-    @DisplayName("updateAndReturnId - 요청 리스트가 empty List 일 경우 Optional.empty 가 반환된다.")
+    @DisplayName("updateAndReturn - 요청 리스트가 empty List 일 경우 Optional.empty 가 반환된다.")
     @Test
     void updateAndReturnIdEmpty() {
         //given
@@ -166,10 +167,10 @@ class TagServiceTest {
 
         //when & then
         assertAll(
-                () -> assertThat(tagService.updateAndReturnId(tagNames)).isEmpty(),
+                () -> assertThat(tagService.updateAndReturn(tagNames)).isEmpty(),
                 () -> verify(tagRepository, times(0)).findExistName(tagNames),
                 () -> verify(tagRepository, times(0)).saveAll(anyCollection()),
-                () -> verify(tagRepository, times(0)).findIdByName(tagNames)
+                () -> verify(tagRepository, times(0)).findAllByName(tagNames)
         );
     }
 

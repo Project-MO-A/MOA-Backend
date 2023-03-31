@@ -6,13 +6,13 @@ import com.moa.domain.member.RecruitMember;
 import com.moa.domain.recruit.Recruitment;
 import com.moa.domain.recruit.RecruitmentRepository;
 import com.moa.domain.recruit.tag.RecruitTag;
-import com.moa.domain.recruit.tag.TagRepository;
+import com.moa.domain.recruit.tag.Tag;
 import com.moa.domain.user.User;
 import com.moa.domain.user.UserRepository;
+import com.moa.dto.StatusResponse;
 import com.moa.dto.recruit.RecruitInfoResponse;
 import com.moa.dto.recruit.RecruitPostRequest;
 import com.moa.dto.recruit.RecruitUpdateRequest;
-import com.moa.dto.StatusResponse;
 import com.moa.global.exception.service.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,12 +29,11 @@ import static com.moa.global.exception.ErrorCode.RECRUITMENT_NOT_FOUND;
 public class RecruitmentService {
     private final RecruitmentRepository recruitmentRepository;
     private final UserRepository userRepository;
-    private final TagRepository tagRepository;
     private final ApplimentMemberRepository applimentMemberRepository;
 
-    public Long post(final Long userId, final RecruitPostRequest request, final List<Long> tagId) {
+    public Long post(final Long userId, final RecruitPostRequest request, final List<Tag> tags) {
         User user = userRepository.getReferenceById(userId);
-        Recruitment recruitment = request.toEntity(user, request.toMemberList(), getRecruitTags(tagId));
+        Recruitment recruitment = request.toEntity(user, request.toMemberList(), getRecruitTags(tags));
         applimentMemberRepository.save(new ApplimentMember(new RecruitMember(recruitment), user, APPROVED));
         return recruitmentRepository.save(recruitment).getId();
     }
@@ -46,10 +45,10 @@ public class RecruitmentService {
         return new RecruitInfoResponse(recruitment);
     }
 
-    public Long update(final Long recruitId, final RecruitUpdateRequest request, final List<Long> tagId) {
+    public Long update(final Long recruitId, final RecruitUpdateRequest request, final List<Tag> tags) {
         Recruitment recruitment = recruitmentRepository.findById(recruitId)
                 .orElseThrow(() -> new EntityNotFoundException(RECRUITMENT_NOT_FOUND));
-        recruitment.update(request, getRecruitTags(tagId));
+        recruitment.update(request, getRecruitTags(tags));
         return recruitment.getId();
     }
 
@@ -67,11 +66,8 @@ public class RecruitmentService {
         return recruitId;
     }
 
-    private List<RecruitTag> getRecruitTags(List<Long> tagId) {
-        return tagId.stream()
-                .map(tagRepository::getReferenceById)
-                .toList()
-                .stream()
+    private List<RecruitTag> getRecruitTags(List<Tag> tags) {
+        return tags.stream()
                 .map(RecruitTag::new)
                 .toList();
     }

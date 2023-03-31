@@ -68,6 +68,21 @@ class TagRepositoryTest {
         //when
         List<Long> id = tagRepository.findIdByName(tags);
 
+        //then
         assertThat(id).isEmpty();
+    }
+
+    @DisplayName("findAllByName - 태그명을 통해 엔티티 리스트를 조회한다.")
+    @Test
+    void findAllByName() {
+        //given
+        List<String> tags = List.of("tag1", "tag2", "tag3");
+        tagRepository.saveAll(tags.stream().map(Tag::new).toList());
+
+        //when
+        List<Tag> tagList = tagRepository.findAllByName(tags);
+
+        //then
+        assertThat(tagList.size()).isEqualTo(3);
     }
 }

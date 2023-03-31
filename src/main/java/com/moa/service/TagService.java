@@ -15,10 +15,10 @@ import java.util.Optional;
 public class TagService {
     private final TagRepository tagRepository;
 
-    public Optional<List<Long>> updateAndReturnId(List<String> tags) {
+    public Optional<List<Tag>> updateAndReturn(List<String> tags) {
         if (tags == null || tags.isEmpty()) return Optional.empty();
         update(tags);
-        return Optional.of(tagRepository.findIdByName(tags));
+        return Optional.of(tagRepository.findAllByName(tags));
     }
 
     public List<Tag> update(List<String> tags) {
