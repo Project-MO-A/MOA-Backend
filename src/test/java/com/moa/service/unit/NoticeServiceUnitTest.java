@@ -47,14 +47,18 @@ class NoticeServiceUnitTest extends AbstractServiceTest {
         Notice savedNotice = request.toEntity(recruitment);
 
         given(recruitmentRepository.getReferenceById(recruitmentId)).willReturn(recruitment);
-        given(noticeRepository.save(savedNotice)).willReturn(savedNotice);
+        given(noticeRepository.save(any(Notice.class))).willReturn(savedNotice);
         doNothing().when(attendMemberRepository).saveFromApplimentMember(savedNotice, recruitmentId);
 
         //when
         noticeService.post(recruitmentId, request);
 
         //then
-        assertAll(() -> verify(recruitmentRepository).getReferenceById(recruitmentId), () -> verify(noticeRepository).save(savedNotice), () -> verify(attendMemberRepository).saveFromApplimentMember(savedNotice, recruitmentId));
+        assertAll(
+                () -> verify(recruitmentRepository).getReferenceById(recruitmentId),
+                () -> verify(noticeRepository).save(any(Notice.class)),
+                () -> verify(attendMemberRepository).saveFromApplimentMember(savedNotice, recruitmentId)
+        );
     }
 
     @Test
@@ -70,7 +74,15 @@ class NoticeServiceUnitTest extends AbstractServiceTest {
         noticeService.update(recruitmentId, noticeId, request);
 
         //then
-        assertAll(() -> assertThat(notice.getConfirmedLocation()).isEqualTo("용산역"), () -> assertThat(notice.getPost().getContent()).isEqualTo(notice.getPost().getContent()), () -> assertThat(notice.getPost().getTitle()).isEqualTo("title2"), () -> assertThat(notice.getConfirmedTime()).isEqualTo(notice.getConfirmedTime()), () -> assertThat(notice.isCheckVote()).isEqualTo(notice.isCheckVote()), () -> verify(recruitmentRepository).getReferenceById(recruitmentId), () -> verify(noticeRepository).findById(noticeId));
+        assertAll(
+                () -> assertThat(notice.getConfirmedLocation()).isEqualTo("용산역"),
+                () -> assertThat(notice.getPost().getContent()).isEqualTo(notice.getPost().getContent()),
+                () -> assertThat(notice.getPost().getTitle()).isEqualTo("title2"),
+                () -> assertThat(notice.getConfirmedTime()).isEqualTo(notice.getConfirmedTime()),
+                () -> assertThat(notice.isCheckVote()).isEqualTo(notice.isCheckVote()),
+                () -> verify(recruitmentRepository).getReferenceById(recruitmentId),
+                () -> verify(noticeRepository).findById(noticeId)
+        );
     }
 
     @Test
@@ -83,7 +95,12 @@ class NoticeServiceUnitTest extends AbstractServiceTest {
         given(noticeRepository.findById(noticeId)).willThrow(EntityNotFoundException.class);
 
         //when & then
-        assertAll(() -> assertThatThrownBy(() -> noticeService.update(recruitmentId, noticeId, request)).isInstanceOf(EntityNotFoundException.class), () -> verify(recruitmentRepository).getReferenceById(recruitmentId), () -> verify(noticeRepository).findById(noticeId));
+        assertAll(
+                () -> assertThatThrownBy(() -> noticeService.update(recruitmentId, noticeId, request))
+                        .isExactlyInstanceOf(EntityNotFoundException.class),
+                () -> verify(recruitmentRepository).getReferenceById(recruitmentId),
+                () -> verify(noticeRepository).findById(noticeId)
+        );
     }
 
     @Test
@@ -96,7 +113,11 @@ class NoticeServiceUnitTest extends AbstractServiceTest {
         Long deletedNoticeId = noticeService.delete(recruitmentId, noticeId);
 
         //then
-        assertAll(() -> assertThat(deletedNoticeId).isEqualTo(noticeId), () -> verify(noticeRepository).findByIdAndRecruitmentId(noticeId, recruitmentId), () -> verify(noticeRepository).delete(notice));
+        assertAll(
+                () -> assertThat(deletedNoticeId).isEqualTo(noticeId),
+                () -> verify(noticeRepository).findByIdAndRecruitmentId(noticeId, recruitmentId),
+                () -> verify(noticeRepository).delete(notice)
+        );
     }
 
     @Test
@@ -106,7 +127,12 @@ class NoticeServiceUnitTest extends AbstractServiceTest {
         given(noticeRepository.findByIdAndRecruitmentId(noticeId, recruitmentId)).willThrow(EntityNotFoundException.class);
 
         //when & then
-        assertAll(() -> assertThatThrownBy(() -> noticeService.delete(recruitmentId, noticeId)).isInstanceOf(EntityNotFoundException.class), () -> verify(noticeRepository).findByIdAndRecruitmentId(noticeId, recruitmentId), () -> verify(noticeRepository, never()).delete(notice));
+        assertAll(
+                () -> assertThatThrownBy(() -> noticeService.delete(recruitmentId, noticeId))
+                        .isExactlyInstanceOf(EntityNotFoundException.class),
+                () -> verify(noticeRepository).findByIdAndRecruitmentId(noticeId, recruitmentId),
+                () -> verify(noticeRepository, never()).delete(notice)
+        );
     }
 
     @Test

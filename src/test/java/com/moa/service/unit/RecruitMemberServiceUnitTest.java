@@ -68,7 +68,7 @@ class RecruitMemberServiceUnitTest extends AbstractServiceTest {
 
         assertAll(
                 () -> assertThatThrownBy(() -> service.applyMember(request))
-                        .isInstanceOf(EntityNotFoundException.class),
+                        .isExactlyInstanceOf(EntityNotFoundException.class),
                 () -> verify(recruitMemberRepository).findByRecruitFieldAndRecruitmentId("backend", 1L),
                 () -> verify(userRepository, never()).getReferenceById(1L),
                 () -> verify(applimentMemberRepository, never()).save(any(ApplimentMember.class))

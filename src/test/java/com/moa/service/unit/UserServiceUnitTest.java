@@ -57,7 +57,7 @@ class UserServiceUnitTest extends AbstractServiceTest {
 
         //when & then
         assertThatThrownBy(() -> userService.loadUserByUsername(INCORRECT_EMAIL))
-                .isInstanceOf(UsernameNotFoundException.class);
+                .isExactlyInstanceOf(UsernameNotFoundException.class);
     }
 
     @Test
@@ -91,7 +91,7 @@ class UserServiceUnitTest extends AbstractServiceTest {
                 null, null, 0.0, 0.0, null);
         //when & then
         assertThatThrownBy(() -> userService.saveUser(request))
-                .isInstanceOf(BusinessException.class);
+                .isExactlyInstanceOf(BusinessException.class);
     }
 
     @Test
@@ -117,7 +117,7 @@ class UserServiceUnitTest extends AbstractServiceTest {
 
         //when & then
         assertThatThrownBy(() -> userService.getUserProfileInfoById(0L))
-                .isInstanceOf(EntityNotFoundException.class);
+                .isExactlyInstanceOf(EntityNotFoundException.class);
     }
     @Test
     @DisplayName("유저 작성 글 조회")
@@ -202,7 +202,7 @@ class UserServiceUnitTest extends AbstractServiceTest {
 
         //when & then
         assertThatThrownBy(() -> userService.getUserConcernInfoById(0L))
-                .isInstanceOf(EntityNotFoundException.class);
+                .isExactlyInstanceOf(EntityNotFoundException.class);
 
     }
     @Test
@@ -226,7 +226,7 @@ class UserServiceUnitTest extends AbstractServiceTest {
 
         //when & then
         assertThatThrownBy(() -> userService.deleteUser(0L))
-                .isInstanceOf(EntityNotFoundException.class);
+                .isExactlyInstanceOf(EntityNotFoundException.class);
     }
 
     @Test
@@ -255,7 +255,7 @@ class UserServiceUnitTest extends AbstractServiceTest {
 
         //when & then
         assertThatThrownBy(() -> userService.updateUser(request))
-                .isInstanceOf(EntityNotFoundException.class);
+                .isExactlyInstanceOf(EntityNotFoundException.class);
     }
     @Test
     @DisplayName("유저 비밀번호 변경 성공")
@@ -283,7 +283,7 @@ class UserServiceUnitTest extends AbstractServiceTest {
         //when & then
         assertAll(
                 () -> assertThatThrownBy(() -> userService.changePassword(request))
-                        .isInstanceOf(EntityNotFoundException.class),
+                        .isExactlyInstanceOf(EntityNotFoundException.class),
                 () -> verify(passwordEncoder, never()).matches(request.currentPassword(), request.newPassword())
         );
     }
@@ -299,7 +299,7 @@ class UserServiceUnitTest extends AbstractServiceTest {
         //when & then
         assertAll(
                 () -> assertThatThrownBy(() -> userService.changePassword(request))
-                        .isInstanceOf(BusinessException.class),
+                        .isExactlyInstanceOf(BusinessException.class),
                 () -> verify(userRepository).findByEmail(request.email()),
                 () -> verify(passwordEncoder).matches(request.currentPassword(), USER.getPassword())
         );
