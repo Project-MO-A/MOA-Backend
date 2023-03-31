@@ -10,6 +10,7 @@ import com.moa.domain.recruit.Recruitment;
 import com.moa.domain.user.User;
 import com.moa.dto.recruit.RecruitmentsInfo;
 import com.moa.dto.user.*;
+import com.moa.global.exception.BusinessException;
 import com.moa.global.exception.service.EntityNotFoundException;
 import com.moa.service.UserService;
 import org.junit.jupiter.api.DisplayName;
@@ -25,6 +26,7 @@ import static com.moa.constant.TestConst.*;
 import static com.moa.domain.recruit.Category.PROGRAMMING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
@@ -81,27 +83,15 @@ class UserServiceUnitTest extends AbstractServiceTest {
     }
 
     @Test
-    @DisplayName("유저 삭제")
-    void deleteUser() {
+    @DisplayName("중복 유저 저장으로 인한 실패")
+    void failSaveUserByDuplicated() {
         //given
-        given(userRepository.findById(1L)).willReturn(Optional.of(USER));
-
-        //when
-        userService.deleteUser(1L);
-
-        //then
-        verify(userRepository, times(1)).delete(USER);
-    }
-
-    @Test
-    @DisplayName("잘못된 이메일로 유저 삭제 불가")
-    void cannotDeleteUser() {
-        //given
-        given(userRepository.findById(0L)).willReturn(Optional.empty());
-
+        given(userRepository.findByEmail("duplicate@email.com")).willReturn(Optional.of(USER));
+        UserSignupRequest request = new UserSignupRequest("duplicate@email.com", "password", "name",
+                null, null, 0.0, 0.0, null);
         //when & then
-        assertThatThrownBy(() -> userService.deleteUser(0L))
-                .isInstanceOf(EntityNotFoundException.class);
+        assertThatThrownBy(() -> userService.saveUser(request))
+                .isInstanceOf(BusinessException.class);
     }
 
     @Test
@@ -120,6 +110,16 @@ class UserServiceUnitTest extends AbstractServiceTest {
     }
 
     @Test
+    @DisplayName("가입되지 않은 유저 기본 정보 조회 실패")
+    void failGetUserProfile() {
+        //given
+        given(userRepository.findById(0L)).willReturn(Optional.empty());
+
+        //when & then
+        assertThatThrownBy(() -> userService.getUserProfileInfoById(0L))
+                .isInstanceOf(EntityNotFoundException.class);
+    }
+    @Test
     @DisplayName("유저 작성 글 조회")
     void getUserWriting() {
         //given
@@ -136,7 +136,7 @@ class UserServiceUnitTest extends AbstractServiceTest {
         //then
         assertThat(info.getWriting().size()).isEqualTo(3);
         assertThat(info.getWriting().get(0).title()).isEqualTo("title1");
-        assertThat(info.getWriting().get(0).recruitStatus()).isEqualTo("RECRUITING");
+        assertThat(info.getWriting().get(0).recruitStatus()).isEqualTo("모집중");
     }
 
     @Test
@@ -176,7 +176,7 @@ class UserServiceUnitTest extends AbstractServiceTest {
         assertThat(info.getEtcProjects().get(0).title()).isEqualTo("recruitTitle1");
         assertThat(info.getEtcProjects().get(0).cancelUri()).startsWith("/recruitment/cancel/");
         assertThat(info.getEtcProjects().get(0).detailsUri()).startsWith("/recruitment/");
-        assertThat(info.getEtcProjects().get(0).status()).isEqualTo("PENDING");
+        assertThat(info.getEtcProjects().get(0).status()).isEqualTo("대기중");
     }
 
     @Test
@@ -192,6 +192,117 @@ class UserServiceUnitTest extends AbstractServiceTest {
         assertThat(info.getWriting().size()).isEqualTo(1);
         assertThat(info.getWriting().get(0).title()).isEqualTo("title");
         assertThat(info.getWriting().get(0).redirectUri()).startsWith("/recruitment/");
+    }
+
+    @Test
+    @DisplayName("가입되지 않은 유저의 관심글 조회 실패")
+    void failGetUserConcern() {
+        //given
+        given(userRepository.findRecruitmentInterestById(0L)).willReturn(Optional.empty());
+
+        //when & then
+        assertThatThrownBy(() -> userService.getUserConcernInfoById(0L))
+                .isInstanceOf(EntityNotFoundException.class);
+
+    }
+    @Test
+    @DisplayName("유저 삭제")
+    void deleteUser() {
+        //given
+        given(userRepository.findById(1L)).willReturn(Optional.of(USER));
+
+        //when
+        userService.deleteUser(1L);
+
+        //then
+        verify(userRepository, times(1)).delete(USER);
+    }
+
+    @Test
+    @DisplayName("잘못된 이메일로 유저 삭제 불가")
+    void cannotDeleteUser() {
+        //given
+        given(userRepository.findById(0L)).willReturn(Optional.empty());
+
+        //when & then
+        assertThatThrownBy(() -> userService.deleteUser(0L))
+                .isInstanceOf(EntityNotFoundException.class);
+    }
+
+    @Test
+    @DisplayName("유저 정보 변경 성공")
+    void successChangeUserProfile() {
+        //given
+        UserUpdateRequest request = new UserUpdateRequest(USER.getEmail(), "newName", USER.getNickname(), USER.getLocationLatitude(), USER.getLocationLongitude(), null, null);
+        given(userRepository.findByEmail(request.email())).willReturn(Optional.of(USER));
+
+        //when
+        userService.updateUser(request);
+
+        //then
+        assertAll(
+                () -> assertThat(USER.getName()).isEqualTo("newName"),
+                () -> assertThat(USER.getDetails()).isEqualTo(USER.getDetails())
+        );
+    }
+
+    @Test
+    @DisplayName("존재하지 않은 유저 정보 실패")
+    void failChangeUserProfile() {
+        //given
+        UserUpdateRequest request = new UserUpdateRequest(USER.getEmail(), "newName", USER.getNickname(), USER.getLocationLatitude(), USER.getLocationLongitude(), null, null);
+        given(userRepository.findByEmail(request.email())).willReturn(Optional.empty());
+
+        //when & then
+        assertThatThrownBy(() -> userService.updateUser(request))
+                .isInstanceOf(EntityNotFoundException.class);
+    }
+    @Test
+    @DisplayName("유저 비밀번호 변경 성공")
+    void successChangePassword() {
+        //given
+        UserPwUpdateRequest request = new UserPwUpdateRequest(USER.getEmail(), USER.getPassword(), "newPassword");
+        given(userRepository.findByEmail(request.email())).willReturn(Optional.of(USER));
+        given(passwordEncoder.matches(request.currentPassword(), USER.getPassword())).willReturn(true);
+        given(passwordEncoder.encode(request.newPassword())).willReturn(request.newPassword());
+
+        //when
+        userService.changePassword(request);
+
+        //then
+        assertThat(USER.getPassword()).isEqualTo("newPassword");
+    }
+
+    @Test
+    @DisplayName("가입되 있지 않은 유저의 비밀번호 변경 실패")
+    void failChangePasswordByNoUser() {
+        //given
+        UserPwUpdateRequest request = new UserPwUpdateRequest(USER.getEmail(), USER.getPassword(), "newPassword");
+        given(userRepository.findByEmail(request.email())).willThrow(EntityNotFoundException.class);
+
+        //when & then
+        assertAll(
+                () -> assertThatThrownBy(() -> userService.changePassword(request))
+                        .isInstanceOf(EntityNotFoundException.class),
+                () -> verify(passwordEncoder, never()).matches(request.currentPassword(), request.newPassword())
+        );
+    }
+
+    @Test
+    @DisplayName("기존 비밀번호를 잘못 입력해서 비밀번호 변경 실패")
+    void failChangePasswordByIncorrectBeforePassword() {
+        //given
+        UserPwUpdateRequest request = new UserPwUpdateRequest(USER.getEmail(), "wrongPassword", "newPassword");
+        given(userRepository.findByEmail(request.email())).willReturn(Optional.of(USER));
+        given(passwordEncoder.matches(request.currentPassword(), USER.getPassword())).willReturn(false);
+
+        //when & then
+        assertAll(
+                () -> assertThatThrownBy(() -> userService.changePassword(request))
+                        .isInstanceOf(BusinessException.class),
+                () -> verify(userRepository).findByEmail(request.email()),
+                () -> verify(passwordEncoder).matches(request.currentPassword(), USER.getPassword())
+        );
     }
 
 }
