@@ -7,14 +7,13 @@ import com.moa.service.PossibleTimeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RequiredArgsConstructor
 @RequestMapping("/recruitment/{recruitmentId}/time")
-@Controller
+@RestController
 public class PossibleTimeController {
     private final PossibleTimeService possibleTimeService;
 
