@@ -11,7 +11,7 @@ import javax.sql.DataSource;
 import java.sql.DatabaseMetaData;
 
 @Slf4j
-//@Configuration
+@Configuration
 public class ApplicationRunnerConfig {
 
     private static final String HOST_NAME = "localhost:8080";

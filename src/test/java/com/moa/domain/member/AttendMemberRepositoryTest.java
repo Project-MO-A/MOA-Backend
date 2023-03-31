@@ -11,14 +11,16 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.util.List;
 
-import static com.moa.domain.member.Attendance.NONE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace.NONE;
 
+@AutoConfigureTestDatabase(replace = NONE)
 @DataJpaTest(showSql = false)
 class AttendMemberRepositoryTest {
 
@@ -51,8 +53,8 @@ class AttendMemberRepositoryTest {
         notice1 = noticeRepository.save(Notice.builder().recruitment(recruitment).build());
         notice2 = noticeRepository.save(Notice.builder().recruitment(recruitment).build());
         notice3 = noticeRepository.save(Notice.builder().recruitment(recruitment).post(new Post("notice3", "content")).build());
-        attendMemberRepository.save(new AttendMember(NONE, user, notice1));
-        attendMemberRepository.save(new AttendMember(NONE, user, notice3));
+        attendMemberRepository.save(new AttendMember(Attendance.NONE, user, notice1));
+        attendMemberRepository.save(new AttendMember(Attendance.NONE, user, notice3));
 
         //참여멤버 등록
         for (int i = 0; i < 5; i++) {
@@ -62,8 +64,8 @@ class AttendMemberRepositoryTest {
                     memberUser1, ApprovalStatus.APPROVED));
             applimentMemberRepository.save(new ApplimentMember(new RecruitMember(recruitment, "백엔드", 5),
                     memberUser2, ApprovalStatus.APPROVED));
-            attendMemberRepository.save(new AttendMember(NONE, memberUser1, notice1));
-            attendMemberRepository.save(new AttendMember(NONE, memberUser2, notice2));
+            attendMemberRepository.save(new AttendMember(Attendance.NONE, memberUser1, notice1));
+            attendMemberRepository.save(new AttendMember(Attendance.NONE, memberUser2, notice2));
         }
     }
 
@@ -96,7 +98,7 @@ class AttendMemberRepositoryTest {
 
         //then
         assertAll(
-                () -> assertThat(attendMember.getAttendance()).isEqualTo(NONE),
+                () -> assertThat(attendMember.getAttendance()).isEqualTo(Attendance.NONE),
                 () -> assertThat(attendMember.getNotice().getPost().getTitle()).isEqualTo("notice3")
         );
     }
