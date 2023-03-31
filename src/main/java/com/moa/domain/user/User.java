@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -90,11 +91,25 @@ public class User {
     }
     
     public void update(UserUpdateRequest updateRequest) {
-        this.name = updateRequest.name();
-        this.nickname = updateRequest.nickname();
-        this.locationLatitude = updateRequest.locationLatitude();
-        this.locationLongitude = updateRequest.locationLongitude();
-        this.details = updateRequest.details();
+        this.name = validateStringValue(updateRequest.name(), this.name);
+        this.nickname = validateStringValue(updateRequest.nickname(), this.nickname);
+        this.locationLatitude = validateDouble(updateRequest.locationLatitude(), this.locationLatitude);
+        this.locationLongitude = validateDouble(updateRequest.locationLongitude(), this.locationLongitude);
+        this.details = validateStringValue(updateRequest.details(), this.details);
         addInterests(updateRequest.interestsValue());
+    }
+
+    private String validateStringValue(String value, String origin) {
+        if (StringUtils.hasText(value) && !value.equals(origin)) {
+            return value;
+        }
+        return origin;
+    }
+
+    private double validateDouble(double value, double origin) {
+        if (value != origin) {
+            return value;
+        }
+        return origin;
     }
 }
