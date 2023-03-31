@@ -1,5 +1,6 @@
 package com.moa.controller;
 
+import com.moa.dto.possible.PossibleTimeData;
 import com.moa.dto.possible.PossibleTimeRequest;
 import com.moa.dto.possible.PossibleTimeResponse;
 import com.moa.global.auth.model.JwtUser;
@@ -27,7 +28,7 @@ public class PossibleTimeController {
     }
 
     @GetMapping
-    public PossibleTimeResponse getTimeList(@PathVariable Long recruitmentId, @AuthenticationPrincipal JwtUser user) {
+    public List<PossibleTimeData> getTimeList(@PathVariable Long recruitmentId, @AuthenticationPrincipal JwtUser user) {
         return possibleTimeService.getTimeList(recruitmentId, user.id());
     }
 

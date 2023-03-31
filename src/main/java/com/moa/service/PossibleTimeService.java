@@ -7,6 +7,7 @@ import com.moa.domain.possible.Day;
 import com.moa.domain.possible.PossibleTime;
 import com.moa.domain.possible.PossibleTimeRepository;
 import com.moa.dto.member.ApprovedMemberResponse;
+import com.moa.dto.possible.PossibleTimeData;
 import com.moa.dto.possible.PossibleTimeRequest;
 import com.moa.dto.possible.PossibleTimeResponse;
 import com.moa.global.exception.service.EntityNotFoundException;
@@ -36,11 +37,11 @@ public class PossibleTimeService {
     }
 
     @Transactional(readOnly = true)
-    public PossibleTimeResponse getTimeList(final Long recruitmentId, final Long userId) {
+    public List<PossibleTimeData> getTimeList(final Long recruitmentId, final Long userId) {
         ApplimentMember applimentMember = applimentMemberRepository.findByRecruitIdAndUserId(recruitmentId, userId)
                 .orElseThrow(() -> new EntityNotFoundException(APPLIMENT_NOT_FOUND));
-        List<PossibleTime> allByApplyId = possibleTimeRepository.findAllByApplimentMemberId(applimentMember.getId());
-        return new PossibleTimeResponse(null, allByApplyId);
+        List<PossibleTime> possibleTimes = possibleTimeRepository.findAllByApplimentMemberId(applimentMember.getId());
+        return PossibleTimeResponse.getPossibleTimeData(possibleTimes);
     }
 
     public void setTime(final PossibleTimeRequest timeRequestList, final Long recruitmentId, final Long userId) {

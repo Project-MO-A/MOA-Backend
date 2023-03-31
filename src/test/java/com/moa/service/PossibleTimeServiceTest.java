@@ -128,11 +128,11 @@ class PossibleTimeServiceTest {
                 .willReturn(possibleTimes1);
 
         //when
-        PossibleTimeResponse timeList = possibleTimeService.getTimeList(recruitmentId, userId);
+        List<PossibleTimeData> timeList = possibleTimeService.getTimeList(recruitmentId, userId);
 
         //then
         assertAll(
-                () -> assertThat(timeList.getPossibleTimeData().size()).isEqualTo(3),
+                () -> assertThat(timeList.size()).isEqualTo(3),
                 () -> verify(applimentMemberRepository).findByRecruitIdAndUserId(recruitmentId, userId),
                 () -> verify(possibleTimeRepository).findAllByApplimentMemberId(any())
         );
