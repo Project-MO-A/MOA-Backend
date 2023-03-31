@@ -3,10 +3,12 @@ package com.moa.support.fixture;
 import com.moa.domain.interests.Interests;
 import com.moa.domain.user.Popularity;
 import com.moa.domain.user.User;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Getter
 public enum UserFixture {
     KAI("kai123@email.com", "asdfsqwe1234!", "이기우", "kai",
             34.123124, 31.123451, "안녕하세욤"),

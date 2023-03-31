@@ -6,12 +6,14 @@ import com.moa.domain.recruit.Category;
 import com.moa.domain.recruit.Recruitment;
 import com.moa.domain.recruit.tag.RecruitTag;
 import com.moa.domain.user.User;
+import lombok.Getter;
 
 import java.util.List;
 
 import static com.moa.domain.recruit.Category.PROGRAMMING;
 import static com.moa.domain.recruit.RecruitStatus.RECRUITING;
 
+@Getter
 public enum RecruitmentFixture {
     PROGRAMMING_POST("사이드 프로젝트 모집합니다.",
             "사이드 프로젝트 같이하실 프론트, 백엔드 개발자를 모집합니다", PROGRAMMING),
@@ -39,11 +41,8 @@ public enum RecruitmentFixture {
     }
 
     private Recruitment 기본_엔티티_생성(final User postUser) {
-        return Recruitment.builder()
+        return 기본_빌더_생성()
                 .user(postUser)
-                .post(new Post(this.title, this.content))
-                .status(RECRUITING)
-                .category(this.category)
                 .build();
     }
 

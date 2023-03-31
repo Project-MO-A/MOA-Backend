@@ -5,9 +5,11 @@ import com.moa.domain.member.ApprovalStatus;
 import com.moa.domain.member.RecruitMember;
 import com.moa.domain.recruit.Recruitment;
 import com.moa.domain.user.User;
+import lombok.Getter;
 
 import static com.moa.domain.member.ApprovalStatus.*;
 
+@Getter
 public enum ApplimentFixture {
     LEADER_MEMBER(APPROVED),
     APPROVED_MEMBER(APPROVED),

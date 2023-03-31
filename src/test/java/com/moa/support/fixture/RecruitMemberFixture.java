@@ -2,9 +2,11 @@ package com.moa.support.fixture;
 
 import com.moa.domain.member.RecruitMember;
 import com.moa.domain.recruit.Recruitment;
+import lombok.Getter;
 
 import java.util.List;
 
+@Getter
 public enum RecruitMemberFixture {
     BACKEND_MEMBER("백엔드", 5),
     FRONTEND_MEMBER("프론트엔드", 3),
