@@ -47,10 +47,10 @@ public class AdminService implements ApplimentHandler {
         return applimentMember.changeStatus(status);
     }
 
-    public double setApprovedPopularity(final Long applyId, final ApprovedPopularityRequest popularityRequest) {
+    public double setApprovedPopularity(final Long applyId, final double popularity) {
         ApplimentMember applimentMember = adminRepository.findApplimentMemberById(applyId)
                 .orElseThrow(() -> new EntityNotFoundException(APPLIMENT_NOT_FOUND));
-        applimentMember.setPopularity(popularityRequest.popularity());
+        applimentMember.setPopularity(popularity);
         return applimentMember.getPopularity();
     }
 }

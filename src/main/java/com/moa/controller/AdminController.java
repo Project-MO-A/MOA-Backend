@@ -20,7 +20,8 @@ public class AdminController {
 
     @GetMapping("/apply/members")
     public List<ApplimentMemberResponse> applimentMemberInfo (@PathVariable Long recruitmentId, @RequestParam(required = false) Integer statusCode) {
-        return adminService.getApplimentMembers(recruitmentId, ApprovalStatus.getStatus(statusCode));
+        ApprovalStatus status = statusCode != null ? ApprovalStatus.getStatus(statusCode) : null;
+        return adminService.getApplimentMembers(recruitmentId, status);
     }
 
     @PostMapping("/apply/{applyId}")
@@ -36,6 +37,6 @@ public class AdminController {
 
     @PostMapping("/approved/{applyId}/popularity")
     public double setPopularity(@PathVariable Long applyId, @RequestBody @Valid ApprovedPopularityRequest popularityRequest) {
-        return adminService.setApprovedPopularity(applyId, popularityRequest);
+        return adminService.setApprovedPopularity(applyId, popularityRequest.popularity());
     }
 }
