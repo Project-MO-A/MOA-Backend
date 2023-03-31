@@ -1,253 +1,371 @@
 package com.moa.service;
 
+import com.moa.domain.member.ApplimentMember;
+import com.moa.domain.member.ApplimentMemberRepository;
 import com.moa.domain.member.RecruitMember;
 import com.moa.domain.recruit.Recruitment;
 import com.moa.domain.recruit.RecruitmentRepository;
+import com.moa.domain.recruit.tag.RecruitTag;
+import com.moa.domain.recruit.tag.Tag;
+import com.moa.domain.user.User;
 import com.moa.domain.user.UserRepository;
+import com.moa.dto.StatusResponse;
 import com.moa.dto.member.RecruitMemberRequest;
 import com.moa.dto.recruit.RecruitInfoResponse;
 import com.moa.dto.recruit.RecruitPostRequest;
 import com.moa.dto.recruit.RecruitUpdateRequest;
-import com.moa.dto.user.UserSignupRequest;
 import com.moa.global.exception.service.EntityNotFoundException;
-import jakarta.persistence.EntityManager;
-import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.BeforeEach;
+import com.moa.global.exception.service.InvalidCodeException;
+import com.moa.global.exception.service.InvalidRequestException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-import static com.moa.domain.recruit.RecruitStatus.COMPLETE;
-import static com.moa.domain.recruit.RecruitStatus.RECRUITING;
-import static com.moa.dto.recruit.RecruitPostRequest.builder;
+import static com.moa.domain.recruit.RecruitStatus.getState;
+import static com.moa.support.fixture.RecruitMemberFixture.BACKEND_MEMBER;
+import static com.moa.support.fixture.RecruitMemberFixture.FRONTEND_MEMBER;
+import static com.moa.support.fixture.RecruitRequestFixture.ANOTHER_REQUEST;
+import static com.moa.support.fixture.RecruitRequestFixture.BASIC_REQUEST;
+import static com.moa.support.fixture.RecruitmentFixture.PROGRAMMING_POST;
+import static com.moa.support.fixture.TagFixture.BACKEND_TAG;
+import static com.moa.support.fixture.TagFixture.FRONTEND_TAG;
+import static com.moa.support.fixture.UserFixture.PINGU;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
-@SpringBootTest
-@Transactional
+@ExtendWith(MockitoExtension.class)
 class RecruitmentServiceTest {
-    @Autowired
-    RecruitmentService recruitmentService;
-    @Autowired
-    RecruitmentRepository recruitmentRepository;
+    @Mock
+    private RecruitmentRepository recruitmentRepository;
+    @Mock
+    private UserRepository userRepository;
+    @Mock
+    private ApplimentMemberRepository applimentMemberRepository;
 
-    @Autowired
-    UserService userService;
-    @Autowired
-    EntityManager em;
-
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    TagService tagService;
-
-    private static final String TEST_EMAIL = "test2@naver.com";
-
-    @BeforeEach
-    void setUser() {
-        List<String> interests = new ArrayList<>();
-        interests.add("Java");
-        interests.add("Python");
-
-        UserSignupRequest testUser = UserSignupRequest.builder()
-                .email(TEST_EMAIL)
-                .password("qwer1234")
-                .name("기우")
-                .nickname("john")
-                .details("Hello")
-                .locationLatitude(23.1551134)
-                .locationLongitude(51.2341355)
-                .interests(interests)
-                .build();
-
-        userService.saveUser(testUser);
-    }
+    @InjectMocks
+    private RecruitmentService recruitmentService;
 
     @DisplayName("post - 모집글 등록에 성공한다.")
     @Test
-    void post() {
+    void post() throws NoSuchFieldException, IllegalAccessException {
         //given
-        Long userId = userRepository.findByEmail(TEST_EMAIL).orElseThrow().getId();
-        RecruitMemberRequest memberRequest2 = new RecruitMemberRequest("백엔드", 5);
-        RecruitMemberRequest memberRequest1 = new RecruitMemberRequest("프론트엔드", 5);
+        final Long userId = 1L;
+        final List<Tag> tags = BACKEND_TAG.생성();
+        RecruitPostRequest postRequest = BASIC_REQUEST.등록_생성();
 
-        List<RecruitMemberRequest> list = List.of(memberRequest1, memberRequest2);
-        List<String> category = List.of("프로젝트", "개발", "팀프로젝트");
-        RecruitPostRequest request = builder()
-                .title("모집글 1")
-                .content("네이스")
-                .memberFields(list)
-                .tags(category)
-                .build();
-        tagService.update(category);
-        List<Long> categoryId = tagService.getId(category);
+        // Reflection
+        Recruitment recruitment = PROGRAMMING_POST.생성();
+        Field id = recruitment.getClass().getDeclaredField("id");
+        id.setAccessible(true);
+        id.set(recruitment, 1L);
+
+        given(userRepository.getReferenceById(userId)).willReturn(User.builder().build());
+        given(recruitmentRepository.save(any())).willReturn(recruitment);
+
 
         //when
-        Long postId = recruitmentService.post(userId, request, categoryId);
-        em.flush();
-        em.clear();
+        Long postId = recruitmentService.post(userId, postRequest, tags);
 
         //then
-        Recruitment recruitment = recruitmentRepository.findById(postId).orElseThrow();
-        assertThat(recruitment.getUser().getName()).isEqualTo("기우");
-        assertThat(recruitment.getStatus()).isEqualTo(RECRUITING);
-        assertThat(recruitment.getTags().size()).isEqualTo(3);
-        assertThat(recruitment.getMembers().size()).isEqualTo(3);
-        assertThat(recruitment.getMembers().get(0).getRecruitField()).containsAnyOf("LEADER", "백엔드", "프론트엔드");
+        assertAll(
+                () -> assertThat(postId).isEqualTo(1L),
+                () -> verify(userRepository).getReferenceById(userId),
+                () -> verify(applimentMemberRepository).save(any(ApplimentMember.class)),
+                () -> verify(recruitmentRepository).save(any(Recruitment.class))
+        );
+    }
+
+    @DisplayName("post - 모집 멤버가 null일 경우 예외가 발생한다.")
+    @Test
+    void post_memberNull() {
+        //given
+        final Long userId = 1L;
+        final List<Tag> tags = BACKEND_TAG.생성();
+        RecruitPostRequest postRequest = BASIC_REQUEST.멤버를_변경하여_등록_생성(null);
+        given(userRepository.getReferenceById(userId)).willReturn(User.builder().build());
+
+        //then
+        assertAll(
+                () -> assertThatThrownBy(() -> recruitmentService.post(userId, postRequest, tags))
+                        .isExactlyInstanceOf(InvalidRequestException.class),
+                () -> verify(userRepository).getReferenceById(userId),
+                () -> verify(applimentMemberRepository, times(0)).save(any(ApplimentMember.class)),
+                () -> verify(recruitmentRepository, times(0)).save(any(Recruitment.class))
+        );
+    }
+
+    @DisplayName("post - 모집 멤버가 empty 일 경우 예외가 발생한다.")
+    @Test
+    void post_memberEmpty() {
+        //given
+        final Long userId = 1L;
+        final List<Tag> tags = BACKEND_TAG.생성();
+        RecruitPostRequest postRequest = BASIC_REQUEST.멤버를_변경하여_등록_생성(new ArrayList<>());
+        given(userRepository.getReferenceById(userId)).willReturn(User.builder().build());
+
+        //then
+        assertAll(
+                () -> assertThatThrownBy(() -> recruitmentService.post(userId, postRequest, tags))
+                        .isExactlyInstanceOf(InvalidRequestException.class),
+                () -> verify(userRepository).getReferenceById(userId),
+                () -> verify(applimentMemberRepository, times(0)).save(any(ApplimentMember.class)),
+                () -> verify(recruitmentRepository, times(0)).save(any(Recruitment.class))
+        );
     }
 
     @DisplayName("모집글 수정, 확인, 삭제 테스트")
     @Nested
     class Service {
-        Long userId;
-        Long recruitId;
-        List<Long> categoryId;
-
-        @BeforeEach
-        void setUp() {
-            //given
-            userId = userRepository.findByEmail(TEST_EMAIL).orElseThrow().getId();
-            RecruitMemberRequest memberRequest2 = new RecruitMemberRequest("백엔드", 5);
-            RecruitMemberRequest memberRequest1 = new RecruitMemberRequest("프론트엔드", 5);
-
-            List<RecruitMemberRequest> list = List.of(memberRequest1, memberRequest2);
-            List<String> category = List.of("프로젝트", "개발", "팀프로젝트");
-            RecruitPostRequest request = builder()
-                    .title("모집글 1")
-                    .content("네이스")
-                    .memberFields(list)
-                    .tags(category)
-                    .build();
-            tagService.update(category);
-            categoryId = tagService.getId(category);
-            recruitId = recruitmentService.post(userId, request, categoryId);
-            em.flush();
-            em.clear();
-        }
-
         @DisplayName("getInfo - 모집글 정보를 불러오는데 성공한다.")
         @Test
         void getInfo() {
+            //given
+            final Long recruitId = 3L;
+            Recruitment recruitment = PROGRAMMING_POST.생성(PINGU.생성(),
+                    BACKEND_TAG.생성().stream().map(RecruitTag::new).toList(),
+                    List.of(BACKEND_MEMBER.생성(), FRONTEND_MEMBER.생성()));
+            given(recruitmentRepository.findByIdFetchUser(recruitId))
+                    .willReturn(Optional.of(recruitment));
+
             //when
             RecruitInfoResponse info = recruitmentService.getInfo(recruitId);
 
             //then
-            assertThat(info.getTitle()).isEqualTo("모집글 1");
-            assertThat(info.getContent()).isEqualTo("네이스");
-            assertThat(info.getState()).isEqualTo(RECRUITING);
-            assertThat(info.getPostUser().userName()).isEqualTo("기우");
-            assertThat(info.getTags().size()).isEqualTo(3);
-            assertThat(info.getMembers().size()).isEqualTo(3);
-            assertThat(info.getMembers().get(1).recruitField()).contains("프론트엔드");
-            assertThat(info.getMembers().get(0).recruitField()).contains("LEADER");
+            assertAll(
+                    () -> assertThat(info.getTitle()).isEqualTo(PROGRAMMING_POST.getTitle()),
+                    () -> assertThat(info.getPostUser().userName()).isEqualTo(PINGU.getName()),
+                    () -> verify(recruitmentRepository).findByIdFetchUser(recruitId)
+            );
+        }
+
+        @DisplayName("getInfo - 잘못된 모집글 ID를 입력하면 예외가 발생한다.")
+        @Test
+        void getInfo_invalidRecruitId() {
+            //given
+            final Long invalidRecruitId = 999L;
+            given(recruitmentRepository.findByIdFetchUser(invalidRecruitId))
+                    .willThrow(EntityNotFoundException.class);
+
+            //when & then
+            assertThatThrownBy(() -> recruitmentService.getInfo(invalidRecruitId))
+                    .isExactlyInstanceOf(EntityNotFoundException.class);
         }
 
         @DisplayName("update - 모집글 수정에 성공한다. (타이틀, 내용)")
         @Test
         void updatePost() {
             //given
-            RecruitUpdateRequest updateRequest = RecruitUpdateRequest.builder()
-                    .title("web project")
-                    .content("welcome")
-                    .build();
+            final Long recruitId = 1L;
+            final List<Tag> updateTag = FRONTEND_TAG.생성();
+            RecruitUpdateRequest updateRequest = ANOTHER_REQUEST.수정_생성();
+
+            Recruitment basicRecruit = PROGRAMMING_POST.생성(PINGU.생성(),
+                    BACKEND_TAG.생성().stream().map(RecruitTag::new).toList(),
+                    List.of(BACKEND_MEMBER.생성(), FRONTEND_MEMBER.생성()));
+            given(recruitmentRepository.findById(recruitId))
+                    .willReturn(Optional.of(basicRecruit));
 
             //when
-            Long update = recruitmentService.update(recruitId, updateRequest,  new ArrayList<>());
+            recruitmentService.update(recruitId, updateRequest, updateTag);
 
             //then
-            Recruitment updated = recruitmentRepository.findById(update).get();
-            assertThat(updated.getPost().getTitle()).isEqualTo("web project");
-            assertThat(updated.getPost().getContent()).isEqualTo("welcome");
-            assertThat(updated.getMembers().size()).isEqualTo(3);
-            assertThat(updated.getTags().size()).isEqualTo(3);
+            assertAll(
+                    () -> assertThat(basicRecruit.getPost().getTitle()).isEqualTo(ANOTHER_REQUEST.getTitle()),
+                    () -> verify(recruitmentRepository).findById(recruitId)
+            );
         }
 
         @DisplayName("update - 모집글 수정에 성공한다. (모집 멤버 그룹)")
         @Test
         void updateRecruitMember() {
             //given
-            RecruitMemberRequest memberUpdate1 = new RecruitMemberRequest("백엔드", 5);
-            RecruitMemberRequest memberUpdate2 = new RecruitMemberRequest("프론트엔드", 5);
-            RecruitMemberRequest memberUpdate3 = new RecruitMemberRequest("디자이너", 2);
-            List<RecruitMemberRequest> updateMember = List.of(memberUpdate1, memberUpdate2, memberUpdate3);
-            RecruitUpdateRequest updateRequest = RecruitUpdateRequest.builder()
-                    .memberFields(updateMember)
-                    .build();
+            final Long recruitId = 1L;
+            final List<Tag> updateTag = FRONTEND_TAG.생성();
+            RecruitUpdateRequest updateRequest = ANOTHER_REQUEST.멤버를_변경하여_수정_생성(
+                    List.of(
+                            new RecruitMemberRequest("디자이너", 1),
+                            new RecruitMemberRequest("인프라", 2)
+                    )
+            );
+
+            Recruitment basicRecruit = PROGRAMMING_POST.생성(PINGU.생성(),
+                    BACKEND_TAG.생성().stream().map(RecruitTag::new).toList(),
+                    List.of(BACKEND_MEMBER.생성(), FRONTEND_MEMBER.생성()));
+            given(recruitmentRepository.findById(recruitId))
+                    .willReturn(Optional.of(basicRecruit));
 
             //when
-            Long update = recruitmentService.update(recruitId, updateRequest, new ArrayList<>());
+            recruitmentService.update(recruitId, updateRequest, updateTag);
 
             //then
-            Recruitment updated = recruitmentRepository.findById(update).get();
-            List<String> fileds = updated.getMembers().stream()
-                    .map(RecruitMember::getRecruitField)
-                    .toList();
-
-            assertThat(updated.getPost().getTitle()).isEqualTo("모집글 1");
-            assertThat(updated.getPost().getContent()).isEqualTo("네이스");
-            assertThat(updated.getTags().size()).isEqualTo(3);
-            assertThat(fileds.size()).isEqualTo(3);
-            assertThat(fileds).containsOnly("백엔드", "프론트엔드", "디자이너");
+            RecruitMember recruitMember1 = basicRecruit.getMembers().get(0);
+            RecruitMember recruitMember2 = basicRecruit.getMembers().get(1);
+            assertAll(
+                    () -> assertThat(recruitMember1.getRecruitField()).isEqualTo("디자이너"),
+                    () -> assertThat(recruitMember2.getRecruitField()).isEqualTo("인프라"),
+                    () -> verify(recruitmentRepository).findById(recruitId)
+            );
         }
 
         @DisplayName("update - 모집글 수정에 성공한다. (카테고리)")
         @Test
         void updateCategory() {
             //given
-            List<String> updateCategory = List.of("API", "백엔드", "크롤링", "자기개발");
-            RecruitUpdateRequest updateRequest = RecruitUpdateRequest.builder()
-                    .tags(updateCategory)
-                    .build();
+            final Long recruitId = 1L;
+            final List<Tag> updateTag = FRONTEND_TAG.생성();
+            RecruitUpdateRequest updateRequest = ANOTHER_REQUEST.수정_생성();
+
+            Recruitment basicRecruit = PROGRAMMING_POST.생성(PINGU.생성(),
+                    BACKEND_TAG.생성().stream().map(RecruitTag::new).toList(),
+                    List.of(BACKEND_MEMBER.생성(), FRONTEND_MEMBER.생성()));
+            given(recruitmentRepository.findById(recruitId))
+                    .willReturn(Optional.of(basicRecruit));
 
             //when
-            List<Long> updatedCategoryId = tagService.updateAndReturnId(updateRequest.tags()).get();
-            Long update = recruitmentService.update(recruitId, updateRequest, updatedCategoryId);
+            recruitmentService.update(recruitId, updateRequest, updateTag);
 
             //then
-            Recruitment updated = recruitmentRepository.findById(update).get();
-            List<String> updatedCategory = updated.getTags().stream()
-                    .map(rc -> rc.getTag().getName())
-                    .toList();
-
-            assertThat(updated.getPost().getTitle()).isEqualTo("모집글 1");
-            assertThat(updated.getPost().getContent()).isEqualTo("네이스");
-            assertThat(updated.getMembers().size()).isEqualTo(3);
-            assertThat(updatedCategory.size()).isEqualTo(4);
-            assertThat(updatedCategory).containsOnly("API", "백엔드", "크롤링", "자기개발");
+            assertAll(
+                    () -> assertThat(basicRecruit.getTags().size()).isEqualTo(updateTag.size()),
+                    () -> verify(recruitmentRepository).findById(recruitId)
+            );
         }
 
-        @DisplayName("delete - 모집글 삭제에 성공한다.")
+        @DisplayName("update - 모집 멤버가 없을 경우 예외가 발생한다.")
         @Test
-        void delete() {
-            //when
-            Long delete = recruitmentService.delete(recruitId);
+        void update_invalidRequest() {
+            //given
+            final Long recruitId = 1L;
+            final List<Tag> updateTag = FRONTEND_TAG.생성();
+            RecruitUpdateRequest updateRequest = ANOTHER_REQUEST.멤버를_변경하여_수정_생성(new ArrayList<>());
 
-            //then
-            assertThat(recruitmentRepository.findById(delete)).isEmpty();
+            Recruitment basicRecruit = PROGRAMMING_POST.생성(PINGU.생성(),
+                    BACKEND_TAG.생성().stream().map(RecruitTag::new).toList(),
+                    List.of(BACKEND_MEMBER.생성(), FRONTEND_MEMBER.생성()));
+            given(recruitmentRepository.findById(recruitId))
+                    .willReturn(Optional.of(basicRecruit));
+
+            //when & then
+            assertThatThrownBy(() -> recruitmentService.update(recruitId, updateRequest, updateTag))
+                            .isExactlyInstanceOf(InvalidRequestException.class);
         }
 
-        @DisplayName("delete - 모집글 삭제에 실패한다. (잘못된 ID)")
+        @DisplayName("update - 잘못된 ID 가 입력될 경우 예외가 발생한다.")
         @Test
-        void deleteFail() {
-            //when
-            assertThatThrownBy(() -> recruitmentService.delete(Long.MAX_VALUE))
-                    .isInstanceOf(EntityNotFoundException.class);
+        void update_invalidRecruitId() {
+            //given
+            final Long invalidId = 999L;
+            final List<Tag> updateTag = FRONTEND_TAG.생성();
+            RecruitUpdateRequest updateRequest = ANOTHER_REQUEST.수정_생성();
+
+            given(recruitmentRepository.findById(invalidId))
+                    .willThrow(EntityNotFoundException.class);
+
+            //when & then
+            assertThatThrownBy(() -> recruitmentService.update(invalidId, updateRequest, updateTag))
+                    .isExactlyInstanceOf(EntityNotFoundException.class);
         }
 
         @DisplayName("updateStatus - 모집글 상태 변경에 성공한다.")
         @Test
         void updateState() {
+            //given
+            final Long recruitId = 1L;
+            final int statusCode = 2;
+
+            Recruitment basicRecruit = PROGRAMMING_POST.생성(PINGU.생성(),
+                    BACKEND_TAG.생성().stream().map(RecruitTag::new).toList(),
+                    List.of(BACKEND_MEMBER.생성(), FRONTEND_MEMBER.생성()));
+            given(recruitmentRepository.findById(recruitId))
+                    .willReturn(Optional.of(basicRecruit));
+
             //when
-            recruitmentService.updateStatus(recruitId, 2);
+            StatusResponse statusResponse = recruitmentService.updateStatus(recruitId, statusCode);
 
             //then
-            Recruitment updated = recruitmentRepository.findById(recruitId).get();
-            assertThat(updated.getStatus()).isEqualTo(COMPLETE);
+            assertAll(
+                    () -> assertThat(statusResponse.status()).isEqualTo(getState(statusCode).name()),
+                    () -> verify(recruitmentRepository).findById(recruitId)
+            );
+        }
+
+        @DisplayName("updateStatus - 잘못된 상태 코드일 경우 예외가 발생한다.")
+        @Test
+        void updateState_invalidCode() {
+            //given
+            final Long recruitId = 1L;
+            final int statusCode = 4;
+
+            Recruitment basicRecruit = PROGRAMMING_POST.생성(PINGU.생성(),
+                    BACKEND_TAG.생성().stream().map(RecruitTag::new).toList(),
+                    List.of(BACKEND_MEMBER.생성(), FRONTEND_MEMBER.생성()));
+            given(recruitmentRepository.findById(recruitId))
+                    .willReturn(Optional.of(basicRecruit));
+
+            //when & then
+            assertAll(
+                    () -> assertThatThrownBy(() -> recruitmentService.updateStatus(recruitId, statusCode))
+                            .isExactlyInstanceOf(InvalidCodeException.class),
+                    () -> verify(recruitmentRepository).findById(recruitId)
+            );
+        }
+
+        @DisplayName("delete - 모집글 삭제에 성공한다.")
+        @Test
+        void delete() {
+            //given
+            final Long recruitId = 3L;
+            Recruitment basicRecruit = PROGRAMMING_POST.생성(PINGU.생성(),
+                    BACKEND_TAG.생성().stream().map(RecruitTag::new).toList(),
+                    List.of(BACKEND_MEMBER.생성(), FRONTEND_MEMBER.생성()));
+
+            given(recruitmentRepository.findById(recruitId))
+                    .willReturn(Optional.of(basicRecruit));
+
+            //when
+            Long delete = recruitmentService.delete(recruitId);
+
+            //then
+            assertAll(
+                    () -> assertThat(delete).isEqualTo(recruitId),
+                    () -> verify(recruitmentRepository).findById(recruitId),
+                    () -> verify(recruitmentRepository).delete(basicRecruit)
+            );
+        }
+
+        @DisplayName("delete - 모집글 삭제에 실패한다. (잘못된 ID)")
+        @Test
+        void deleteFail() {
+            //given
+            final Long invalidId = 999L;
+            Recruitment basicRecruit = PROGRAMMING_POST.생성(PINGU.생성(),
+                    BACKEND_TAG.생성().stream().map(RecruitTag::new).toList(),
+                    List.of(BACKEND_MEMBER.생성(), FRONTEND_MEMBER.생성()));
+
+            given(recruitmentRepository.findById(invalidId))
+                    .willThrow(EntityNotFoundException.class);
+
+            //when & then
+            assertAll(
+                    () -> assertThatThrownBy(()-> recruitmentService.delete(invalidId))
+                            .isExactlyInstanceOf(EntityNotFoundException.class),
+                    () -> verify(recruitmentRepository).findById(invalidId),
+                    () -> verify(recruitmentRepository, times(0)).delete(basicRecruit)
+            );
         }
     }
 }
