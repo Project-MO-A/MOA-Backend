@@ -425,7 +425,9 @@ class AdminControllerTest {
 
         //then
         actions.andExpectAll(
-                status().isBadRequest()
+                status().isBadRequest(),
+                jsonPath("$.message").value("must be less than or equal to 5.0"),
+                jsonPath("$.code").value("400")
         ).andDo(print());
 
         verify(adminService, times(0)).setApprovedPopularity(anyLong(), anyDouble());
@@ -445,7 +447,9 @@ class AdminControllerTest {
 
         //then
         actions.andExpectAll(
-                status().isBadRequest()
+                status().isBadRequest(),
+                jsonPath("$.message").value("must be greater than or equal to 0.5"),
+                jsonPath("$.code").value("400")
         ).andDo(print());
 
         verify(adminService, times(0)).setApprovedPopularity(anyLong(), anyDouble());
