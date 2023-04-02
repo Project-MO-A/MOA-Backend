@@ -20,10 +20,12 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 public class LoginProcessFilter extends AbstractAuthenticationProcessingFilter {
 
     private static final String DEFAULT_FILTER_PROCESSES_URL = "/user/login";
+    private final AuthenticationManager manager;
     private final ObjectMapper objectMapper;
 
     public LoginProcessFilter(ObjectMapper objectMapper, AuthenticationManager authenticationManager) {
         super(DEFAULT_FILTER_PROCESSES_URL, authenticationManager);
+        this.manager = authenticationManager;
         this.objectMapper = objectMapper;
     }
 
@@ -33,7 +35,7 @@ public class LoginProcessFilter extends AbstractAuthenticationProcessingFilter {
         Login loginInfo = objectMapper.readValue(request.getInputStream(), Login.class);
         loginInfo.valid();
         UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(loginInfo.email, loginInfo.password);
-        return this.getAuthenticationManager().authenticate(authRequest);
+        return this.manager.authenticate(authRequest);
     }
 
     private static void validateRequest(HttpServletRequest request) {
