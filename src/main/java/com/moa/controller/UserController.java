@@ -1,12 +1,12 @@
 package com.moa.controller;
 
+import com.moa.dto.ValueResponse;
 import com.moa.dto.recruit.RecruitmentsInfo;
 import com.moa.dto.user.*;
 import com.moa.global.auth.model.JwtUser;
 import com.moa.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,11 +19,10 @@ public class UserController {
 
     private final UserService userService;
 
+    @ResponseStatus(CREATED)
     @PostMapping("/sign-up")
-    public ResponseEntity<UserEmailResponse> signUp(@RequestBody @Valid UserSignupRequest request) {
-        return ResponseEntity
-                .status(CREATED)
-                .body(userService.saveUser(request));
+    public UserEmailResponse signUp(@RequestBody @Valid UserSignupRequest request) {
+        return userService.saveUser(request);
     }
 
     @ResponseStatus(OK)
@@ -65,7 +64,7 @@ public class UserController {
     }
 
     @GetMapping("/check/email")
-    public Boolean checkEmailUnique(@RequestBody @Valid EmailDuplicateRequest request) {
-        return userService.checkEmailUnique(request.email());
+    public ValueResponse<Boolean> checkEmailUnique(@RequestBody @Valid EmailDuplicateRequest request) {
+        return new ValueResponse<>(userService.checkEmailUnique(request.email()));
     }
 }
