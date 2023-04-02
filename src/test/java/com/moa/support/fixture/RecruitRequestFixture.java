@@ -34,38 +34,46 @@ public enum RecruitRequestFixture {
     }
 
     public RecruitPostRequest 등록_생성() {
-        return RecruitPostRequest.builder()
-                .title(this.title)
-                .content(this.content)
-                .tags(this.tags)
-                .memberFields(this.requests)
+        return 기본_등록_빌더()
+                .build();
+    }
+
+    public RecruitPostRequest 제목을_변경하여_등록_생성(String title) {
+        return 기본_등록_빌더()
+                .title(title)
                 .build();
     }
 
     public RecruitPostRequest 멤버를_변경하여_등록_생성(List<RecruitMemberRequest> requests) {
-        return RecruitPostRequest.builder()
-                .title(this.title)
-                .content(this.content)
-                .tags(this.tags)
+        return 기본_등록_빌더()
                 .memberFields(requests)
                 .build();
     }
 
     public RecruitUpdateRequest 수정_생성() {
-        return RecruitUpdateRequest.builder()
-                .title(this.title)
-                .content(this.content)
-                .tags(this.tags)
-                .memberFields(this.requests)
+        return 기본_수정_빌더()
                 .build();
     }
 
     public RecruitUpdateRequest 멤버를_변경하여_수정_생성(List<RecruitMemberRequest> requests) {
+        return 기본_수정_빌더()
+                .memberFields(requests)
+                .build();
+    }
+
+    private RecruitPostRequest.RecruitPostRequestBuilder 기본_등록_빌더() {
+        return RecruitPostRequest.builder()
+                .title(this.title)
+                .content(this.content)
+                .tags(this.tags)
+                .memberFields(this.requests);
+    }
+
+    private RecruitUpdateRequest.RecruitUpdateRequestBuilder 기본_수정_빌더() {
         return RecruitUpdateRequest.builder()
                 .title(this.title)
                 .content(this.content)
                 .tags(this.tags)
-                .memberFields(requests)
-                .build();
+                .memberFields(this.requests);
     }
 }
