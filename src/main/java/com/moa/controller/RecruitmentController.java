@@ -40,7 +40,7 @@ public class RecruitmentController {
     }
 
     @PatchMapping("/{recruitmentId}")
-    public Long updatePost(@PathVariable Long recruitmentId, @RequestBody @Valid RecruitUpdateRequest request) {
+    public Long update(@PathVariable Long recruitmentId, @RequestBody @Valid RecruitUpdateRequest request) {
         List<Tag> tags = tagService.updateAndReturn(request.tags()).orElse(new ArrayList<>());
         return recruitmentService.update(recruitmentId, request, tags);
     }
