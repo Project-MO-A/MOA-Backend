@@ -39,7 +39,7 @@ public class LoginProcessFilter extends AbstractAuthenticationProcessingFilter {
     }
 
     private static void validateRequest(HttpServletRequest request) {
-        if (!request.getContentType().equals(APPLICATION_JSON_VALUE) && !request.getMethod().equals(POST.name())) {
+        if (!request.getContentType().equals(APPLICATION_JSON_VALUE) || !request.getMethod().equals(POST.name())) {
             throw new BusinessAuthenticationException(BAD_HTTP_REQUEST);
         }
     }
