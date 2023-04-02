@@ -2,11 +2,11 @@ package com.moa;
 
 import com.moa.domain.member.*;
 import com.moa.domain.notice.NoticeRepository;
-import com.moa.domain.possible.Day;
 import com.moa.domain.possible.PossibleTime;
 import com.moa.domain.possible.PossibleTimeRepository;
 import com.moa.domain.recruit.Recruitment;
 import com.moa.domain.recruit.RecruitmentRepository;
+import com.moa.domain.recruit.tag.Tag;
 import com.moa.domain.user.AlarmRepository;
 import com.moa.domain.user.User;
 import com.moa.domain.user.UserRepository;
@@ -27,7 +27,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.moa.domain.member.ApprovalStatus.APPROVED;
-import static com.moa.domain.member.ApprovalStatus.PENDING;
 import static com.moa.domain.possible.Day.*;
 
 @Profile("local-test")
@@ -115,11 +114,11 @@ public class InitData {
                     ))
                     .tags(List.of("프로젝트", "웹", "Java", "MySQL"))
                     .build();
-            List<Long> categoryId = tagService.updateAndReturnId(request.tags()).orElse(new ArrayList<>());
+            List<Tag> categoryId = tagService.updateAndReturn(request.tags()).orElse(new ArrayList<>());
             Long recruitmentId = recruitmentService.post(user.getId(), request, categoryId);
             Recruitment recruitment = recruitmentRepository.findById(recruitmentId).get();
-            RecruitMember recruitMemberBackend = recruitMemberRepository.findByRecruitFieldAndRecruitmentId("백엔드", recruitmentId);
-            RecruitMember recruitMemberFrontend = recruitMemberRepository.findByRecruitFieldAndRecruitmentId("프론트엔드", recruitmentId);
+            RecruitMember recruitMemberBackend = recruitMemberRepository.findByRecruitFieldAndRecruitmentId("백엔드", recruitmentId).get();
+            RecruitMember recruitMemberFrontend = recruitMemberRepository.findByRecruitFieldAndRecruitmentId("프론트엔드", recruitmentId).get();
 
             ApplimentMember appliment1 = ApplimentMember.builder()
                     .user(user2)

@@ -76,7 +76,7 @@ class AdminServiceTest {
         assertAll(
                 () -> assertThat(approvedMembers.size()).isEqualTo(2),
                 () -> assertThat(approvedMembers.get(0).getPopularity()).isGreaterThan(1.0),
-                () -> assertThat(approvedMembers.get(0).getTotalVote()).isGreaterThan(1L)
+                () -> assertThat(approvedMembers.get(0).getTotalAttend()).isGreaterThan(1L)
         );
     }
 
@@ -108,7 +108,7 @@ class AdminServiceTest {
     @DisplayName("setApprovedPopularity - 신청 멤버 상태 변경에 성공한다.")
     @Test
     void setApprovedPopularity() {//when
-        double popularity = adminService.setApprovedPopularity(1L, new ApprovedPopularityRequest(3.5));
+        double popularity = adminService.setApprovedPopularity(1L, 3.5);
 
         //then
         assertThat(popularity).isEqualTo(3.5);
@@ -118,7 +118,7 @@ class AdminServiceTest {
     @Test
     void setApprovedPopularityFail() {
         //when & then
-        assertThatThrownBy(() -> adminService.setApprovedPopularity(10L, new ApprovedPopularityRequest(3.5)))
+        assertThatThrownBy(() -> adminService.setApprovedPopularity(10L, 3.5))
                 .isInstanceOf(EntityNotFoundException.class);
     }
 

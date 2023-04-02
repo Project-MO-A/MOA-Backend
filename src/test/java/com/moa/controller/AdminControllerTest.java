@@ -228,7 +228,7 @@ class AdminControllerTest {
 
             //then
             actions.andExpectAll(
-                    status().isBadRequest(),
+                    status().isNotFound(),
                     jsonPath("$.message").value("잘못된 상태 코드입니다."),
                     jsonPath("$.code").value("S0001")
             ).andDo(print());
@@ -326,7 +326,7 @@ class AdminControllerTest {
 
             //then
             actions.andExpectAll(
-                    status().isBadRequest(),
+                    status().isNotFound(),
                     jsonPath("$.message").value("잘못된 상태 코드입니다."),
                     jsonPath("$.code").value("S0001")
             ).andDo(print());
