@@ -1,21 +1,16 @@
 package com.moa.controller;
 
+import com.moa.base.AbstractControllerUnitTest;
 import com.moa.base.WithMockCustomUser;
 import com.moa.dto.notice.VoteAttendanceRequest;
-import com.moa.global.config.WebBeanConfig;
 import com.moa.service.AttendMemberService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
 import org.springframework.restdocs.RestDocumentationContextProvider;
-import org.springframework.restdocs.RestDocumentationExtension;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -26,16 +21,11 @@ import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuild
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@AutoConfigureRestDocs
-@ExtendWith(RestDocumentationExtension.class)
 @WebMvcTest(AttendMemberController.class)
-@Import(WebBeanConfig.class)
-class AttendMemberControllerUnitTest {
+class AttendMemberControllerUnitTest extends AbstractControllerUnitTest {
 
     @MockBean
     private AttendMemberService attendMemberService;
-
-    private MockMvc mvc;
 
     @BeforeEach
     void setup(WebApplicationContext context, RestDocumentationContextProvider restDocumentation) {
