@@ -6,9 +6,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface RecruitMemberRepository extends JpaRepository<RecruitMember, Long> {
-    RecruitMember findByRecruitFieldAndRecruitmentId(String recruitField, Long recruitmentId);
+    Optional<RecruitMember> findByRecruitFieldAndRecruitmentId(String recruitField, Long recruitmentId);
 
     @EntityGraph(attributePaths = {"recruitment"}, type = EntityGraph.EntityGraphType.LOAD)
     @Query("select r from RecruitMember r where r.id in :id")
