@@ -7,9 +7,10 @@ import com.moa.domain.recruit.Recruitment;
 import com.moa.domain.recruit.tag.RecruitTag;
 import com.moa.domain.user.User;
 import com.moa.dto.member.RecruitMemberRequest;
-import com.moa.global.exception.ErrorCode;
 import com.moa.global.exception.service.InvalidRequestException;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
 
 import java.util.List;
@@ -20,7 +21,7 @@ import static com.moa.global.exception.ErrorCode.REQUEST_INVALID;
 public record RecruitPostRequest (
         @NotBlank String title,
         @NotBlank String content,
-        List<RecruitMemberRequest> memberFields,
+        @NotEmpty @Valid List<RecruitMemberRequest> memberFields,
         List<String> tags
 ) {
     public Recruitment toEntity(User user, List<RecruitMember> members, List<RecruitTag> tags) {

@@ -3,6 +3,7 @@ package com.moa.dto.recruit;
 import com.moa.domain.member.RecruitMember;
 import com.moa.dto.member.RecruitMemberRequest;
 import com.moa.global.exception.service.InvalidRequestException;
+import jakarta.validation.Valid;
 import lombok.Builder;
 
 import java.util.List;
@@ -14,7 +15,7 @@ public record RecruitUpdateRequest(
         String title,
         String content,
         Integer state,
-        List<RecruitMemberRequest> memberFields,
+        @Valid List<RecruitMemberRequest> memberFields,
         List<String> tags
 ) {
     public List<RecruitMember> toMemberList() {
