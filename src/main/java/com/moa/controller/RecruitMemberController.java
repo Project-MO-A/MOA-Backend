@@ -1,6 +1,6 @@
 package com.moa.controller;
 
-import com.moa.dto.StatusResponse;
+import com.moa.dto.ValueResponse;
 import com.moa.dto.recruit.RecruitApplyRequest;
 import com.moa.global.auth.model.JwtUser;
 import com.moa.service.RecruitMemberService;
@@ -17,8 +17,8 @@ public class RecruitMemberController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/{recruitmentId}/apply")
-    public StatusResponse applyToRecruit(@PathVariable Long recruitmentId, @RequestParam String position, @AuthenticationPrincipal JwtUser user) {
+    public ValueResponse<String> applyToRecruit(@PathVariable Long recruitmentId, @RequestParam String position, @AuthenticationPrincipal JwtUser user) {
         RecruitApplyRequest request = new RecruitApplyRequest(recruitmentId, position, user.id());
-        return new StatusResponse(recruitMemberService.applyMember(request));
+        return new ValueResponse<>(recruitMemberService.applyMember(request));
     }
 }

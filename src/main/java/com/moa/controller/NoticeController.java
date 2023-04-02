@@ -1,6 +1,6 @@
 package com.moa.controller;
 
-import com.moa.dto.IdResponse;
+import com.moa.dto.ValueResponse;
 import com.moa.dto.notice.*;
 import com.moa.service.NoticeService;
 import jakarta.validation.Valid;
@@ -18,18 +18,18 @@ public class NoticeController {
 
     @ResponseStatus(CREATED)
     @PostMapping
-    public IdResponse postNotice(@PathVariable Long recruitmentId, @RequestBody @Valid PostNoticeRequest request){
-        return new IdResponse(noticeService.post(recruitmentId, request));
+    public ValueResponse<Long> postNotice(@PathVariable Long recruitmentId, @RequestBody @Valid PostNoticeRequest request){
+        return new ValueResponse<>(noticeService.post(recruitmentId, request));
     }
 
     @PatchMapping("/{noticeId}")
-    public IdResponse update(@PathVariable Long recruitmentId, @PathVariable Long noticeId, @RequestBody @Valid UpdateNoticeRequest request){
-        return new IdResponse(noticeService.update(recruitmentId, noticeId, request));
+    public ValueResponse<Long> update(@PathVariable Long recruitmentId, @PathVariable Long noticeId, @RequestBody @Valid UpdateNoticeRequest request){
+        return new ValueResponse<>(noticeService.update(recruitmentId, noticeId, request));
     }
 
     @DeleteMapping("/{noticeId}")
-    public IdResponse delete(@PathVariable Long recruitmentId, @PathVariable Long noticeId){
-        return new IdResponse(noticeService.delete(noticeId, recruitmentId));
+    public ValueResponse<Long> delete(@PathVariable Long recruitmentId, @PathVariable Long noticeId){
+        return new ValueResponse<>(noticeService.delete(recruitmentId, noticeId));
     }
 
     @GetMapping
