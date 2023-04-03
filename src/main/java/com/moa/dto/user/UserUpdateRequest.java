@@ -12,8 +12,8 @@ import java.util.List;
 @Builder
 public record UserUpdateRequest(
         @Email @NotBlank String email,
-        @NotBlank @Length(min = 1, max = 15) String name,
-        @NotBlank @Length(min = 1, max = 15) String nickname,
+        @Length(min = 1, max = 15) String name,
+        @Length(min = 1, max = 15) String nickname,
         @Positive double locationLatitude,
         @Positive double locationLongitude,
         String details,

@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 public record PostNoticeRequest(
         @NotBlank String title,
         @NotBlank String content,
-        @NotBlank @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") LocalDateTime meetingTime,
+        @NotNull @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss") LocalDateTime meetingTime,
         String confirmedLocation,
         @NotNull Boolean checkVote
 ) {
