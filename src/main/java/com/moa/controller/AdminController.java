@@ -20,9 +20,9 @@ public class AdminController {
     private final AdminService adminService;
 
     @GetMapping("/apply/members")
-    public List<ApplimentMemberResponse> applimentMemberInfo (@PathVariable Long recruitmentId, @RequestParam(required = false) Integer statusCode) {
+    public ValueResponse<List<ApplimentMemberResponse>> applimentMemberInfo (@PathVariable Long recruitmentId, @RequestParam(required = false) Integer statusCode) {
         ApprovalStatus status = statusCode != null ? ApprovalStatus.getStatus(statusCode) : null;
-        return adminService.getApplimentMembers(recruitmentId, status);
+        return new ValueResponse<>(adminService.getApplimentMembers(recruitmentId, status));
     }
 
     @PostMapping("/apply/{applyId}")

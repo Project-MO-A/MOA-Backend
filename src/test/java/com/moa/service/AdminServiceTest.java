@@ -6,7 +6,6 @@ import com.moa.domain.member.ApprovalStatus;
 import com.moa.domain.member.RecruitMember;
 import com.moa.dto.member.ApplimentMemberResponse;
 import com.moa.dto.member.ApprovedMemberResponse;
-import com.moa.dto.member.ApprovedPopularityRequest;
 import com.moa.global.exception.service.EntityNotFoundException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -38,9 +37,10 @@ class AdminServiceTest {
 
         //then
         assertAll(
-                () ->assertThat(applimentMembers.size()).isEqualTo(2),
-                () ->assertThat(applimentMembers.get(0).status()).isEqualTo(PENDING),
-                () ->assertThat(applimentMembers.get(1).status()).isEqualTo(PENDING)
+                () -> assertThat(applimentMembers.size()).isEqualTo(2),
+                () -> assertThat(applimentMembers.get(0).status()).isEqualTo(PENDING),
+                () -> assertThat(applimentMembers.get(1).status()).isEqualTo(PENDING),
+                () -> assertThat(applimentMembers.get(0).redirectUri()).endsWith(String.valueOf(applimentMembers.get(0).userId()))
         );
     }
 
