@@ -1,8 +1,10 @@
 package com.moa.global.config.sub;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.moa.domain.user.UserRepository;
-import com.moa.global.auth.utils.JwtService;
+import com.moa.global.auth.token.AccessTokenProvider;
+import com.moa.global.auth.token.RefreshTokenProvider;
+import com.moa.global.auth.token.TokenExtractor;
+import com.moa.global.auth.token.TokenInjector;
 import com.moa.global.filter.BusinessExceptionHandlerFilter;
 import com.moa.global.filter.JwtAuthenticationFilter;
 import com.moa.global.filter.LoginProcessFilter;
@@ -15,8 +17,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 public class SecurityFilterBeanConfig {
 
     @Bean
-    public JwtProviderHandler jwtProviderHandler(JwtService jwtService, UserRepository userRepository) {
-        return new JwtProviderHandler(jwtService, userRepository);
+    public JwtProviderHandler jwtProviderHandler(AccessTokenProvider accessTokenProvider, RefreshTokenProvider refreshTokenProvider, TokenInjector tokenInjector) {
+        return new JwtProviderHandler(accessTokenProvider, refreshTokenProvider, tokenInjector);
     }
 
     @Bean
@@ -33,8 +35,8 @@ public class SecurityFilterBeanConfig {
     }
 
     @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter(JwtService jwtService, UserRepository userRepository) {
-        return new JwtAuthenticationFilter(jwtService, userRepository);
+    public JwtAuthenticationFilter jwtAuthenticationFilter(TokenExtractor extractor, TokenInjector injector, AccessTokenProvider accessTokenProvider, RefreshTokenProvider refreshTokenProvider) {
+        return new JwtAuthenticationFilter(extractor, injector, accessTokenProvider, refreshTokenProvider);
     }
 
     @Bean
