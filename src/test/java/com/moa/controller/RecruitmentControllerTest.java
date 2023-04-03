@@ -6,14 +6,12 @@ import com.moa.base.WithMockCustomUser;
 import com.moa.domain.recruit.tag.RecruitTag;
 import com.moa.dto.StatusResponse;
 import com.moa.dto.member.RecruitMemberRequest;
-import com.moa.dto.recruit.RecruitApplyRequest;
 import com.moa.dto.recruit.RecruitInfoResponse;
 import com.moa.dto.recruit.RecruitPostRequest;
 import com.moa.dto.recruit.RecruitUpdateRequest;
 import com.moa.global.config.WebBeanConfig;
 import com.moa.global.exception.service.EntityNotFoundException;
 import com.moa.global.exception.service.InvalidCodeException;
-import com.moa.service.RecruitMemberService;
 import com.moa.service.RecruitmentService;
 import com.moa.service.TagService;
 import org.junit.jupiter.api.BeforeEach;
@@ -56,8 +54,8 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @AutoConfigureRestDocs
 @ExtendWith(RestDocumentationExtension.class)
@@ -67,8 +65,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class RecruitmentControllerTest {
     @MockBean
     private RecruitmentService recruitmentService;
-    @MockBean
-    private RecruitMemberService recruitMemberService;
     @MockBean
     private TagService tagService;
     @Autowired
@@ -105,8 +101,8 @@ class RecruitmentControllerTest {
             //then
             action.andExpectAll(
                     status().isCreated(),
-                    content().string("1")
-            ).andDo(print());
+                    jsonPath("$.value").value("1")
+            );
 
             assertAll(
                     () -> verify(tagService).updateAndReturn(anyList()),
@@ -133,7 +129,7 @@ class RecruitmentControllerTest {
                     status().isBadRequest(),
                     jsonPath("$.code").value("400"),
                     jsonPath("$.message").value("must not be blank")
-            ).andDo(print());
+            );
 
             assertAll(
                     () -> verify(tagService, times(0)).updateAndReturn(anyList()),
@@ -160,7 +156,7 @@ class RecruitmentControllerTest {
                     status().isBadRequest(),
                     jsonPath("$.code").value("400"),
                     jsonPath("$.message").value("must not be empty")
-            ).andDo(print());
+            );
 
             assertAll(
                     () -> verify(tagService, times(0)).updateAndReturn(anyList()),
@@ -191,7 +187,7 @@ class RecruitmentControllerTest {
                     status().isBadRequest(),
                     jsonPath("$.code").value("400"),
                     jsonPath("$.message").value("must not be blank")
-            ).andDo(print());
+            );
 
             assertAll(
                     () -> verify(tagService, times(0)).updateAndReturn(anyList()),
@@ -222,7 +218,7 @@ class RecruitmentControllerTest {
                     status().isBadRequest(),
                     jsonPath("$.code").value("400"),
                     jsonPath("$.message").value("must be greater than 0")
-            ).andDo(print());
+            );
 
             assertAll(
                     () -> verify(tagService, times(0)).updateAndReturn(anyList()),
@@ -306,8 +302,8 @@ class RecruitmentControllerTest {
             //then
             action.andExpectAll(
                     status().isOk(),
-                    content().string("1")
-            ).andDo(print());
+                    jsonPath("$.value").value("1")
+            );
 
             assertAll(
                     () -> verify(tagService).updateAndReturn(any()),
@@ -336,8 +332,8 @@ class RecruitmentControllerTest {
             //then
             action.andExpectAll(
                     status().isOk(),
-                    content().string("1")
-            ).andDo(print());
+                    jsonPath("$.value").value("1")
+            );
 
             assertAll(
                     () -> verify(tagService).updateAndReturn(any()),
@@ -369,8 +365,8 @@ class RecruitmentControllerTest {
             //then
             action.andExpectAll(
                     status().isOk(),
-                    content().string("1")
-            ).andDo(print());
+                    jsonPath("$.value").value("1")
+            );
 
             assertAll(
                     () -> verify(tagService).updateAndReturn(any()),
@@ -404,7 +400,7 @@ class RecruitmentControllerTest {
                     status().isBadRequest(),
                     jsonPath("$.code").value("400"),
                     jsonPath("$.message").value("must not be blank")
-            ).andDo(print());
+            );
 
             assertAll(
                     () -> verify(tagService, times(0)).updateAndReturn(any()),
@@ -438,7 +434,7 @@ class RecruitmentControllerTest {
                     status().isBadRequest(),
                     jsonPath("$.code").value("400"),
                     jsonPath("$.message").value("must be greater than 0")
-            ).andDo(print());
+            );
 
             assertAll(
                     () -> verify(tagService, times(0)).updateAndReturn(any()),
@@ -465,7 +461,7 @@ class RecruitmentControllerTest {
             action.andExpectAll(
                     status().isOk(),
                     jsonPath("$.status").value("COMPLETE")
-            ).andDo(print());
+            );
 
             verify(recruitmentService).updateStatus(1L, 2);
         }
@@ -490,7 +486,7 @@ class RecruitmentControllerTest {
                     status().isNotFound(),
                     jsonPath("$.code").value("S0001"),
                     jsonPath("$.message").value("잘못된 상태 코드입니다.")
-            ).andDo(print());
+            );
 
             verify(recruitmentService).updateStatus(1L, 99);
         }
@@ -512,54 +508,9 @@ class RecruitmentControllerTest {
         //then
         action.andExpectAll(
                 status().isOk(),
-                content().string("1")
-        ).andDo(print());
+                jsonPath("$.value").value(1)
+        );
         verify(recruitmentService).delete(1L);
-    }
-
-    @DisplayName("모집글에 지원한다.")
-    @Test
-    void applyToRecruit() throws Exception {
-        //given
-        given(recruitMemberService.applyMember(any(RecruitApplyRequest.class)))
-                .willReturn("PENDING");
-
-        //when
-        ResultActions action = mvc.perform(
-                post("/recruitment/{recruitmentId}/apply", 1L)
-                        .param("position", "백엔드")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer Token")
-        );
-
-        //then
-        action.andExpectAll(
-                status().isCreated(),
-                jsonPath("$.status").value("PENDING")
-        ).andDo(print());
-        verify(recruitMemberService).applyMember(any(RecruitApplyRequest.class));
-    }
-
-    @DisplayName("잘못된 포지션을 입력하면 모집글 지원에 실패한다.")
-    @Test
-    void applyToRecruit_잘못된_포지션() throws Exception {
-        //given
-        given(recruitMemberService.applyMember(any(RecruitApplyRequest.class)))
-                .willThrow(new EntityNotFoundException(RECRUITMENT_NOT_FOUND));
-
-        //when
-        ResultActions action = mvc.perform(
-                post("/recruitment/{recruitmentId}/apply", 1L)
-                        .param("position", "원딜")
-                        .header(HttpHeaders.AUTHORIZATION, "Bearer Token")
-        );
-
-        //then
-        action.andExpectAll(
-                status().isNotFound(),
-                jsonPath("$.code").value("R0001"),
-                jsonPath("$.message").value("해당 아이디를 가진 모집글을 찾을 수 없습니다")
-        ).andDo(print());
-        verify(recruitMemberService).applyMember(any(RecruitApplyRequest.class));
     }
 
     private String toJson(Object object) throws JsonProcessingException {

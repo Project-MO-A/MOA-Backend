@@ -25,7 +25,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.time.LocalTime;
 import java.util.List;
 
 import static com.moa.support.fixture.PossibleTimeFixture.*;
@@ -40,7 +39,6 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -104,7 +102,7 @@ class PossibleTimeControllerTest {
                         .value(MONDAY_DAYTIME.getStartHour() + ":00"),
                 jsonPath("$.[1].possibleTimeData.[0].endTime")
                         .value(MONDAY_DAYTIME.getEndHour() + ":00")
-        ).andDo(print());
+        );
 
         verify(possibleTimeService).getAllMembersTimeList(recruitmentId);
     }
@@ -138,7 +136,7 @@ class PossibleTimeControllerTest {
                         .value("0"+ TUESDAY_ALL.getStartHour() + ":00"),
                 jsonPath("$.[1].endTime")
                         .value(TUESDAY_ALL.getEndHour() + ":00")
-        ).andDo(print());
+        );
 
         verify(possibleTimeService).getTimeList(recruitmentId, 1L);
     }
@@ -168,7 +166,7 @@ class PossibleTimeControllerTest {
         //then
         actions.andExpectAll(
                 status().isFound()
-        ).andDo(print());
+        );
 
         verify(possibleTimeService).setTime(any(PossibleTimeRequest.class), anyLong(), anyLong());
     }
@@ -210,7 +208,7 @@ class PossibleTimeControllerTest {
                 status().isBadRequest(),
                 jsonPath("$.code").value("400"),
                 jsonPath("$.message").value("must not be blank")
-        ).andDo(print());
+        );
 
         verify(possibleTimeService, times(0)).setTime(any(PossibleTimeRequest.class), anyLong(), anyLong());
     }
@@ -252,7 +250,7 @@ class PossibleTimeControllerTest {
                 status().isBadRequest(),
                 jsonPath("$.code").value("400"),
                 jsonPath("$.message").value("must not be null")
-        ).andDo(print());
+        );
 
         verify(possibleTimeService, times(0)).setTime(any(PossibleTimeRequest.class), anyLong(), anyLong());
     }
@@ -294,7 +292,7 @@ class PossibleTimeControllerTest {
                 status().isBadRequest(),
                 jsonPath("$.code").value("400"),
                 jsonPath("$.message").isString()
-        ).andDo(print());
+        );
 
         verify(possibleTimeService, times(0)).setTime(any(PossibleTimeRequest.class), anyLong(), anyLong());
     }

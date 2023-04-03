@@ -38,7 +38,6 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
@@ -97,7 +96,7 @@ class AdminControllerTest {
                     jsonPath("$.[0].status").value("대기중"),
                     jsonPath("$.[1].userId").value("2"),
                     jsonPath("$.[1].status").value("거절")
-            ).andDo(print());
+            );
 
             verify(adminService).getApplimentMembers(1L, null);
         }
@@ -134,7 +133,7 @@ class AdminControllerTest {
                     jsonPath("$.[0].status").value("대기중"),
                     jsonPath("$.[1].userId").value("2"),
                     jsonPath("$.[1].status").value("대기중")
-            ).andDo(print());
+            );
 
             verify(adminService).getApplimentMembers(1L, PENDING);
         }
@@ -171,7 +170,7 @@ class AdminControllerTest {
                     jsonPath("$.[0].status").value("거절"),
                     jsonPath("$.[1].userId").value("2"),
                     jsonPath("$.[1].status").value("거절")
-            ).andDo(print());
+            );
 
             verify(adminService).getApplimentMembers(1L, REFUSE);
         }
@@ -208,7 +207,7 @@ class AdminControllerTest {
                     jsonPath("$.[0].status").value("강퇴"),
                     jsonPath("$.[1].userId").value("2"),
                     jsonPath("$.[1].status").value("강퇴")
-            ).andDo(print());
+            );
 
             verify(adminService).getApplimentMembers(1L, KICK);
         }
@@ -231,7 +230,7 @@ class AdminControllerTest {
                     status().isNotFound(),
                     jsonPath("$.message").value("잘못된 상태 코드입니다."),
                     jsonPath("$.code").value("S0001")
-            ).andDo(print());
+            );
 
             verify(adminService, times(0)).getApplimentMembers(anyLong(), any());
         }
@@ -257,8 +256,8 @@ class AdminControllerTest {
             //then
             actions.andExpectAll(
                     status().isOk(),
-                    content().string("APPROVED")
-            ).andDo(print());
+                    jsonPath("$.value").value("APPROVED")
+            );
 
             verify(adminService).changeApplimentStatus(1L, APPROVED);
         }
@@ -280,8 +279,8 @@ class AdminControllerTest {
             //then
             actions.andExpectAll(
                     status().isOk(),
-                    content().string("REFUSE")
-            ).andDo(print());
+                    jsonPath("$.value").value("REFUSE")
+            );
 
             verify(adminService).changeApplimentStatus(1L, REFUSE);
         }
@@ -303,8 +302,8 @@ class AdminControllerTest {
             //then
             actions.andExpectAll(
                     status().isOk(),
-                    content().string("KICK")
-            ).andDo(print());
+                    jsonPath("$.value").value("KICK")
+            );
 
             verify(adminService).changeApplimentStatus(1L, KICK);
         }
@@ -329,7 +328,7 @@ class AdminControllerTest {
                     status().isNotFound(),
                     jsonPath("$.message").value("잘못된 상태 코드입니다."),
                     jsonPath("$.code").value("S0001")
-            ).andDo(print());
+            );
 
             verify(adminService, times(0)).changeApplimentStatus(anyLong(), any());
         }
@@ -359,7 +358,7 @@ class AdminControllerTest {
                 status().isOk(),
                 jsonPath("$.[0].nickname").value("hose"),
                 jsonPath("$.[1].nickname").value("sole")
-        ).andDo(print());
+        );
 
         verify(adminService).getApprovedMembers(1L);
     }
@@ -383,7 +382,7 @@ class AdminControllerTest {
                 status().isNotFound(),
                 jsonPath("$.message").value("해당 아이디를 가진 모집글을 찾을 수 없습니다"),
                 jsonPath("$.code").value("R0001")
-        ).andDo(print());
+        );
     }
 
     @DisplayName("인기도를 설정한다.")
@@ -405,8 +404,8 @@ class AdminControllerTest {
         //then
         actions.andExpectAll(
                 status().isOk(),
-                content().string("5.0")
-        ).andDo(print());
+                jsonPath("$.value").value("5.0")
+        );
 
         verify(adminService).setApprovedPopularity(1L, 5.0);
     }
@@ -428,7 +427,7 @@ class AdminControllerTest {
                 status().isBadRequest(),
                 jsonPath("$.message").value("must be less than or equal to 5.0"),
                 jsonPath("$.code").value("400")
-        ).andDo(print());
+        );
 
         verify(adminService, times(0)).setApprovedPopularity(anyLong(), anyDouble());
     }
@@ -450,7 +449,7 @@ class AdminControllerTest {
                 status().isBadRequest(),
                 jsonPath("$.message").value("must be greater than or equal to 0.5"),
                 jsonPath("$.code").value("400")
-        ).andDo(print());
+        );
 
         verify(adminService, times(0)).setApprovedPopularity(anyLong(), anyDouble());
     }
