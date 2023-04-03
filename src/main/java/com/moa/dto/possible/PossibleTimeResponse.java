@@ -18,7 +18,11 @@ public class PossibleTimeResponse {
     }
 
     public void setPossibleTimeData(List<PossibleTime> possibleTimes) {
-        this.possibleTimeData = possibleTimes.stream()
+        this.possibleTimeData = getPossibleTimeData(possibleTimes);
+    }
+
+    public static List<PossibleTimeData> getPossibleTimeData(List<PossibleTime> possibleTimes) {
+        return possibleTimes.stream()
                 .map(p -> PossibleTimeData.builder()
                         .day(p.getDay().name())
                         .startTime(p.getStartTime())

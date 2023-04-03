@@ -7,13 +7,13 @@ import com.moa.domain.member.RecruitMemberRepository;
 import com.moa.domain.user.User;
 import com.moa.domain.user.UserRepository;
 import com.moa.dto.recruit.RecruitApplyRequest;
-import com.moa.global.exception.ErrorCode;
 import com.moa.global.exception.service.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.moa.domain.member.ApprovalStatus.PENDING;
+import static com.moa.global.exception.ErrorCode.RECRUITMEMEBER_NO_FIELD;
 
 @Service
 @Transactional
@@ -25,7 +25,7 @@ public class RecruitMemberService {
 
     public String applyMember(RecruitApplyRequest request) {
         RecruitMember recruitMember = recruitMemberRepository.findByRecruitFieldAndRecruitmentId(request.position(), request.recruitmentId())
-                .orElseThrow(() -> new EntityNotFoundException(ErrorCode.RECRUITMEMEBER_NO_FIELD));
+                .orElseThrow(() -> new EntityNotFoundException(RECRUITMEMEBER_NO_FIELD));
         User user = userRepository.getReferenceById(request.userId());
         return applimentMemberRepository.save(new ApplimentMember(recruitMember, user, PENDING)).getStatus().name();
     }

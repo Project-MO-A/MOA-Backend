@@ -1,6 +1,7 @@
 package com.moa.controller;
 
 import com.moa.domain.member.ApprovalStatus;
+import com.moa.dto.ValueResponse;
 import com.moa.dto.member.ApplimentMemberResponse;
 import com.moa.dto.member.ApprovedMemberResponse;
 import com.moa.dto.member.ApprovedPopularityRequest;
@@ -19,14 +20,16 @@ public class AdminController {
     private final AdminService adminService;
 
     @GetMapping("/apply/members")
-    public List<ApplimentMemberResponse> applimentMemberInfo (@PathVariable Long recruitmentId, @RequestParam int statusCode) {
-        return adminService.getApplimentMembers(recruitmentId, ApprovalStatus.getStatus(statusCode));
+    public List<ApplimentMemberResponse> applimentMemberInfo (@PathVariable Long recruitmentId, @RequestParam(required = false) Integer statusCode) {
+        ApprovalStatus status = statusCode != null ? ApprovalStatus.getStatus(statusCode) : null;
+        return adminService.getApplimentMembers(recruitmentId, status);
     }
 
     @PostMapping("/apply/{applyId}")
-    public String changeStatusMember(@PathVariable Long applyId, @RequestParam int statusCode) {
+    public ValueResponse<String> changeStatusMember(@PathVariable Long applyId, @RequestParam int statusCode) {
         ApprovalStatus status = getStatus(statusCode);
-        return adminService.changeApplimentStatus(applyId, status);
+        String statusName = adminService.changeApplimentStatus(applyId, status);
+        return new ValueResponse<>(statusName);
     }
 
     @GetMapping("/approved/members")
@@ -35,7 +38,8 @@ public class AdminController {
     }
 
     @PostMapping("/approved/{applyId}/popularity")
-    public double setPopularity(@PathVariable Long applyId, @RequestBody @Valid ApprovedPopularityRequest popularityRequest) {
-        return adminService.setApprovedPopularity(applyId, popularityRequest);
+    public ValueResponse<Double> setPopularity(@PathVariable Long applyId, @RequestBody @Valid ApprovedPopularityRequest popularityRequest) {
+        double popularity = adminService.setApprovedPopularity(applyId, popularityRequest.popularity());
+        return new ValueResponse<>(popularity);
     }
 }

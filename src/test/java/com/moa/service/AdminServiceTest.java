@@ -1,7 +1,7 @@
 package com.moa.service;
 
-import com.moa.domain.member.ApplimentSearchRepository;
 import com.moa.domain.member.ApplimentMember;
+import com.moa.domain.member.ApplimentSearchRepository;
 import com.moa.domain.member.ApprovalStatus;
 import com.moa.domain.member.RecruitMember;
 import com.moa.dto.member.ApplimentMemberResponse;
@@ -20,6 +20,7 @@ import static com.moa.constant.TestConst.USER;
 import static com.moa.domain.member.ApprovalStatus.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 class AdminServiceTest {
     static AdminService adminService;
@@ -36,9 +37,11 @@ class AdminServiceTest {
         List<ApplimentMemberResponse> applimentMembers = adminService.getApplimentMembers(1L, PENDING);
 
         //then
-        assertThat(applimentMembers.size()).isEqualTo(2);
-        assertThat(applimentMembers.get(0).status()).isEqualTo(PENDING);
-        assertThat(applimentMembers.get(1).status()).isEqualTo(PENDING);
+        assertAll(
+                () ->assertThat(applimentMembers.size()).isEqualTo(2),
+                () ->assertThat(applimentMembers.get(0).status()).isEqualTo(PENDING),
+                () ->assertThat(applimentMembers.get(1).status()).isEqualTo(PENDING)
+        );
     }
 
     @DisplayName("getApplimentMembers - 신청한 멤버를 조회한다. (강퇴)")
@@ -48,9 +51,11 @@ class AdminServiceTest {
         List<ApplimentMemberResponse> applimentMembers = adminService.getApplimentMembers(1L, KICK);
 
         //then
-        assertThat(applimentMembers.size()).isEqualTo(2);
-        assertThat(applimentMembers.get(0).status()).isEqualTo(KICK);
-        assertThat(applimentMembers.get(1).status()).isEqualTo(KICK);
+        assertAll(
+                () -> assertThat(applimentMembers.size()).isEqualTo(2),
+                () -> assertThat(applimentMembers.get(0).status()).isEqualTo(KICK),
+                () -> assertThat(applimentMembers.get(1).status()).isEqualTo(KICK)
+        );
     }
 
     @DisplayName("getApplimentMembers - 신청한 멤버를 조회하는데 실패한다. (잘못된 모집글 ID)")
@@ -68,9 +73,11 @@ class AdminServiceTest {
         List<ApprovedMemberResponse> approvedMembers = adminService.getApprovedMembers(1L);
 
         //then
-        assertThat(approvedMembers.size()).isEqualTo(2);
-        assertThat(approvedMembers.get(0).getPopularity()).isGreaterThan(1.0);
-        assertThat(approvedMembers.get(0).getTotalAttend()).isGreaterThan(1L);
+        assertAll(
+                () -> assertThat(approvedMembers.size()).isEqualTo(2),
+                () -> assertThat(approvedMembers.get(0).getPopularity()).isGreaterThan(1.0),
+                () -> assertThat(approvedMembers.get(0).getTotalAttend()).isGreaterThan(1L)
+        );
     }
 
     @DisplayName("getApprovedMembers - 승인된 멤버들을 조회하는데 실패한다. (잘못된 모집글 ID)")
@@ -101,7 +108,7 @@ class AdminServiceTest {
     @DisplayName("setApprovedPopularity - 신청 멤버 상태 변경에 성공한다.")
     @Test
     void setApprovedPopularity() {//when
-        double popularity = adminService.setApprovedPopularity(1L, new ApprovedPopularityRequest(3.5));
+        double popularity = adminService.setApprovedPopularity(1L, 3.5);
 
         //then
         assertThat(popularity).isEqualTo(3.5);
@@ -111,7 +118,7 @@ class AdminServiceTest {
     @Test
     void setApprovedPopularityFail() {
         //when & then
-        assertThatThrownBy(() -> adminService.setApprovedPopularity(10L, new ApprovedPopularityRequest(3.5)))
+        assertThatThrownBy(() -> adminService.setApprovedPopularity(10L, 3.5))
                 .isInstanceOf(EntityNotFoundException.class);
     }
 

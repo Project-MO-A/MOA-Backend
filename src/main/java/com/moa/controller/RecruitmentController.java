@@ -1,6 +1,8 @@
 package com.moa.controller;
 
+import com.moa.domain.recruit.tag.Tag;
 import com.moa.dto.StatusResponse;
+import com.moa.dto.ValueResponse;
 import com.moa.dto.recruit.RecruitInfoResponse;
 import com.moa.dto.recruit.RecruitPostRequest;
 import com.moa.dto.recruit.RecruitUpdateRequest;
@@ -25,9 +27,10 @@ public class RecruitmentController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public Long post(@RequestBody @Valid RecruitPostRequest request, @AuthenticationPrincipal JwtUser user) {
-        List<Long> tagId = tagService.updateAndReturnId(request.tags()).orElse(new ArrayList<>());
-        return recruitmentService.post(user.id(), request, tagId);
+    public ValueResponse<Long> post(@RequestBody @Valid RecruitPostRequest request, @AuthenticationPrincipal JwtUser user) {
+        List<Tag> tags = tagService.updateAndReturn(request.tags()).orElse(new ArrayList<>());
+        Long postId = recruitmentService.post(user.id(), request, tags);
+        return new ValueResponse<>(postId);
     }
 
     @GetMapping("/{recruitmentId}")
@@ -36,9 +39,10 @@ public class RecruitmentController {
     }
 
     @PatchMapping("/{recruitmentId}")
-    public Long updatePost(@PathVariable Long recruitmentId, @RequestBody @Valid RecruitUpdateRequest request) {
-        List<Long> tagId = tagService.updateAndReturnId(request.tags()).orElse(new ArrayList<>());
-        return recruitmentService.update(recruitmentId, request, tagId);
+    public ValueResponse<Long> update(@PathVariable Long recruitmentId, @RequestBody @Valid RecruitUpdateRequest request) {
+        List<Tag> tags = tagService.updateAndReturn(request.tags()).orElse(new ArrayList<>());
+        Long updatePostId = recruitmentService.update(recruitmentId, request, tags);
+        return new ValueResponse<>(updatePostId);
     }
 
     @PostMapping("/{recruitmentId}")
@@ -47,8 +51,8 @@ public class RecruitmentController {
     }
 
     @DeleteMapping("/{recruitmentId}")
-    public Long delete(@PathVariable Long recruitmentId) {
-        return recruitmentService.delete(recruitmentId);
+    public ValueResponse<Long> delete(@PathVariable Long recruitmentId) {
+        Long deletePostId = recruitmentService.delete(recruitmentId);
+        return new ValueResponse<>(deletePostId);
     }
-
 }

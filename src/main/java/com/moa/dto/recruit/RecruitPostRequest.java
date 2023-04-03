@@ -7,19 +7,24 @@ import com.moa.domain.recruit.Recruitment;
 import com.moa.domain.recruit.tag.RecruitTag;
 import com.moa.domain.user.User;
 import com.moa.dto.member.RecruitMemberRequest;
+import com.moa.global.exception.service.InvalidRequestException;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
 
 import java.util.List;
+
+import static com.moa.global.exception.ErrorCode.REQUEST_INVALID;
 
 @Builder
 public record RecruitPostRequest (
         @NotBlank String title,
         @NotBlank String content,
-        List<RecruitMemberRequest> memberFields,
+        @NotEmpty @Valid List<RecruitMemberRequest> memberFields,
         List<String> tags
 ) {
-    public Recruitment toEntity(User user, List<RecruitMember> members, List<RecruitTag> categories) {
+    public Recruitment toEntity(User user, List<RecruitMember> members, List<RecruitTag> tags) {
         Post post = Post.builder()
                 .title(title)
                 .content(content)
@@ -30,12 +35,12 @@ public record RecruitPostRequest (
                 .status(RecruitStatus.RECRUITING)
                 .build();
         if (members != null) recruitment.setMembers(members);
-        if (categories != null) recruitment.setTags(categories);
+        if (tags != null) recruitment.setTags(tags);
         return recruitment;
     }
 
     public List<RecruitMember> toMemberList() {
-        if (memberFields == null || memberFields.isEmpty()) return null;
+        if (memberFields == null || memberFields.isEmpty()) throw new InvalidRequestException(REQUEST_INVALID);
         return memberFields.stream()
                 .map(field -> RecruitMember.builder()
                         .recruitField(field.field())
