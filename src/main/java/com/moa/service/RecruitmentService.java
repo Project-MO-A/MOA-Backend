@@ -1,8 +1,8 @@
 package com.moa.service;
 
 import com.moa.domain.member.ApplimentMember;
-import com.moa.domain.member.ApplimentMemberRepository;
 import com.moa.domain.member.RecruitMember;
+import com.moa.domain.member.RecruitMemberRepository;
 import com.moa.domain.recruit.Recruitment;
 import com.moa.domain.recruit.RecruitmentRepository;
 import com.moa.domain.recruit.tag.RecruitTag;
@@ -29,12 +29,11 @@ import static com.moa.global.exception.ErrorCode.RECRUITMENT_NOT_FOUND;
 public class RecruitmentService {
     private final RecruitmentRepository recruitmentRepository;
     private final UserRepository userRepository;
-    private final ApplimentMemberRepository applimentMemberRepository;
 
     public Long post(final Long userId, final RecruitPostRequest request, final List<Tag> tags) {
         User user = userRepository.getReferenceById(userId);
         Recruitment recruitment = request.toEntity(user, request.toMemberList(), getRecruitTags(tags));
-        applimentMemberRepository.save(new ApplimentMember(new RecruitMember(recruitment), user, APPROVED));
+        addLeader(user, recruitment);
         return recruitmentRepository.save(recruitment).getId();
     }
 
@@ -70,5 +69,11 @@ public class RecruitmentService {
         return tags.stream()
                 .map(RecruitTag::new)
                 .toList();
+    }
+
+    private void addLeader(User user, Recruitment recruitment) {
+        RecruitMember leaderMember = new RecruitMember(recruitment);
+        leaderMember.addApplimentMember(new ApplimentMember(leaderMember, user, APPROVED));
+        recruitment.setMember(leaderMember);
     }
 }

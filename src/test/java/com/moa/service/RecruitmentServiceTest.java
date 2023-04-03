@@ -84,7 +84,6 @@ class RecruitmentServiceTest {
         assertAll(
                 () -> assertThat(postId).isEqualTo(1L),
                 () -> verify(userRepository).getReferenceById(userId),
-                () -> verify(applimentMemberRepository).save(any(ApplimentMember.class)),
                 () -> verify(recruitmentRepository).save(any(Recruitment.class))
         );
     }
