@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -65,5 +66,18 @@ class RecruitMemberRepositoryTest {
         assertThat(recruitMember.get().getRecruitField()).isEqualTo(field);
         assertThat(recruitMember.get().getTotalRecruitCount()).isEqualTo(5);
         assertThat(recruitMember.get().getRecruitment().getId()).isEqualTo(recruitment1.getId());
+    }
+
+    @DisplayName("리더를 제외한 모든 모집 멤버 엔티티를 가져온다.")
+    @Test
+    void findAllByRecruitment() {
+        //given
+        recruitMemberRepository.save(new RecruitMember(recruitment1));
+
+        //when
+        List<RecruitMember> all = recruitMemberRepository.findAllByRecruitment(recruitment1);
+
+        //then
+        assertThat(all.size()).isEqualTo(2);
     }
 }
