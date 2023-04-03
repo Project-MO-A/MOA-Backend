@@ -30,7 +30,6 @@ import static com.moa.global.exception.ErrorCode.*;
 @Service
 public class RecruitmentService {
     private final RecruitmentRepository recruitmentRepository;
-    private final RecruitMemberRepository recruitMemberRepository;
     private final UserRepository userRepository;
 
     public Long post(final Long userId, final RecruitPostRequest request, final List<Tag> tags) {
@@ -48,7 +47,7 @@ public class RecruitmentService {
     }
 
     public Long update(final Long recruitId, final RecruitUpdateRequest request, final List<Tag> tags) {
-        Recruitment recruitment = recruitmentRepository.findById(recruitId)
+        Recruitment recruitment = recruitmentRepository.findByIdFetchMembers(recruitId)
                 .orElseThrow(() -> new EntityNotFoundException(RECRUITMENT_NOT_FOUND));
         recruitment.update(request, getRecruitTags(tags));
         updateRecruitMember(request, recruitment);
@@ -71,9 +70,11 @@ public class RecruitmentService {
     }
 
     private void updateRecruitMember(RecruitUpdateRequest request, Recruitment recruitment) {
-        if (request.memberFields().isEmpty()) throw new InvalidRequestException(REQUEST_INVALID);;
+        if (request.memberFields().isEmpty()) throw new InvalidRequestException(REQUEST_INVALID);
 
-        List<RecruitMember> exists = recruitMemberRepository.findAllByRecruitment(recruitment);
+        List<RecruitMember> exists = recruitment.getMembers().stream()
+                .filter(member -> !member.getRecruitField().equals("LEADER"))
+                .toList();
         List<RecruitMemberRequest> memberRequests = request.memberFields();
         saveNewOrUpdateMember(recruitment, exists, memberRequests);
         deleteMember(recruitment, exists);
@@ -83,9 +84,12 @@ public class RecruitmentService {
         for (RecruitMemberRequest memberRequest : memberRequests) {
             Long id = memberRequest.recruitMemberId();
 
-            if (id == null || id == 0) saveNewMember(recruitment, memberRequest);
-            else {
-                RecruitMember recruitMember = recruitMemberRepository.findById(id)
+            if (id == null || id == 0) {
+                saveNewMember(recruitment, memberRequest);
+            } else {
+                RecruitMember recruitMember = exists.stream()
+                        .filter(member -> member.getId().equals(id))
+                        .findFirst()
                         .orElseThrow(() -> new EntityNotFoundException(RECRUITMEMBER_NOT_FOUND));
                 recruitMember.update(memberRequest);
                 exists.remove(recruitMember);
@@ -107,7 +111,6 @@ public class RecruitmentService {
                 .filter(m -> m.getCurrentRecruitCount() == 0)
                 .toList();
         recruitment.getMembers().removeAll(exists);
-        recruitMemberRepository.deleteAll(exists);
     }
 
     private List<RecruitTag> getRecruitTags(List<Tag> tags) {
