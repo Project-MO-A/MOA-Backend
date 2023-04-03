@@ -2,7 +2,6 @@ package com.moa.service;
 
 import com.moa.domain.member.ApplimentMember;
 import com.moa.domain.member.RecruitMember;
-import com.moa.domain.member.RecruitMemberRepository;
 import com.moa.domain.recruit.Recruitment;
 import com.moa.domain.recruit.RecruitmentRepository;
 import com.moa.domain.recruit.tag.RecruitTag;
@@ -20,6 +19,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.moa.domain.member.ApprovalStatus.APPROVED;
@@ -72,9 +72,7 @@ public class RecruitmentService {
     private void updateRecruitMember(RecruitUpdateRequest request, Recruitment recruitment) {
         if (request.memberFields().isEmpty()) throw new InvalidRequestException(REQUEST_INVALID);
 
-        List<RecruitMember> exists = recruitment.getMembers().stream()
-                .filter(member -> !member.getRecruitField().equals("LEADER"))
-                .toList();
+        List<RecruitMember> exists = new ArrayList<>(recruitment.getMembers());
         List<RecruitMemberRequest> memberRequests = request.memberFields();
         saveNewOrUpdateMember(recruitment, exists, memberRequests);
         deleteMember(recruitment, exists);
@@ -109,6 +107,7 @@ public class RecruitmentService {
     private void deleteMember(Recruitment recruitment, List<RecruitMember> members) {
         List<RecruitMember> exists = members.stream()
                 .filter(m -> m.getCurrentRecruitCount() == 0)
+                .filter(m -> !m.getRecruitField().equals("LEADER"))
                 .toList();
         recruitment.getMembers().removeAll(exists);
     }
