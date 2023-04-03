@@ -13,12 +13,12 @@ import static com.moa.support.fixture.TagFixture.FRONTEND_TAG;
 @Getter
 public enum RecruitRequestFixture {
     BASIC_REQUEST("프로젝트 모집", "프로젝트 인원 모집합니다.", BACKEND_TAG.getTags(), List.of(
-            new RecruitMemberRequest("백엔드", 4),
-            new RecruitMemberRequest("프론트엔드", 4)
+            RecruitMemberRequest.builder().field("백엔드").total(5).build(),
+            RecruitMemberRequest.builder().field("프론트").total(4).build()
     )),
     ANOTHER_REQUEST("사이드 프로젝트 모집", "개발자 모집합니다.", FRONTEND_TAG.getTags(), List.of(
-            new RecruitMemberRequest("백엔드", 5),
-            new RecruitMemberRequest("프론트엔드", 3)
+            RecruitMemberRequest.builder().field("백엔드").total(4).build(),
+            RecruitMemberRequest.builder().field("프론트").total(3).build()
     ));
 
     private final String title;

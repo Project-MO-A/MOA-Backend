@@ -41,10 +41,11 @@ public class RecruitInfoResponse {
 
     private void setMembers(List<RecruitMember> members) {
         this.members = members.stream().map(m -> RecruitMemberResponse.builder()
-                .recruitField(m.getRecruitField())
-                .currentCount(m.getCurrentRecruitCount())
-                .totalCount(m.getTotalRecruitCount())
-                .build())
+                        .recruitMemberId(m.getId())
+                        .recruitField(m.getRecruitField())
+                        .currentCount(m.getCurrentRecruitCount())
+                        .totalCount(m.getTotalRecruitCount())
+                        .build())
                 .toList();
     }
 }

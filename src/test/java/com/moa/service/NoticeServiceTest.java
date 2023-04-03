@@ -71,8 +71,8 @@ class NoticeServiceTest {
                 .toList();
 
         List<RecruitMemberRequest> memberFields = List.of(
-                new RecruitMemberRequest("backend", 2),
-                new RecruitMemberRequest("frontend", 2)
+                RecruitMemberRequest.builder().field("backend").total(2).build(),
+                RecruitMemberRequest.builder().field("frontend").total(2).build()
         );
 
         recruitmentId = recruitmentService.post(user.getId(),
