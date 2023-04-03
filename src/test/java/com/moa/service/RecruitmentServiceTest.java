@@ -1,7 +1,6 @@
 package com.moa.service;
 
 import com.moa.domain.member.RecruitMember;
-import com.moa.domain.member.RecruitMemberRepository;
 import com.moa.domain.recruit.Recruitment;
 import com.moa.domain.recruit.RecruitmentRepository;
 import com.moa.domain.recruit.tag.RecruitTag;
@@ -52,8 +51,6 @@ class RecruitmentServiceTest {
     private RecruitmentRepository recruitmentRepository;
     @Mock
     private UserRepository userRepository;
-    @Mock
-    private RecruitMemberRepository recruitMemberRepository;
 
     @InjectMocks
     private RecruitmentService recruitmentService;
