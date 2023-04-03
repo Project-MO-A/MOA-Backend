@@ -2,13 +2,12 @@ package com.moa.controller;
 
 import com.moa.domain.recruit.tag.Tag;
 import com.moa.dto.StatusResponse;
-import com.moa.dto.recruit.RecruitApplyRequest;
+import com.moa.dto.ValueResponse;
 import com.moa.dto.recruit.RecruitInfoResponse;
 import com.moa.dto.recruit.RecruitPostRequest;
 import com.moa.dto.recruit.RecruitUpdateRequest;
 import com.moa.global.auth.model.JwtUser;
 import com.moa.service.TagService;
-import com.moa.service.RecruitMemberService;
 import com.moa.service.RecruitmentService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,15 +22,15 @@ import java.util.List;
 @RequestMapping("/recruitment")
 @RequiredArgsConstructor
 public class RecruitmentController {
-    private final RecruitMemberService recruitMemberService;
     private final RecruitmentService recruitmentService;
     private final TagService tagService;
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public Long post(@RequestBody @Valid RecruitPostRequest request, @AuthenticationPrincipal JwtUser user) {
+    public ValueResponse<Long> post(@RequestBody @Valid RecruitPostRequest request, @AuthenticationPrincipal JwtUser user) {
         List<Tag> tags = tagService.updateAndReturn(request.tags()).orElse(new ArrayList<>());
-        return recruitmentService.post(user.id(), request, tags);
+        Long postId = recruitmentService.post(user.id(), request, tags);
+        return new ValueResponse<>(postId);
     }
 
     @GetMapping("/{recruitmentId}")
@@ -40,9 +39,10 @@ public class RecruitmentController {
     }
 
     @PatchMapping("/{recruitmentId}")
-    public Long update(@PathVariable Long recruitmentId, @RequestBody @Valid RecruitUpdateRequest request) {
+    public ValueResponse<Long> update(@PathVariable Long recruitmentId, @RequestBody @Valid RecruitUpdateRequest request) {
         List<Tag> tags = tagService.updateAndReturn(request.tags()).orElse(new ArrayList<>());
-        return recruitmentService.update(recruitmentId, request, tags);
+        Long updatePostId = recruitmentService.update(recruitmentId, request, tags);
+        return new ValueResponse<>(updatePostId);
     }
 
     @PostMapping("/{recruitmentId}")
@@ -51,14 +51,8 @@ public class RecruitmentController {
     }
 
     @DeleteMapping("/{recruitmentId}")
-    public Long delete(@PathVariable Long recruitmentId) {
-        return recruitmentService.delete(recruitmentId);
-    }
-    
-    @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/{recruitmentId}/apply")
-    public StatusResponse applyToRecruit(@PathVariable Long recruitmentId, @RequestParam String position, @AuthenticationPrincipal JwtUser user) {
-        RecruitApplyRequest request = new RecruitApplyRequest(recruitmentId, position, user.id());
-        return new StatusResponse(recruitMemberService.applyMember(request));
+    public ValueResponse<Long> delete(@PathVariable Long recruitmentId) {
+        Long deletePostId = recruitmentService.delete(recruitmentId);
+        return new ValueResponse<>(deletePostId);
     }
 }
