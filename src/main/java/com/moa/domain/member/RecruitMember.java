@@ -1,6 +1,8 @@
 package com.moa.domain.member;
 
 import com.moa.domain.recruit.Recruitment;
+import com.moa.dto.member.RecruitMemberRequest;
+import com.moa.global.exception.service.InvalidRequestException;
 import com.moa.global.exception.service.MemberStatusException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -11,8 +13,7 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.moa.global.exception.ErrorCode.RECRUITMEMBER_FULL_COUNT;
-import static com.moa.global.exception.ErrorCode.RECRUITMEMBER_ZERO_COUNT;
+import static com.moa.global.exception.ErrorCode.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -52,6 +53,11 @@ public class RecruitMember {
         this.totalRecruitCount = 1;
     }
 
+    public void update(RecruitMemberRequest request) {
+        this.recruitField = request.field();
+        setTotal(request.total());
+    }
+
     public void setParent(Recruitment recruitment) {
         this.recruitment = recruitment;
     }
@@ -71,5 +77,10 @@ public class RecruitMember {
     public void minusCount() {
         if (this.currentRecruitCount <= 0 ) throw new MemberStatusException(RECRUITMEMBER_ZERO_COUNT);
         currentRecruitCount -= 1;
+    }
+
+    private void setTotal(int total) {
+        if (currentRecruitCount > total) throw new InvalidRequestException(COUNT_INVALID);
+        this.totalRecruitCount = total;
     }
 }

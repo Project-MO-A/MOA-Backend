@@ -82,14 +82,7 @@ public class Recruitment {
         this.post.updateTitle(updateRequest.title());
         this.post.updateContent(updateRequest.content());
         updateState(updateRequest.state());
-        updateMembers(updateRequest.toMemberList());
         updateTags(tags);
-    }
-
-    private void updateMembers(List<RecruitMember> memberList) {
-        if (memberList == null || memberList.isEmpty()) throw new InvalidRequestException(REQUEST_INVALID);
-        this.members.clear();
-        this.setMembers(memberList);
     }
 
     private void updateTags(List<RecruitTag> tags) {
