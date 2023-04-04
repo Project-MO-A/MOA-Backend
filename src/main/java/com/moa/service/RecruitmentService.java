@@ -21,6 +21,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static com.moa.domain.member.ApprovalStatus.APPROVED;
 import static com.moa.global.exception.ErrorCode.*;
@@ -79,15 +82,18 @@ public class RecruitmentService {
     }
 
     private void saveNewOrUpdateMember(Recruitment recruitment, List<RecruitMember> exists, List<RecruitMemberRequest> memberRequests) {
+        Map<Long, Optional<RecruitMember>> recruitmentMap = new ConcurrentHashMap<>();
+        for (RecruitMember member : exists) {
+            recruitmentMap.put(member.getId(), Optional.of(member));
+        }
+
         for (RecruitMemberRequest memberRequest : memberRequests) {
             Long id = memberRequest.recruitMemberId();
 
             if (id == null || id == 0) {
                 saveNewMember(recruitment, memberRequest);
             } else {
-                RecruitMember recruitMember = exists.stream()
-                        .filter(member -> member.getId().equals(id))
-                        .findFirst()
+                RecruitMember recruitMember = recruitmentMap.getOrDefault(id, Optional.empty())
                         .orElseThrow(() -> new EntityNotFoundException(RECRUITMEMBER_NOT_FOUND));
                 recruitMember.update(memberRequest);
                 exists.remove(recruitMember);
@@ -107,7 +113,6 @@ public class RecruitmentService {
     private void deleteMember(Recruitment recruitment, List<RecruitMember> members) {
         List<RecruitMember> exists = members.stream()
                 .filter(m -> m.getCurrentRecruitCount() == 0)
-                .filter(m -> !m.getRecruitField().equals("LEADER"))
                 .toList();
         recruitment.getMembers().removeAll(exists);
     }
