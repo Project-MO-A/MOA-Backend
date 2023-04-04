@@ -32,8 +32,8 @@ public class UserController {
     }
     
     @GetMapping("/info/profile")
-    public UserInfo getProfileInfo(@AuthenticationPrincipal JwtUser user) {
-        return userService.getUserProfileInfoById(user.id());
+    public UserInfo getProfileInfo(@RequestParam(required = false) Long userId, @AuthenticationPrincipal JwtUser user) {
+        return userService.getUserProfileInfoById(userId == null ? user.id() : userId);
     }
 
     @GetMapping("/info/writing")

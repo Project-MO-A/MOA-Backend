@@ -12,6 +12,8 @@ import java.util.Map;
 
 import static com.moa.domain.member.ApprovalStatus.APPROVED;
 import static com.moa.domain.recruit.RecruitStatus.*;
+import static com.moa.dto.constant.RedirectURIConst.RECRUIT_CANCEL;
+import static com.moa.dto.constant.RedirectURIConst.RECRUIT_INFO;
 
 @Getter
 public class UserActivityInfo {
@@ -41,15 +43,15 @@ public class UserActivityInfo {
 
     private static List<ApprovedInfo> setRecruitmentInfo(List<ApprovedInfo> applimentInfos, Recruitment recruitment) {
         String title = recruitment.getPost().getTitle();
-        String detailsUri = "/recruitment/".concat(String.valueOf(recruitment.getId()));
+        String detailsUri = RECRUIT_INFO.of(String.valueOf(recruitment.getId()));
         applimentInfos.add(new ApprovedInfo(title, detailsUri));
         return applimentInfos;
     }
 
     private static EtcInfo setEtcInfo(ApplimentMember applimentMember) {
         Recruitment recruitment = applimentMember.getRecruitMember().getRecruitment();
-        String cancelUri = "/recruitment/cancel/".concat(String.valueOf(recruitment.getId()));
-        String detailsUri = "/recruitment/".concat(String.valueOf(recruitment.getId()));
+        String cancelUri = RECRUIT_CANCEL.of(String.valueOf(recruitment.getId()));
+        String detailsUri = RECRUIT_INFO.of(String.valueOf(recruitment.getId()));
         return new EtcInfo(recruitment.getPost().getTitle(), cancelUri, detailsUri, applimentMember.getStatus().getStatus());
     }
 
