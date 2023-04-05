@@ -209,14 +209,12 @@ class RecruitmentServiceTest {
             //then
             RecruitMember recruitMember1 = basicRecruit.getMembers().get(0);
             RecruitMember recruitMember2 = basicRecruit.getMembers().get(1);
-            RecruitMember recruitMember3 = basicRecruit.getMembers().get(2);
             for (RecruitMember member : basicRecruit.getMembers()) {
                 System.out.println(member.getRecruitField());
             }
             assertAll(
-                    () -> assertThat(recruitMember1.getRecruitField()).isEqualTo("LEADER"),
-                    () -> assertThat(recruitMember2.getRecruitField()).isEqualTo("디자이너"),
-                    () -> assertThat(recruitMember3.getRecruitField()).isEqualTo("인프라"),
+                    () -> assertThat(recruitMember1.getRecruitField()).isEqualTo("디자이너"),
+                    () -> assertThat(recruitMember2.getRecruitField()).isEqualTo("인프라"),
                     () -> verify(recruitmentRepository).findByIdFetchMembers(recruitId)
             );
         }

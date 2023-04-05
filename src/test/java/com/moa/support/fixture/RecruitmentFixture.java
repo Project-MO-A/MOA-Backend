@@ -42,8 +42,8 @@ public enum RecruitmentFixture {
         Recruitment recruitment = 기본_엔티티_생성(postUser);
         recruitment.setTags(recruitTags);
         List<RecruitMember> test = new ArrayList<>();
-        for (long i = 0; i < recruitMembers.size(); i++) {
-            test.add(new TestRecruitMember(recruitment, i));
+        for (int i = 0; i < recruitMembers.size(); i++) {
+            test.add(new TestRecruitMember(recruitment, recruitMembers.get(i), (long) i));
         }
         recruitment.setMembers(test);
         return recruitment;
@@ -69,8 +69,8 @@ public enum RecruitmentFixture {
     static class TestRecruitMember extends RecruitMember {
         private Long id;
 
-        public TestRecruitMember(Recruitment recruitment, Long id) {
-            super(recruitment);
+        public TestRecruitMember(Recruitment recruitment, RecruitMember recruitMember, Long id) {
+            super(recruitment, recruitMember.getRecruitField(), recruitMember.getTotalRecruitCount());
             this.id = id;
         }
 
