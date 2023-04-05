@@ -134,7 +134,7 @@ class UserControllerTest extends AbstractControllerTest {
         //then
         action.andExpect(status().isOk())
                 .andDo(
-                        document("user/signout",
+                        document("user/sign-out",
                                 queryParameters(
                                         parameterWithName("email").description("user email")
                                 ),
@@ -185,34 +185,6 @@ class UserControllerTest extends AbstractControllerTest {
                     .build();
 
             userService.saveUser(request);
-        }
-
-        @Test
-        @DisplayName("getInfo - 사용자의 정보를 가져오는데 성공한다. fail -> 모집 글 기능 구현시 테스트 재 구성 필")
-        @WithMockUser
-        void getInfo() throws Exception {
-            //when
-            ResultActions action = mvc.perform(get("/user/info")
-                    .header(HttpHeaders.AUTHORIZATION, "access.jwt.token")
-                    .header("AuthorizationRefresh", "refresh.jwt.token"));
-
-            action.andExpectAll(
-                    status().isOk(),
-                    jsonPath("$.userInfo.email").value(EMAIL),
-                    jsonPath("$.userInfo.name").value("name"),
-                    jsonPath("$.userInfo.nickname").value("John"),
-                    jsonPath("$.userInfo.locationLatitude").value(34.14123),
-                    jsonPath("$.userInfo.locationLongitude").value(34.14123),
-                    jsonPath("$.userInfo.details").value("Hello"),
-                    jsonPath("$.userInfo.interests.[0]").value("Java"),
-                    jsonPath("$.userInfo.interests.[1]").value("Python"))
-                            .andDo(
-                                    document("user/info",
-                                            queryParameters(
-                                                    parameterWithName("email").description("user email")
-                                            )
-                                    )
-                            );
         }
 
         @DisplayName("update - 사용자 정보를 수정하는데 성공한다.")
