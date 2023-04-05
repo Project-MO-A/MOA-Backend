@@ -5,9 +5,11 @@ import com.moa.domain.notice.Post;
 import com.moa.domain.recruit.Category;
 import com.moa.domain.recruit.Recruitment;
 import com.moa.domain.recruit.tag.RecruitTag;
+import com.moa.domain.user.Popularity;
 import com.moa.domain.user.User;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.moa.domain.recruit.Category.PROGRAMMING;
@@ -36,6 +38,17 @@ public enum RecruitmentFixture {
         return recruitment;
     }
 
+    public Recruitment 생성1(final User postUser, final List<RecruitTag> recruitTags, List<RecruitMember> recruitMembers) {
+        Recruitment recruitment = 기본_엔티티_생성(postUser);
+        recruitment.setTags(recruitTags);
+        List<RecruitMember> test = new ArrayList<>();
+        for (long i = 0; i < recruitMembers.size(); i++) {
+            test.add(new TestRecruitMember(recruitment, i));
+        }
+        recruitment.setMembers(test);
+        return recruitment;
+    }
+
     public Recruitment 생성() {
         return 기본_빌더_생성().build();
     }
@@ -51,5 +64,19 @@ public enum RecruitmentFixture {
                 .post(new Post(this.title, this.content))
                 .status(RECRUITING)
                 .category(this.category);
+    }
+
+    static class TestRecruitMember extends RecruitMember {
+        private Long id;
+
+        public TestRecruitMember(Recruitment recruitment, Long id) {
+            super(recruitment);
+            this.id = id;
+        }
+
+        @Override
+        public Long getId() {
+            return id;
+        }
     }
 }
