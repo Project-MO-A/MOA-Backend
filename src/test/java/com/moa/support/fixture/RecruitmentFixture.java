@@ -15,7 +15,6 @@ import java.util.List;
 import static com.moa.domain.recruit.Category.PROGRAMMING;
 import static com.moa.domain.recruit.RecruitStatus.RECRUITING;
 
-@Getter
 public enum RecruitmentFixture {
     PROGRAMMING_POST("사이드 프로젝트 모집합니다.",
             "사이드 프로젝트 같이하실 프론트, 백엔드 개발자를 모집합니다", PROGRAMMING),
@@ -78,5 +77,17 @@ public enum RecruitmentFixture {
         public Long getId() {
             return id;
         }
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public Category getCategory() {
+        return category;
     }
 }

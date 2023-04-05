@@ -9,7 +9,6 @@ import java.time.LocalTime;
 
 import static com.moa.domain.possible.Day.*;
 
-@Getter
 public enum PossibleTimeFixture {
     MONDAY_ALL(MONDAY, 9, 23),
     MONDAY_DAYTIME(MONDAY, 13, 19),
@@ -56,5 +55,17 @@ public enum PossibleTimeFixture {
         return PossibleTime.builder()
                 .day(this.day)
                 .applimentMember(applimentMember);
+    }
+
+    public Day getDay() {
+        return day;
+    }
+
+    public int getStartHour() {
+        return startHour;
+    }
+
+    public int getEndHour() {
+        return endHour;
     }
 }

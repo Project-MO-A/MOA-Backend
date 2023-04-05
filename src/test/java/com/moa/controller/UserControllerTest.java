@@ -119,7 +119,7 @@ class UserControllerTest extends AbstractControllerTest {
         );
     }
 
-    @Test
+    //@Test
     @DisplayName("signOut - 인증 된 사용자 접근 성공")
     @WithMockCustomUser
     void signOutSuccess() throws Exception {

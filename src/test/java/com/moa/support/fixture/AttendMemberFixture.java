@@ -9,7 +9,6 @@ import lombok.Getter;
 import static com.moa.domain.member.Attendance.ATTENDANCE;
 import static com.moa.domain.member.Attendance.NONATTENDANCE;
 
-@Getter
 public enum AttendMemberFixture {
     ATTENDANCE_MEMBER(ATTENDANCE),
     NON_ATTENDANCE_MEMBER(NONATTENDANCE);
@@ -26,5 +25,9 @@ public enum AttendMemberFixture {
                 .notice(notice)
                 .attendance(this.attendance)
                 .build();
+    }
+
+    public Attendance getAttendance() {
+        return attendance;
     }
 }
