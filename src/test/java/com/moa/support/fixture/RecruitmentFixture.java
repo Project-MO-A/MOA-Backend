@@ -5,15 +5,16 @@ import com.moa.domain.notice.Post;
 import com.moa.domain.recruit.Category;
 import com.moa.domain.recruit.Recruitment;
 import com.moa.domain.recruit.tag.RecruitTag;
+import com.moa.domain.user.Popularity;
 import com.moa.domain.user.User;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.moa.domain.recruit.Category.PROGRAMMING;
 import static com.moa.domain.recruit.RecruitStatus.RECRUITING;
 
-@Getter
 public enum RecruitmentFixture {
     PROGRAMMING_POST("사이드 프로젝트 모집합니다.",
             "사이드 프로젝트 같이하실 프론트, 백엔드 개발자를 모집합니다", PROGRAMMING),
@@ -36,6 +37,17 @@ public enum RecruitmentFixture {
         return recruitment;
     }
 
+    public Recruitment 생성1(final User postUser, final List<RecruitTag> recruitTags, List<RecruitMember> recruitMembers) {
+        Recruitment recruitment = 기본_엔티티_생성(postUser);
+        recruitment.setTags(recruitTags);
+        List<RecruitMember> test = new ArrayList<>();
+        for (int i = 0; i < recruitMembers.size(); i++) {
+            test.add(new TestRecruitMember(recruitment, recruitMembers.get(i), (long) i));
+        }
+        recruitment.setMembers(test);
+        return recruitment;
+    }
+
     public Recruitment 생성() {
         return 기본_빌더_생성().build();
     }
@@ -51,5 +63,31 @@ public enum RecruitmentFixture {
                 .post(new Post(this.title, this.content))
                 .status(RECRUITING)
                 .category(this.category);
+    }
+
+    static class TestRecruitMember extends RecruitMember {
+        private Long id;
+
+        public TestRecruitMember(Recruitment recruitment, RecruitMember recruitMember, Long id) {
+            super(recruitment, recruitMember.getRecruitField(), recruitMember.getTotalRecruitCount());
+            this.id = id;
+        }
+
+        @Override
+        public Long getId() {
+            return id;
+        }
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public Category getCategory() {
+        return category;
     }
 }

@@ -32,6 +32,8 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf().disable()
+                .cors()
+                .and()
                 .httpBasic().disable()
                 .headers().frameOptions().sameOrigin()
                 .and()
@@ -40,6 +42,7 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorize ->
                         authorize
+                                .requestMatchers(GET, "/recruitment/*").permitAll()
                                 .requestMatchers(DELETE, "/user/sign-out").hasRole("USER")
                                 //admin
                                 .requestMatchers("/recruitment/*", "/recruitment/*/apply/**", "/recruitment/*/approved/**", "/recruitment/*/notice/*").access(forAuthor)

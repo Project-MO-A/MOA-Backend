@@ -8,7 +8,6 @@ import lombok.Getter;
 import java.util.ArrayList;
 import java.util.List;
 
-@Getter
 public enum UserFixture {
     KAI("kai123@email.com", "asdfsqwe1234!", "이기우", "kai",
             34.123124, 31.123451, "안녕하세욤"),
@@ -73,5 +72,37 @@ public enum UserFixture {
         return 기본_빌더_생성()
                     .popularity(popularity)
                     .build();
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public double getLocationLatitude() {
+        return locationLatitude;
+    }
+
+    public double getLocationLongitude() {
+        return locationLongitude;
+    }
+
+    public String getDetails() {
+        return details;
+    }
+
+    public List<Interests> getInterests() {
+        return interests;
     }
 }

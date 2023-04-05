@@ -7,7 +7,6 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-@Getter
 public enum NoticeFixture {
     FIRST_NOTICE("첫 번째 공지", "공지사항 입니당", "강남 스터디카페", LocalDateTime.of(2023, 4, 1, 13, 0)),
     SECOND_NOTICE("두 번째 공지","공지사항 입니당", "강남 스터디카페", LocalDateTime.of(2023, 4, 8, 13, 0)),
@@ -42,5 +41,21 @@ public enum NoticeFixture {
                 .recruitment(recruitment)
                 .checkVote(vote)
                 .build();
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public LocalDateTime getTime() {
+        return time;
     }
 }

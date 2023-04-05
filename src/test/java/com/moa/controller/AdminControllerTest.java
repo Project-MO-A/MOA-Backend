@@ -92,10 +92,10 @@ class AdminControllerTest {
             //then
             actions.andExpectAll(
                     status().isOk(),
-                    jsonPath("$.[0].userId").value("1"),
-                    jsonPath("$.[0].status").value("대기중"),
-                    jsonPath("$.[1].userId").value("2"),
-                    jsonPath("$.[1].status").value("거절")
+                    jsonPath("$.value.[0].userId").value("1"),
+                    jsonPath("$.value.[0].status").value("대기중"),
+                    jsonPath("$.value.[1].userId").value("2"),
+                    jsonPath("$.value.[1].status").value("거절")
             );
 
             verify(adminService).getApplimentMembers(1L, null);
@@ -129,10 +129,10 @@ class AdminControllerTest {
             //then
             actions.andExpectAll(
                     status().isOk(),
-                    jsonPath("$.[0].userId").value("1"),
-                    jsonPath("$.[0].status").value("대기중"),
-                    jsonPath("$.[1].userId").value("2"),
-                    jsonPath("$.[1].status").value("대기중")
+                    jsonPath("$.value.[0].userId").value("1"),
+                    jsonPath("$.value.[0].status").value("대기중"),
+                    jsonPath("$.value.[1].userId").value("2"),
+                    jsonPath("$.value.[1].status").value("대기중")
             );
 
             verify(adminService).getApplimentMembers(1L, PENDING);
@@ -166,10 +166,10 @@ class AdminControllerTest {
             //then
             actions.andExpectAll(
                     status().isOk(),
-                    jsonPath("$.[0].userId").value("1"),
-                    jsonPath("$.[0].status").value("거절"),
-                    jsonPath("$.[1].userId").value("2"),
-                    jsonPath("$.[1].status").value("거절")
+                    jsonPath("$.value.[0].userId").value("1"),
+                    jsonPath("$.value.[0].status").value("거절"),
+                    jsonPath("$.value.[1].userId").value("2"),
+                    jsonPath("$.value.[1].status").value("거절")
             );
 
             verify(adminService).getApplimentMembers(1L, REFUSE);
@@ -203,10 +203,10 @@ class AdminControllerTest {
             //then
             actions.andExpectAll(
                     status().isOk(),
-                    jsonPath("$.[0].userId").value("1"),
-                    jsonPath("$.[0].status").value("강퇴"),
-                    jsonPath("$.[1].userId").value("2"),
-                    jsonPath("$.[1].status").value("강퇴")
+                    jsonPath("$.value.[0].userId").value("1"),
+                    jsonPath("$.value.[0].status").value("강퇴"),
+                    jsonPath("$.value.[1].userId").value("2"),
+                    jsonPath("$.value.[1].status").value("강퇴")
             );
 
             verify(adminService).getApplimentMembers(1L, KICK);

@@ -166,7 +166,7 @@ class RecruitmentServiceTest {
             final List<Tag> updateTag = FRONTEND_TAG.생성();
             RecruitUpdateRequest updateRequest = ANOTHER_REQUEST.수정_생성();
             List<RecruitMember> recruitMembers = List.of(BACKEND_MEMBER.생성(), FRONTEND_MEMBER.생성());
-            Recruitment basicRecruit = PROGRAMMING_POST.생성(PINGU.생성(),
+            Recruitment basicRecruit = PROGRAMMING_POST.생성1(PINGU.생성(),
                     BACKEND_TAG.생성().stream().map(RecruitTag::new).toList(),
                     recruitMembers);
 
@@ -196,7 +196,7 @@ class RecruitmentServiceTest {
                     )
             );
             List<RecruitMember> beforeMember = List.of(BACKEND_MEMBER.생성(), FRONTEND_MEMBER.생성());
-            Recruitment basicRecruit = PROGRAMMING_POST.생성(PINGU.생성(),
+            Recruitment basicRecruit = PROGRAMMING_POST.생성1(PINGU.생성(),
                     BACKEND_TAG.생성().stream().map(RecruitTag::new).toList(),
                     beforeMember);
 
@@ -209,6 +209,9 @@ class RecruitmentServiceTest {
             //then
             RecruitMember recruitMember1 = basicRecruit.getMembers().get(0);
             RecruitMember recruitMember2 = basicRecruit.getMembers().get(1);
+            for (RecruitMember member : basicRecruit.getMembers()) {
+                System.out.println(member.getRecruitField());
+            }
             assertAll(
                     () -> assertThat(recruitMember1.getRecruitField()).isEqualTo("디자이너"),
                     () -> assertThat(recruitMember2.getRecruitField()).isEqualTo("인프라"),
@@ -225,7 +228,7 @@ class RecruitmentServiceTest {
             RecruitUpdateRequest updateRequest = ANOTHER_REQUEST.수정_생성();
             List<RecruitMember> recruitMembers = List.of(BACKEND_MEMBER.생성(), FRONTEND_MEMBER.생성());
 
-            Recruitment basicRecruit = PROGRAMMING_POST.생성(PINGU.생성(),
+            Recruitment basicRecruit = PROGRAMMING_POST.생성1(PINGU.생성(),
                     BACKEND_TAG.생성().stream().map(RecruitTag::new).toList(),
                     recruitMembers);
             given(recruitmentRepository.findByIdFetchMembers(recruitId))

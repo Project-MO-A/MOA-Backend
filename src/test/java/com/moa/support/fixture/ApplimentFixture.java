@@ -9,7 +9,6 @@ import lombok.Getter;
 
 import static com.moa.domain.member.ApprovalStatus.*;
 
-@Getter
 public enum ApplimentFixture {
     LEADER_MEMBER(APPROVED),
     APPROVED_MEMBER(APPROVED),
@@ -33,5 +32,9 @@ public enum ApplimentFixture {
                 .recruitMember(recruitMember)
                 .status(this.status)
                 .build();
+    }
+
+    public ApprovalStatus getStatus() {
+        return status;
     }
 }

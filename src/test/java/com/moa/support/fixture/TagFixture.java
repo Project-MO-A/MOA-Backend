@@ -5,7 +5,6 @@ import lombok.Getter;
 
 import java.util.List;
 
-@Getter
 public enum TagFixture {
     BACKEND_TAG(List.of("백엔드", "DevOps", "Infra", "Java", "CI/CD")),
     FRONTEND_TAG(List.of("프론트엔드", "React", "Nest", "TypeScript", "Figma"));
@@ -24,5 +23,9 @@ public enum TagFixture {
         return this.tags.stream()
                 .map(Tag::new)
                 .toList();
+    }
+
+    public List<String> getTags() {
+        return tags;
     }
 }

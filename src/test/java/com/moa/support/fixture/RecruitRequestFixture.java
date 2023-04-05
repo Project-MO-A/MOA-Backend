@@ -10,7 +10,6 @@ import java.util.List;
 import static com.moa.support.fixture.TagFixture.BACKEND_TAG;
 import static com.moa.support.fixture.TagFixture.FRONTEND_TAG;
 
-@Getter
 public enum RecruitRequestFixture {
     BASIC_REQUEST("프로젝트 모집", "프로젝트 인원 모집합니다.", BACKEND_TAG.getTags(), List.of(
             RecruitMemberRequest.builder().field("백엔드").total(5).build(),
@@ -75,5 +74,21 @@ public enum RecruitRequestFixture {
                 .content(this.content)
                 .tags(this.tags)
                 .memberFields(this.requests);
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public List<String> getTags() {
+        return tags;
+    }
+
+    public List<RecruitMemberRequest> getRequests() {
+        return requests;
     }
 }

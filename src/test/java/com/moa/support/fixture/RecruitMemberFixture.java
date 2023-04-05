@@ -6,7 +6,6 @@ import lombok.Getter;
 
 import java.util.List;
 
-@Getter
 public enum RecruitMemberFixture {
     BACKEND_MEMBER("백엔드", 5),
     FRONTEND_MEMBER("프론트엔드", 3),
@@ -39,5 +38,13 @@ public enum RecruitMemberFixture {
                 .recruitField(this.field)
                 .totalRecruitCount(totalCount)
                 .build();
+    }
+
+    public String getField() {
+        return field;
+    }
+
+    public int getTotal() {
+        return total;
     }
 }
