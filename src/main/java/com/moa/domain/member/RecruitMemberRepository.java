@@ -1,5 +1,6 @@
 package com.moa.domain.member;
 
+import com.moa.domain.recruit.Recruitment;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,4 +15,7 @@ public interface RecruitMemberRepository extends JpaRepository<RecruitMember, Lo
     @EntityGraph(attributePaths = {"recruitment"}, type = EntityGraph.EntityGraphType.LOAD)
     @Query("select r from RecruitMember r where r.id in :id")
     List<RecruitMember> findFetchAllById(@Param("id") Iterable<Long> Id);
+
+    @Query("select r from RecruitMember r where r.recruitment =:recruit and r.recruitField != 'LEADER'")
+    List<RecruitMember> findAllByRecruitment(@Param("recruit") Recruitment recruitment);
 }

@@ -6,6 +6,7 @@ import lombok.Builder;
 
 @Builder
 public record RecruitMemberRequest(
+        Long recruitMemberId,
         @NotBlank String field,
         @Positive int total
 ) {

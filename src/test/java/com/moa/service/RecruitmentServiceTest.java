@@ -1,7 +1,5 @@
 package com.moa.service;
 
-import com.moa.domain.member.ApplimentMember;
-import com.moa.domain.member.ApplimentMemberRepository;
 import com.moa.domain.member.RecruitMember;
 import com.moa.domain.recruit.Recruitment;
 import com.moa.domain.recruit.RecruitmentRepository;
@@ -53,8 +51,6 @@ class RecruitmentServiceTest {
     private RecruitmentRepository recruitmentRepository;
     @Mock
     private UserRepository userRepository;
-    @Mock
-    private ApplimentMemberRepository applimentMemberRepository;
 
     @InjectMocks
     private RecruitmentService recruitmentService;
@@ -84,7 +80,6 @@ class RecruitmentServiceTest {
         assertAll(
                 () -> assertThat(postId).isEqualTo(1L),
                 () -> verify(userRepository).getReferenceById(userId),
-                () -> verify(applimentMemberRepository).save(any(ApplimentMember.class)),
                 () -> verify(recruitmentRepository).save(any(Recruitment.class))
         );
     }
@@ -103,7 +98,6 @@ class RecruitmentServiceTest {
                 () -> assertThatThrownBy(() -> recruitmentService.post(userId, postRequest, tags))
                         .isExactlyInstanceOf(InvalidRequestException.class),
                 () -> verify(userRepository).getReferenceById(userId),
-                () -> verify(applimentMemberRepository, times(0)).save(any(ApplimentMember.class)),
                 () -> verify(recruitmentRepository, times(0)).save(any(Recruitment.class))
         );
     }
@@ -122,7 +116,6 @@ class RecruitmentServiceTest {
                 () -> assertThatThrownBy(() -> recruitmentService.post(userId, postRequest, tags))
                         .isExactlyInstanceOf(InvalidRequestException.class),
                 () -> verify(userRepository).getReferenceById(userId),
-                () -> verify(applimentMemberRepository, times(0)).save(any(ApplimentMember.class)),
                 () -> verify(recruitmentRepository, times(0)).save(any(Recruitment.class))
         );
     }
@@ -172,11 +165,12 @@ class RecruitmentServiceTest {
             final Long recruitId = 1L;
             final List<Tag> updateTag = FRONTEND_TAG.생성();
             RecruitUpdateRequest updateRequest = ANOTHER_REQUEST.수정_생성();
-
+            List<RecruitMember> recruitMembers = List.of(BACKEND_MEMBER.생성(), FRONTEND_MEMBER.생성());
             Recruitment basicRecruit = PROGRAMMING_POST.생성(PINGU.생성(),
                     BACKEND_TAG.생성().stream().map(RecruitTag::new).toList(),
-                    List.of(BACKEND_MEMBER.생성(), FRONTEND_MEMBER.생성()));
-            given(recruitmentRepository.findById(recruitId))
+                    recruitMembers);
+
+            given(recruitmentRepository.findByIdFetchMembers(recruitId))
                     .willReturn(Optional.of(basicRecruit));
 
             //when
@@ -185,7 +179,7 @@ class RecruitmentServiceTest {
             //then
             assertAll(
                     () -> assertThat(basicRecruit.getPost().getTitle()).isEqualTo(ANOTHER_REQUEST.getTitle()),
-                    () -> verify(recruitmentRepository).findById(recruitId)
+                    () -> verify(recruitmentRepository).findByIdFetchMembers(recruitId)
             );
         }
 
@@ -197,15 +191,16 @@ class RecruitmentServiceTest {
             final List<Tag> updateTag = FRONTEND_TAG.생성();
             RecruitUpdateRequest updateRequest = ANOTHER_REQUEST.멤버를_변경하여_수정_생성(
                     List.of(
-                            new RecruitMemberRequest("디자이너", 1),
-                            new RecruitMemberRequest("인프라", 2)
+                            RecruitMemberRequest.builder().field("디자이너").total(2).build(),
+                            RecruitMemberRequest.builder().field("인프라").total(1).build()
                     )
             );
-
+            List<RecruitMember> beforeMember = List.of(BACKEND_MEMBER.생성(), FRONTEND_MEMBER.생성());
             Recruitment basicRecruit = PROGRAMMING_POST.생성(PINGU.생성(),
                     BACKEND_TAG.생성().stream().map(RecruitTag::new).toList(),
-                    List.of(BACKEND_MEMBER.생성(), FRONTEND_MEMBER.생성()));
-            given(recruitmentRepository.findById(recruitId))
+                    beforeMember);
+
+            given(recruitmentRepository.findByIdFetchMembers(recruitId))
                     .willReturn(Optional.of(basicRecruit));
 
             //when
@@ -217,7 +212,7 @@ class RecruitmentServiceTest {
             assertAll(
                     () -> assertThat(recruitMember1.getRecruitField()).isEqualTo("디자이너"),
                     () -> assertThat(recruitMember2.getRecruitField()).isEqualTo("인프라"),
-                    () -> verify(recruitmentRepository).findById(recruitId)
+                    () -> verify(recruitmentRepository).findByIdFetchMembers(recruitId)
             );
         }
 
@@ -228,11 +223,12 @@ class RecruitmentServiceTest {
             final Long recruitId = 1L;
             final List<Tag> updateTag = FRONTEND_TAG.생성();
             RecruitUpdateRequest updateRequest = ANOTHER_REQUEST.수정_생성();
+            List<RecruitMember> recruitMembers = List.of(BACKEND_MEMBER.생성(), FRONTEND_MEMBER.생성());
 
             Recruitment basicRecruit = PROGRAMMING_POST.생성(PINGU.생성(),
                     BACKEND_TAG.생성().stream().map(RecruitTag::new).toList(),
-                    List.of(BACKEND_MEMBER.생성(), FRONTEND_MEMBER.생성()));
-            given(recruitmentRepository.findById(recruitId))
+                    recruitMembers);
+            given(recruitmentRepository.findByIdFetchMembers(recruitId))
                     .willReturn(Optional.of(basicRecruit));
 
             //when
@@ -241,7 +237,7 @@ class RecruitmentServiceTest {
             //then
             assertAll(
                     () -> assertThat(basicRecruit.getTags().size()).isEqualTo(updateTag.size()),
-                    () -> verify(recruitmentRepository).findById(recruitId)
+                    () -> verify(recruitmentRepository).findByIdFetchMembers(recruitId)
             );
         }
 
@@ -256,7 +252,7 @@ class RecruitmentServiceTest {
             Recruitment basicRecruit = PROGRAMMING_POST.생성(PINGU.생성(),
                     BACKEND_TAG.생성().stream().map(RecruitTag::new).toList(),
                     List.of(BACKEND_MEMBER.생성(), FRONTEND_MEMBER.생성()));
-            given(recruitmentRepository.findById(recruitId))
+            given(recruitmentRepository.findByIdFetchMembers(recruitId))
                     .willReturn(Optional.of(basicRecruit));
 
             //when & then
@@ -272,7 +268,7 @@ class RecruitmentServiceTest {
             final List<Tag> updateTag = FRONTEND_TAG.생성();
             RecruitUpdateRequest updateRequest = ANOTHER_REQUEST.수정_생성();
 
-            given(recruitmentRepository.findById(invalidId))
+            given(recruitmentRepository.findByIdFetchMembers(invalidId))
                     .willThrow(EntityNotFoundException.class);
 
             //when & then

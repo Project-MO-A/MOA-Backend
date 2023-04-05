@@ -109,8 +109,8 @@ public class InitData {
                     .builder()
                     .title("title")
                     .content("content")
-                    .memberFields(List.of(new RecruitMemberRequest("백엔드", 5),
-                            new RecruitMemberRequest("프론트엔드", 5)
+                    .memberFields(List.of(RecruitMemberRequest.builder().field("백엔드").total(5).build(),
+                            RecruitMemberRequest.builder().field("프론트").total(5).build()
                     ))
                     .tags(List.of("프로젝트", "웹", "Java", "MySQL"))
                     .build();

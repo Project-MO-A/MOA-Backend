@@ -1,11 +1,19 @@
 package com.moa.domain.member;
 
 import com.moa.domain.recruit.Recruitment;
+import com.moa.dto.member.RecruitMemberRequest;
+import com.moa.global.exception.service.InvalidRequestException;
+import com.moa.global.exception.service.MemberStatusException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.moa.global.exception.ErrorCode.*;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -18,6 +26,9 @@ public class RecruitMember {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "RECRUITMENT_ID")
     private Recruitment recruitment;
+
+    @OneToMany(mappedBy = "recruitMember", cascade = CascadeType.PERSIST)
+    private List<ApplimentMember> applimentMembers = new ArrayList<>();
 
     private String recruitField;
 
@@ -42,15 +53,34 @@ public class RecruitMember {
         this.totalRecruitCount = 1;
     }
 
+    public void update(RecruitMemberRequest request) {
+        this.recruitField = request.field();
+        setTotal(request.total());
+    }
+
     public void setParent(Recruitment recruitment) {
         this.recruitment = recruitment;
     }
 
+    public void addApplimentMember(ApplimentMember applimentMember) {
+        if (!applimentMembers.contains(applimentMember)) {
+            applimentMembers.add(applimentMember);
+            applimentMember.setRecruitMember(this);
+        }
+    }
+
     public void addCount() {
+        if (this.totalRecruitCount <= currentRecruitCount) throw new MemberStatusException(RECRUITMEMBER_FULL_COUNT);
         currentRecruitCount += 1;
     }
 
     public void minusCount() {
+        if (this.currentRecruitCount <= 0 ) throw new MemberStatusException(RECRUITMEMBER_ZERO_COUNT);
         currentRecruitCount -= 1;
+    }
+
+    private void setTotal(int total) {
+        if (currentRecruitCount > total) throw new InvalidRequestException(COUNT_INVALID);
+        this.totalRecruitCount = total;
     }
 }

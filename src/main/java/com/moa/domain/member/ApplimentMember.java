@@ -48,6 +48,10 @@ public class ApplimentMember {
         return this.status.name();
     }
 
+    public void setRecruitMember(RecruitMember recruitMember) {
+        this.recruitMember = recruitMember;
+    }
+
     public void setPopularity(double rate) {
         Popularity userPopularity = user.getPopularity();
 

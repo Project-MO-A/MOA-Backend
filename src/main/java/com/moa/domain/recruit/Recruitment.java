@@ -71,24 +71,24 @@ public class Recruitment {
         }
     }
 
-    public void update(RecruitUpdateRequest updateRequest, List<RecruitTag> categories) {
+    public void setMember(RecruitMember member) {
+        if (!this.members.contains(member)) {
+            this.members.add(member);
+            member.setParent(this);
+        }
+    }
+
+    public void update(RecruitUpdateRequest updateRequest, List<RecruitTag> tags) {
         this.post.updateTitle(updateRequest.title());
         this.post.updateContent(updateRequest.content());
         updateState(updateRequest.state());
-        updateMembers(updateRequest.toMemberList());
-        updateCategory(categories);
+        updateTags(tags);
     }
 
-    private void updateMembers(List<RecruitMember> memberList) {
-        if (memberList == null || memberList.isEmpty()) throw new InvalidRequestException(REQUEST_INVALID);
-        this.members.clear();
-        this.setMembers(memberList);
-    }
-
-    private void updateCategory(List<RecruitTag> categories) {
-        if (categories == null || categories.isEmpty()) return;
+    private void updateTags(List<RecruitTag> tags) {
+        if (tags == null || tags.isEmpty()) return;
         this.tags.clear();
-        this.setTags(categories);
+        this.setTags(tags);
     }
 
     public void updateState(Integer stateCode) {
