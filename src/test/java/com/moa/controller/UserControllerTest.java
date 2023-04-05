@@ -25,8 +25,6 @@ import static org.springframework.restdocs.headers.HeaderDocumentation.requestHe
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.payload.JsonFieldType.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.queryParameters;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -119,15 +117,12 @@ class UserControllerTest extends AbstractControllerTest {
         );
     }
 
-    //@Test
+    @Test
     @DisplayName("signOut - 인증 된 사용자 접근 성공")
-    @WithMockCustomUser
+    @WithMockCustomUser(id = "2")
     void signOutSuccess() throws Exception {
-        //given
-        String email = "user@email.com";
-
         //when
-        ResultActions action = mvc.perform(delete("/user/sign-out?email="+email)
+        ResultActions action = mvc.perform(delete("/user/sign-out")
                 .header(HttpHeaders.AUTHORIZATION, "access.jwt.token")
                 .header("AuthorizationRefresh", "refresh.jwt.token"));
 
@@ -135,9 +130,6 @@ class UserControllerTest extends AbstractControllerTest {
         action.andExpect(status().isOk())
                 .andDo(
                         document("user/sign-out",
-                                queryParameters(
-                                        parameterWithName("email").description("user email")
-                                ),
                                 requestHeaders(
                                         headerWithName("Authorization").description("access token"),
                                         headerWithName("AuthorizationRefresh").description("refresh token").optional()
@@ -150,12 +142,8 @@ class UserControllerTest extends AbstractControllerTest {
     @DisplayName("signOut - 인증 되지 않은 사용자 접근 실패")
     @WithAnonymousUser
     void signOutFail() throws Exception {
-        //given
-        String email = "user@email.com";
-
         //when
-        ResultActions action = mvc.perform(delete("/user/sign-out")
-                .param("email", email));
+        ResultActions action = mvc.perform(delete("/user/sign-out"));
 
         //then
         action.andExpect(status().isForbidden());
