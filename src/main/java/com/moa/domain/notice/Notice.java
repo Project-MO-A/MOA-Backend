@@ -9,7 +9,6 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
 
@@ -46,23 +45,8 @@ public class Notice extends BaseTimeEntity {
         if (this.recruitment != recruitment) {
             throw new AssociationMisMatchException(NOTICE_ASSOCIATION_MISMATCH);
         }
-        this.post.updateTitle(request.title());
         this.post.updateContent(request.content());
-        updateConfirmedTime(request.meetingTime());
-        updateConfirmedLocation(request.confirmedLocation());
         updateCheckVote(request.checkVote());
-    }
-
-    private void updateConfirmedTime(LocalDateTime meetingTime) {
-        if (meetingTime != null) {
-            this.confirmedTime = meetingTime;
-        }
-    }
-
-    private void updateConfirmedLocation(String confirmedLocation) {
-        if (StringUtils.hasText(confirmedLocation)) {
-            this.confirmedLocation = confirmedLocation;
-        }
     }
 
     private void updateCheckVote(Boolean checkVote) {
