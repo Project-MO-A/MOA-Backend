@@ -19,7 +19,6 @@ import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -49,8 +48,7 @@ class NoticeControllerUnitTest extends AbstractControllerUnitTest {
     @DisplayName("공지사항 등록에 성공한다")
     void successPostNotice() throws Exception {
         //given
-        PostNoticeRequest request = new PostNoticeRequest("title", "content", LocalDateTime.parse("2023-04-01T12:00:00"),
-                "서울역", true);
+        PostNoticeRequest request = new PostNoticeRequest("content", true);
         given(noticeService.post(1L, request)).willReturn(1L);
 
         //when
@@ -68,7 +66,7 @@ class NoticeControllerUnitTest extends AbstractControllerUnitTest {
     @DisplayName("공지사항 업데이트에 성공한다")
     void successUpdateNotice() throws Exception{
         //given
-        UpdateNoticeRequest request = new UpdateNoticeRequest(null, null, null, "용산역", true);
+        UpdateNoticeRequest request = new UpdateNoticeRequest( null, true);
         given(noticeService.update(1L, 1L, request)).willReturn(1L);
 
         //when
@@ -86,7 +84,7 @@ class NoticeControllerUnitTest extends AbstractControllerUnitTest {
     @DisplayName("잘못된 공지사항 아이디 입력으로 인한 공지사항 업데이트에 실패한다")
     void failUpdateNotice() throws Exception {
         //given
-        UpdateNoticeRequest request = new UpdateNoticeRequest(null, null, null, "용산역", true);
+        UpdateNoticeRequest request = new UpdateNoticeRequest(null, true);
         given(noticeService.update(1L, 0L, request))
                 .willThrow(new EntityNotFoundException(NOTICE_NOT_FOUND));
 
@@ -139,9 +137,9 @@ class NoticeControllerUnitTest extends AbstractControllerUnitTest {
     void findAllNotice() throws Exception {
         //given
         given(noticeService.findAll(1L)).willReturn(new NoticesResponse(
-                Map.of(1L, new NoticeResponse("title1", "content1", "2023-04-01", "2023-04-03 12:00:00", "서울역",
+                Map.of(1L, new NoticeResponse("content1", "2023-04-01",
                                 Map.of("ATTENDANCE", List.of("member1", "member2"))),
-                        2L, new NoticeResponse("title2", "content2", "2023-04-03", "2023-04-05 12:00:00", "용산역",
+                        2L, new NoticeResponse("content2", "2023-04-03",
                                 Map.of("ATTENDANCE", List.of("member1", "member2"))))
         ));
 
