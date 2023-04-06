@@ -1,7 +1,6 @@
 package com.moa.dto.recruit;
 
 import com.moa.domain.member.RecruitMember;
-import com.moa.domain.recruit.RecruitStatus;
 import com.moa.domain.recruit.Recruitment;
 import com.moa.domain.recruit.tag.RecruitTag;
 import com.moa.domain.user.User;
@@ -15,7 +14,7 @@ import java.util.List;
 public class RecruitInfoResponse {
     private final String title;
     private final String content;
-    private final RecruitStatus state;
+    private final int state;
     private UserIdNameResponse postUser;
     private List<String> tags;
     private List<RecruitMemberResponse> members;
@@ -23,7 +22,7 @@ public class RecruitInfoResponse {
     public RecruitInfoResponse(Recruitment recruitment) {
         this.title = recruitment.getPost().getTitle();
         this.content = recruitment.getPost().getContent();
-        this.state = recruitment.getStatus();
+        this.state = recruitment.getStatus().getCode();
         setPostUser(recruitment.getUser());
         setTags(recruitment.getTags());
         setMembers(recruitment.getMembers());
