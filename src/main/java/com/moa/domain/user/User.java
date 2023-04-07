@@ -2,6 +2,7 @@ package com.moa.domain.user;
 
 import com.moa.domain.interests.Interests;
 import com.moa.domain.interests.RecruitmentInterest;
+import com.moa.domain.recruit.Category;
 import com.moa.dto.user.UserUpdateRequest;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -12,6 +13,8 @@ import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static jakarta.persistence.EnumType.STRING;
 
 @Entity
 @Table(name = "USERS")
@@ -29,11 +32,13 @@ public class User {
     private String name;
     private String nickname;
     @Column(columnDefinition = "decimal(18,10)")
-    private double locationLatitude;
+    private Double locationLatitude;
     @Column(columnDefinition = "decimal(18,10)")
-    private double locationLongitude;
+    private Double locationLongitude;
     @Embedded
     private Popularity popularity;
+    @Enumerated(STRING)
+    private Category category;
     @Lob
     @Column(columnDefinition = "CLOB")
     private String details;
@@ -50,7 +55,7 @@ public class User {
     private List<RecruitmentInterest> recruitmentInterests = new ArrayList<>();
 
     @Builder
-    public User(String email, String password, Popularity popularity, String name, String nickname, double locationLatitude, double locationLongitude, String details) {
+    public User(String email, String password, Popularity popularity, String name, String nickname, double locationLatitude, double locationLongitude, Category category, String details) {
         this.email = email;
         this.password = password;
         this.name = name;
@@ -58,6 +63,7 @@ public class User {
         this.locationLatitude = locationLatitude;
         this.locationLongitude = locationLongitude;
         this.popularity = popularity != null ? popularity : new Popularity() ;
+        this.category = category;
         this.details = details;
     }
 
