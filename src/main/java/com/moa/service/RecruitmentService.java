@@ -1,5 +1,7 @@
 package com.moa.service;
 
+import com.moa.domain.interests.RecruitmentInterest;
+import com.moa.domain.interests.RecruitmentInterestsRepository;
 import com.moa.domain.member.ApplimentMember;
 import com.moa.domain.member.RecruitMember;
 import com.moa.domain.recruit.Recruitment;
@@ -32,6 +34,7 @@ import static com.moa.global.exception.ErrorCode.*;
 @Transactional
 @Service
 public class RecruitmentService {
+    private final RecruitmentInterestsRepository recruitmentInterestsRepository;
     private final RecruitmentRepository recruitmentRepository;
     private final UserRepository userRepository;
 
@@ -70,6 +73,13 @@ public class RecruitmentService {
                 .orElseThrow(() -> new EntityNotFoundException(RECRUITMENT_NOT_FOUND));
         recruitmentRepository.delete(recruitment);
         return recruitId;
+    }
+
+    public Long concern(Long recruitmentId, Long userId) {
+        Recruitment recruitment = recruitmentRepository.findById(recruitmentId)
+                .orElseThrow(() -> new EntityNotFoundException(RECRUITMENT_NOT_FOUND));
+        User user = userRepository.getReferenceById(userId);
+        return recruitmentInterestsRepository.save(new RecruitmentInterest(user, recruitment)).getId();
     }
 
     private void updateRecruitMember(RecruitUpdateRequest request, Recruitment recruitment) {
@@ -128,4 +138,6 @@ public class RecruitmentService {
         leaderMember.addApplimentMember(new ApplimentMember(leaderMember, user, APPROVED));
         recruitment.setMember(leaderMember);
     }
+
+
 }
