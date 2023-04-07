@@ -15,9 +15,11 @@ import com.moa.dto.member.RecruitMemberRequest;
 import com.moa.dto.recruit.RecruitInfoResponse;
 import com.moa.dto.recruit.RecruitPostRequest;
 import com.moa.dto.recruit.RecruitUpdateRequest;
+import com.moa.dto.recruit.RecruitmentInfo;
 import com.moa.global.exception.service.EntityNotFoundException;
 import com.moa.global.exception.service.InvalidRequestException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -82,6 +84,24 @@ public class RecruitmentService {
         return recruitmentInterestsRepository.save(new RecruitmentInterest(user, recruitment)).getId();
     }
 
+    public List<RecruitmentInfo> getTopThreeRecruitment() {
+        List<Recruitment> recruitments = recruitmentRepository.findAllDescByCount(PageRequest.of(0, 3));
+        //TODO
+        //댓글 기능 완성 후 값 주입
+        int replyCount = 0;
+        return convertToRecruitmentInfo(recruitments, replyCount);
+    }
+
+    public List<RecruitmentInfo> getRecommendRecruitment(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+        List<Recruitment> recruitments = recruitmentRepository.findByCategory(user.getCategory());
+        //TODO
+        //댓글 기능 완성 후 값 주입
+        int replyCount = 0;
+        return convertToRecruitmentInfo(recruitments, replyCount);
+    }
+
     private void updateRecruitMember(RecruitUpdateRequest request, Recruitment recruitment) {
         if (request.memberFields().isEmpty()) throw new InvalidRequestException(REQUEST_INVALID);
 
@@ -139,5 +159,9 @@ public class RecruitmentService {
         recruitment.setMember(leaderMember);
     }
 
-
+    private List<RecruitmentInfo> convertToRecruitmentInfo(List<Recruitment> recruitments, int replyCount) {
+        return recruitments.stream()
+                .map(recruitment -> RecruitmentInfo.of(recruitment, replyCount))
+                .toList();
+    }
 }
