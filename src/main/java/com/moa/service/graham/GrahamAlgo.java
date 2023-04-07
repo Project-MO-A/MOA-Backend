@@ -1,5 +1,7 @@
 package com.moa.service.graham;
 
+import lombok.Getter;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
@@ -7,7 +9,8 @@ import java.util.Stack;
 import static java.util.Comparator.comparingDouble;
 
 public class GrahamAlgo {
-    public List<Point> getOutSide(List<Point> points) {
+
+    public static List<Point> getOutSide(List<Point> points) {
         points.sort((o1, o2) -> o1.x == o2.x ? Double.compare(o1.y, o2.y) : Double.compare(o1.x, o2.x));
 
         Point start = points.get(0);
@@ -23,7 +26,7 @@ public class GrahamAlgo {
         return result;
     }
 
-    private Stack<Point> getOutSidePoints(List<Point> points, Point start) {
+    private static Stack<Point> getOutSidePoints(List<Point> points, Point start) {
         Stack<Point> stack = new Stack<>();
         stack.push(start);
         stack.push(points.get(0));
@@ -37,13 +40,14 @@ public class GrahamAlgo {
         return stack;
     }
 
-    private boolean ccw(Point first, Point second, Point third) {
+    private static boolean ccw(Point first, Point second, Point third) {
         return first.x * (second.y - third.y) + second.x * (third.y - first.y) + third.x * (first.y - second.y) > 0.0;
     }
 
-    class Point {
-        private double x;
-        private double y;
+    @Getter
+    public static class Point {
+        private final double x;
+        private final double y;
         private double tan;
 
         public Point(double x, double y) {
