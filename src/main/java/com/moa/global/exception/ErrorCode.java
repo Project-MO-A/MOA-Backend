@@ -13,7 +13,7 @@ public enum ErrorCode {
 
     NOTICE_NOT_FOUND(404, "notice.not.found", "N0001"),
     NOTICE_ASSOCIATION_MISMATCH(404, "notice.association.mismatch", "N0002"),
-
+    NOTICE_VOTE_FINISH(400, "notice.vote.finish", "N0003"),
     ATTENDMEMBER_NOT_FOUND(400, "attendmember.not.found", "AM0001"),
     
     RECRUITMENT_NOT_FOUND(404, "recruitment.not.found", "R0001"),
