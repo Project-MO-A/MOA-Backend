@@ -12,6 +12,7 @@ public class RecruitmentInfo {
     private final String title;
     private final LocalDateTime createdDate;
     private final String recruitStatus;
+    private final String category;
     private final List<String> tags;
 
     public RecruitmentInfo(Recruitment recruitment) {
@@ -19,6 +20,7 @@ public class RecruitmentInfo {
         this.title = recruitment.getPost().getTitle();
         this.createdDate = recruitment.getCreatedDate();
         this.recruitStatus = recruitment.getStatus().getStatus();
+        this.category = recruitment.getCategory().getName();
         this.tags = getTagNames(recruitment);
     }
 

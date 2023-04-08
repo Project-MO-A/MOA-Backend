@@ -15,6 +15,7 @@ public class RecruitInfoResponse {
     private final String title;
     private final String content;
     private final int state;
+    private final String category;
     private UserIdNameResponse postUser;
     private List<String> tags;
     private List<RecruitMemberResponse> members;
@@ -23,6 +24,7 @@ public class RecruitInfoResponse {
         this.title = recruitment.getPost().getTitle();
         this.content = recruitment.getPost().getContent();
         this.state = recruitment.getStatus().getCode();
+        this.category = recruitment.getCategory().getName();
         setPostUser(recruitment.getUser());
         setTags(recruitment.getTags());
         setMembers(recruitment.getMembers());
