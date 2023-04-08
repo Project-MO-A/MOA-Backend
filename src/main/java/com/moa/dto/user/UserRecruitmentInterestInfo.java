@@ -5,10 +5,9 @@ import com.moa.domain.recruit.Recruitment;
 import com.moa.domain.user.User;
 import lombok.Getter;
 
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.moa.dto.constant.RedirectURIConst.RECRUIT_INFO;
 
 @Getter
 public class UserRecruitmentInterestInfo {
@@ -23,15 +22,32 @@ public class UserRecruitmentInterestInfo {
 
         for (RecruitmentInterest recruitmentInterest : user.getRecruitmentInterests()) {
             Recruitment recruitment = recruitmentInterest.getRecruitment();
-            String title = recruitment.getPost().getTitle();
-            String redirectUri = RECRUIT_INFO.of(String.valueOf(recruitment.getId()));
-            result.add(new RecruitmentInfo(title, redirectUri));
+            result.add(RecruitmentInfo.of(recruitment, 0));
         }
         return result;
     }
 
     public record RecruitmentInfo(
+            Long id,
             String title,
-            String redirectUri
-    ) {}
+            String author,
+            String category,
+            String recruitStatus,
+            String createAt,
+            String profileImage,
+            int replyCount
+    ) {
+
+        public static RecruitmentInfo of(Recruitment recruitment, int replyCount) {
+            return new RecruitmentInfo(recruitment.getId(),
+                    recruitment.getPost().getTitle(),
+                    recruitment.getUser().getName(),
+                    recruitment.getCategory().getName(),
+                    recruitment.getStatus().getStatus(),
+                    recruitment.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
+                    "profileImageLink",
+                    replyCount
+            );
+        }
+    }
 }
