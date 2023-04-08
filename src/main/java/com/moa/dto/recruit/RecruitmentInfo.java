@@ -5,6 +5,7 @@ import com.moa.domain.recruit.Recruitment;
 import java.time.format.DateTimeFormatter;
 
 public record RecruitmentInfo(
+        Long id,
         String title,
         String author,
         String category,
@@ -15,7 +16,9 @@ public record RecruitmentInfo(
 ) {
 
     public static RecruitmentInfo of(Recruitment recruitment, int replyCount) {
-        return new RecruitmentInfo(recruitment.getPost().getTitle(),
+        return new RecruitmentInfo(
+                recruitment.getId(),
+                recruitment.getPost().getTitle(),
                 recruitment.getUser().getName(),
                 recruitment.getCategory().getName(),
                 recruitment.getStatus().getStatus(),
