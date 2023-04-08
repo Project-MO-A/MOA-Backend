@@ -131,7 +131,7 @@ class RecruitmentServiceTest {
             Recruitment recruitment = PROGRAMMING_POST.생성(PINGU.생성(),
                     BACKEND_TAG.생성().stream().map(RecruitTag::new).toList(),
                     List.of(BACKEND_MEMBER.생성(), FRONTEND_MEMBER.생성()));
-            given(recruitmentRepository.findByIdFetchUser(recruitId))
+            given(recruitmentRepository.findByIdFetchUserAndTags(recruitId))
                     .willReturn(Optional.of(recruitment));
 
             //when
@@ -141,7 +141,7 @@ class RecruitmentServiceTest {
             assertAll(
                     () -> assertThat(info.getTitle()).isEqualTo(PROGRAMMING_POST.getTitle()),
                     () -> assertThat(info.getPostUser().userName()).isEqualTo(PINGU.getName()),
-                    () -> verify(recruitmentRepository).findByIdFetchUser(recruitId)
+                    () -> verify(recruitmentRepository).findByIdFetchUserAndTags(recruitId)
             );
         }
 
@@ -150,7 +150,7 @@ class RecruitmentServiceTest {
         void getInfo_invalidRecruitId() {
             //given
             final Long invalidRecruitId = 999L;
-            given(recruitmentRepository.findByIdFetchUser(invalidRecruitId))
+            given(recruitmentRepository.findByIdFetchUserAndTags(invalidRecruitId))
                     .willThrow(EntityNotFoundException.class);
 
             //when & then

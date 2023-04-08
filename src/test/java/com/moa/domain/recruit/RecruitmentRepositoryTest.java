@@ -65,7 +65,7 @@ class RecruitmentRepositoryTest extends RepositoryTestCustom {
         Post post = RECRUITMENT.getPost();
 
         //when
-        Recruitment recruitment = recruitmentRepository.findByIdFetchUser(RECRUITMENT.getId()).get();
+        Recruitment recruitment = recruitmentRepository.findByIdFetchUserAndTags(RECRUITMENT.getId()).get();
 
         //then
         assertAll(
@@ -82,7 +82,7 @@ class RecruitmentRepositoryTest extends RepositoryTestCustom {
         Long invalidRecruitmentId = 100L;
 
         //when
-        Optional<Recruitment> recruitment = recruitmentRepository.findByIdFetchUser(invalidRecruitmentId);
+        Optional<Recruitment> recruitment = recruitmentRepository.findByIdFetchUserAndTags(invalidRecruitmentId);
 
         //then
         assertThat(recruitment).isEmpty();

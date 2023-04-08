@@ -44,7 +44,7 @@ public class RecruitmentService {
 
     @Transactional(readOnly = true)
     public RecruitInfoResponse getInfo(final Long recruitId) {
-        Recruitment recruitment = recruitmentRepository.findByIdFetchUser(recruitId)
+        Recruitment recruitment = recruitmentRepository.findByIdFetchUserAndTags(recruitId)
                 .orElseThrow(() -> new EntityNotFoundException(RECRUITMENT_NOT_FOUND));
         return new RecruitInfoResponse(recruitment);
     }
