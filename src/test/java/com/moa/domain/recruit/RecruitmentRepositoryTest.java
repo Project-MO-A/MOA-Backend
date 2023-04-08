@@ -116,4 +116,21 @@ class RecruitmentRepositoryTest extends RepositoryTestCustom {
         //then
         assertThat(recruitments).isEmpty();
     }
+
+    @DisplayName("findByUserIdFetchTags - 모집글과 관련된 태그들을 전부 불러온다")
+    @Test
+    void findByUserIdFetchTags() {
+        //given
+        Long id = RECRUITMENT.getId();
+        em.flush();
+        em.clear();
+
+        List<Recruitment> recruitments = recruitmentRepository.findByUserIdFetchTags(id);
+        List<String> tagNames = recruitments.get(0).getTags().stream().map(t -> t.getTag().getName()).toList();
+
+        assertAll(
+                () -> assertThat(tagNames).size().isEqualTo(5),
+                () -> assertThat(tagNames).containsOnly("백엔드", "DevOps", "Infra", "Java", "CI/CD")
+        );
+    }
 }
