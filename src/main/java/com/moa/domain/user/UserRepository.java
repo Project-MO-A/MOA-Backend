@@ -10,6 +10,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByRefreshToken(String refreshToken);
 
-    @EntityGraph(attributePaths = {"recruitmentInterests", "recruitmentInterests.recruitment"})
+    @EntityGraph(attributePaths = {"recruitmentInterests", "recruitmentInterests.recruitment",
+            "recruitmentInterests.recruitment.tags", "recruitmentInterests.recruitment.tags.tag"})
     Optional<User> findRecruitmentInterestById(Long userId);
 }
