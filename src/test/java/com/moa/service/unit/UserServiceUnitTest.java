@@ -135,8 +135,8 @@ class UserServiceUnitTest extends AbstractServiceTest {
 
         //then
         assertThat(info.getWriting().size()).isEqualTo(3);
-        assertThat(info.getWriting().get(0).title()).isEqualTo("title1");
-        assertThat(info.getWriting().get(0).recruitStatus()).isEqualTo("모집중");
+        assertThat(info.getWriting().get(0).getTitle()).isEqualTo("title1");
+        assertThat(info.getWriting().get(0).getRecruitStatus()).isEqualTo("모집중");
     }
 
     @Test
@@ -190,8 +190,8 @@ class UserServiceUnitTest extends AbstractServiceTest {
 
         //then
         assertThat(info.getWriting().size()).isEqualTo(1);
-        assertThat(info.getWriting().get(0).title()).isEqualTo("title");
-        assertThat(info.getWriting().get(0).redirectUri()).startsWith("/recruitment/");
+        assertThat(info.getWriting().get(0).getTitle()).isEqualTo("title");
+        assertThat(info.getWriting().get(0).getRecruitStatus()).startsWith("/recruitment/");
     }
 
     @Test
