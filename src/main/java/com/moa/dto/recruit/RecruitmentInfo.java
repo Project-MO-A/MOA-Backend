@@ -8,12 +8,12 @@ import java.util.List;
 
 @Getter
 public class RecruitmentInfo {
-    private final Long id;
-    private final String title;
-    private final LocalDateTime createdDate;
-    private final String recruitStatus;
-    private final String category;
-    private final List<String> tags;
+    protected final Long id;
+    protected final String title;
+    protected final LocalDateTime createdDate;
+    protected final String recruitStatus;
+    protected final String category;
+    protected final List<String> tags;
 
     public RecruitmentInfo(Recruitment recruitment) {
         this.id = recruitment.getId();
