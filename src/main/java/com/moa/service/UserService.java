@@ -62,7 +62,7 @@ public class UserService implements UserDetailsService {
 
     @Transactional(readOnly = true)
     public RecruitmentsInfo getUserWritingInfoById(final Long userId) {
-        List<Recruitment> recruitments = recruitmentRepository.findListByIdFetchUser(userId);
+        List<Recruitment> recruitments = recruitmentRepository.findByUserIdFetchTags(userId);
         return new RecruitmentsInfo(recruitments);
     }
 
