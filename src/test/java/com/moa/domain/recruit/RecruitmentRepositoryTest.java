@@ -65,7 +65,7 @@ class RecruitmentRepositoryTest extends RepositoryTestCustom {
         Post post = RECRUITMENT.getPost();
 
         //when
-        Recruitment recruitment = recruitmentRepository.findByIdFetchUserAndTags(RECRUITMENT.getId()).get();
+        Recruitment recruitment = recruitmentRepository.findFetchUserTagsById(RECRUITMENT.getId()).get();
 
         //then
         assertAll(
@@ -82,7 +82,7 @@ class RecruitmentRepositoryTest extends RepositoryTestCustom {
         Long invalidRecruitmentId = 100L;
 
         //when
-        Optional<Recruitment> recruitment = recruitmentRepository.findByIdFetchUserAndTags(invalidRecruitmentId);
+        Optional<Recruitment> recruitment = recruitmentRepository.findFetchUserTagsById(invalidRecruitmentId);
 
         //then
         assertThat(recruitment).isEmpty();
@@ -95,7 +95,7 @@ class RecruitmentRepositoryTest extends RepositoryTestCustom {
         Post post = RECRUITMENT.getPost();
 
         //when
-        List<Recruitment> recruitments = recruitmentRepository.findListByIdFetchUser(USER.getId());
+        List<Recruitment> recruitments = recruitmentRepository.findAllFetchUserById(USER.getId());
 
         //then
         assertAll(
@@ -111,7 +111,7 @@ class RecruitmentRepositoryTest extends RepositoryTestCustom {
         Long invalidUserId = 99L;
 
         //when
-        List<Recruitment> recruitments = recruitmentRepository.findListByIdFetchUser(invalidUserId);
+        List<Recruitment> recruitments = recruitmentRepository.findAllFetchUserById(invalidUserId);
 
         //then
         assertThat(recruitments).isEmpty();
@@ -125,7 +125,7 @@ class RecruitmentRepositoryTest extends RepositoryTestCustom {
         em.flush();
         em.clear();
 
-        List<Recruitment> recruitments = recruitmentRepository.findByUserIdFetchTags(id);
+        List<Recruitment> recruitments = recruitmentRepository.findFetchTagsByUserId(id);
         List<String> tagNames = recruitments.get(0).getTags().stream().map(t -> t.getTag().getName()).toList();
 
         assertAll(

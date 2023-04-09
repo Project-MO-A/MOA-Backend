@@ -128,7 +128,7 @@ class UserServiceUnitTest extends AbstractServiceTest {
                 new Recruitment(USER, new Post("title2", "content2"), RecruitStatus.RECRUITING, PROGRAMMING),
                 new Recruitment(USER, new Post("title3", "content3"), RecruitStatus.COMPLETE, PROGRAMMING)
         );
-        given(recruitmentRepository.findListByIdFetchUser(1L)).willReturn(value);
+        given(recruitmentRepository.findAllFetchUserById(1L)).willReturn(value);
 
         //when
         RecruitmentsInfo info = userService.getUserWritingInfoById(1L);

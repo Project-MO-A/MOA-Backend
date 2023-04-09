@@ -44,13 +44,13 @@ public class RecruitmentService {
 
     @Transactional(readOnly = true)
     public RecruitInfoResponse getInfo(final Long recruitId) {
-        Recruitment recruitment = recruitmentRepository.findByIdFetchUserAndTags(recruitId)
+        Recruitment recruitment = recruitmentRepository.findFetchUserTagsById(recruitId)
                 .orElseThrow(() -> new EntityNotFoundException(RECRUITMENT_NOT_FOUND));
         return new RecruitInfoResponse(recruitment);
     }
 
     public Long update(final Long recruitId, final RecruitUpdateRequest request, final List<Tag> tags) {
-        Recruitment recruitment = recruitmentRepository.findByIdFetchMembers(recruitId)
+        Recruitment recruitment = recruitmentRepository.findFetchMembersById(recruitId)
                 .orElseThrow(() -> new EntityNotFoundException(RECRUITMENT_NOT_FOUND));
         recruitment.update(request, getRecruitTags(tags));
         updateRecruitMember(request, recruitment);
