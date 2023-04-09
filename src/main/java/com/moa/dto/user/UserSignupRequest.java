@@ -1,7 +1,6 @@
 package com.moa.dto.user;
 
 import com.moa.domain.interests.Interests;
-import com.moa.domain.recruit.Category;
 import com.moa.domain.user.User;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -16,7 +15,6 @@ public record UserSignupRequest(
         @NotBlank String name,
         String nickname,
         String details,
-        String tag,
         double locationLatitude,
         double locationLongitude,
         List<String> interests
@@ -28,7 +26,6 @@ public record UserSignupRequest(
                 .name(name)
                 .nickname(nickname)
                 .details(details)
-                .category(Category.valueOf(tag))
                 .locationLatitude(locationLatitude)
                 .locationLongitude(locationLongitude)
                 .build();
