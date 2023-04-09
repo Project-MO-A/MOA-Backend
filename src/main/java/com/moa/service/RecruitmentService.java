@@ -1,5 +1,6 @@
 package com.moa.service;
 
+import com.moa.domain.interests.Interests;
 import com.moa.domain.interests.RecruitmentInterest;
 import com.moa.domain.interests.RecruitmentInterestsRepository;
 import com.moa.domain.member.ApplimentMember;
@@ -7,6 +8,7 @@ import com.moa.domain.member.RecruitMember;
 import com.moa.domain.recruit.Recruitment;
 import com.moa.domain.recruit.RecruitmentRepository;
 import com.moa.domain.recruit.tag.RecruitTag;
+import com.moa.domain.recruit.tag.RecruitTagRepository;
 import com.moa.domain.recruit.tag.Tag;
 import com.moa.domain.user.User;
 import com.moa.domain.user.UserRepository;
@@ -18,6 +20,7 @@ import com.moa.dto.recruit.RecruitUpdateRequest;
 import com.moa.dto.recruit.RecruitmentInfo;
 import com.moa.global.exception.service.EntityNotFoundException;
 import com.moa.global.exception.service.InvalidRequestException;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -36,9 +39,11 @@ import static com.moa.global.exception.ErrorCode.*;
 @Transactional
 @Service
 public class RecruitmentService {
+    private final RecruitTagRepository recruitTagRepository;
     private final RecruitmentInterestsRepository recruitmentInterestsRepository;
     private final RecruitmentRepository recruitmentRepository;
     private final UserRepository userRepository;
+    private final EntityManager em;
 
     public Long post(final Long userId, final RecruitPostRequest request, final List<Tag> tags) {
         User user = userRepository.getReferenceById(userId);
@@ -93,9 +98,15 @@ public class RecruitmentService {
     }
 
     public List<RecruitmentInfo> getRecommendRecruitment(Long id) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
-        List<Recruitment> recruitments = recruitmentRepository.findByCategory(user.getCategory());
+        List<String> interests = userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND))
+                .getInterests()
+                .stream()
+                .map(Interests::getName)
+                .toList();
+
+        List<RecruitTag> recruitTags = recruitTagRepository.findByTagNameIn(interests);
+        List<Recruitment> recruitments = recruitmentRepository.findByTagsIn(recruitTags);
         //TODO
         //댓글 기능 완성 후 값 주입
         int replyCount = 0;
@@ -148,7 +159,11 @@ public class RecruitmentService {
     }
 
     private List<RecruitTag> getRecruitTags(List<Tag> tags) {
-        return tags.stream()
+        List<Tag> mergedTags = new ArrayList<>();
+        for (Tag tag : tags) {
+            mergedTags.add(em.merge(tag));
+        }
+        return mergedTags.stream()
                 .map(RecruitTag::new)
                 .toList();
     }

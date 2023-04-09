@@ -1,5 +1,6 @@
 package com.moa.domain.recruit;
 
+import com.moa.domain.recruit.tag.RecruitTag;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -30,5 +31,5 @@ public interface RecruitmentRepository extends JpaRepository<Recruitment, Long>{
             )""")
     List<Recruitment> findAllDescByCount(Pageable limit);
 
-    List<Recruitment> findByCategory(Category category);
+    List<Recruitment> findByTagsIn(List<RecruitTag> tags);
 }
