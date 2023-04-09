@@ -2,6 +2,7 @@ package com.moa.dto.recruit;
 
 import com.moa.domain.member.RecruitMember;
 import com.moa.domain.notice.Post;
+import com.moa.domain.recruit.Category;
 import com.moa.domain.recruit.RecruitStatus;
 import com.moa.domain.recruit.Recruitment;
 import com.moa.domain.recruit.tag.RecruitTag;
@@ -22,6 +23,7 @@ public record RecruitPostRequest (
         @NotBlank String title,
         @NotBlank String content,
         @NotEmpty @Valid List<RecruitMemberRequest> memberFields,
+        String categoryName,
         List<String> tags
 ) {
     public Recruitment toEntity(User user, List<RecruitMember> members, List<RecruitTag> tags) {
@@ -32,6 +34,7 @@ public record RecruitPostRequest (
         Recruitment recruitment = Recruitment.builder()
                 .user(user)
                 .post(post)
+                .category(Category.valueOf(categoryName))
                 .status(RecruitStatus.RECRUITING)
                 .build();
         if (members != null) recruitment.setMembers(members);
