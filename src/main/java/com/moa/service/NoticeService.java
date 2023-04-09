@@ -6,26 +6,19 @@ import com.moa.domain.notice.Notice;
 import com.moa.domain.notice.NoticeRepository;
 import com.moa.domain.recruit.Recruitment;
 import com.moa.domain.recruit.RecruitmentRepository;
-import com.moa.dto.notice.Kakao;
 import com.moa.dto.notice.NoticesResponse;
 import com.moa.dto.notice.PostNoticeRequest;
 import com.moa.dto.notice.UpdateNoticeRequest;
 import com.moa.global.exception.service.EntityNotFoundException;
-import com.moa.service.graham.GrahamAlgo.Point;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
 import java.util.List;
 
 import static com.moa.global.exception.ErrorCode.NOTICE_NOT_FOUND;
-import static com.moa.service.graham.GrahamAlgo.getOutSide;
-import static org.springframework.http.HttpHeaders.AUTHORIZATION;
+import static com.moa.service.util.KakaoUtils.getRecommendedLocationByKakao;
 
 @Service
 @Transactional
@@ -82,41 +75,10 @@ public class NoticeService {
     }
 
     private String findLocation(List<AttendMember> attendMembers) {
-        Mono<Kakao> response = getRecommendedLocationByKakao(getMiddlePoint(attendMembers));
-        return response.block().documents().get(0).place_name();
-    }
-
-    private static Point getMiddlePoint(List<AttendMember> attendMembers) {
-        List<Point> points = attendMembers.stream()
-                .map(member -> new Point(member.getUser().getLocationLatitude(), member.getUser().getLocationLongitude()))
-                .toList();
-        List<Point> outSide = getOutSide(points);
-
-        double sumLatitude = 0.0;
-        double sumLongitude = 0.0;
-        for (Point point : outSide) {
-            sumLatitude += point.getX();
-            sumLongitude += point.getY();
-        }
-
-        return new Point(sumLatitude / outSide.size(), sumLongitude / outSide.size());
-    }
-
-    private Mono<Kakao> getRecommendedLocationByKakao(Point middlePoint) {
-        return WebClient.create(path)
-                .get()
-                .uri(uriBuilder -> uriBuilder.queryParams(createParams(middlePoint)).build())
-                .header(AUTHORIZATION, restApiKey)
-                .retrieve().bodyToMono(Kakao.class);
-    }
-
-    private static MultiValueMap<String, String> createParams(Point middlePoint) {
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("x", String.valueOf(middlePoint.getX()));
-        params.add("y", String.valueOf(middlePoint.getY()));
-        params.add("radius", "2000");
-        params.add("query", "역");
-        params.add("category_group_code", "SW8");
-        return params;
+        return getRecommendedLocationByKakao(attendMembers, path, restApiKey)
+                .block()
+                .documents()
+                .get(0)
+                .place_name();
     }
 }
