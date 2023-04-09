@@ -1,14 +1,17 @@
-package com.moa.service.graham;
+package com.moa.service.util;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
 
 import static java.util.Comparator.comparingDouble;
+import static lombok.AccessLevel.PRIVATE;
 
-public class GrahamAlgo {
+@NoArgsConstructor(access = PRIVATE)
+public class GrahamUtils {
 
     public static List<Point> getOutSide(List<Point> points) {
         points.sort((o1, o2) -> o1.x == o2.x ? Double.compare(o1.y, o2.y) : Double.compare(o1.x, o2.x));
