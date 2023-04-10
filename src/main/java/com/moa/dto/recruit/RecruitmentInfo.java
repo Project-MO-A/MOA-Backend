@@ -16,7 +16,8 @@ public record RecruitmentInfo(
 ) {
 
     public static RecruitmentInfo of(Recruitment recruitment, int replyCount) {
-        return new RecruitmentInfo(recruitment.getId(),
+        return new RecruitmentInfo(
+                recruitment.getId(),
                 recruitment.getPost().getTitle(),
                 recruitment.getUser().getName(),
                 recruitment.getCategory().getName(),
