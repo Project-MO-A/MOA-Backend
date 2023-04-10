@@ -21,7 +21,7 @@ public enum RecruitStatus {
         this.status = status;
     }
 
-    public static RecruitStatus getState(int stateCode) {
+    public static RecruitStatus getInstance(int stateCode) {
         return Arrays.stream(RecruitStatus.values())
                 .filter(state -> state.getCode() == stateCode)
                 .findFirst()

@@ -1,6 +1,11 @@
 package com.moa.domain.recruit;
 
+import com.moa.global.exception.service.CategoryNotFoundException;
 import lombok.Getter;
+
+import java.util.Arrays;
+
+import static com.moa.global.exception.ErrorCode.CATEGORY_NOT_FOUND;
 
 @Getter
 public enum Category {
@@ -15,5 +20,12 @@ public enum Category {
     private final String name;
     Category(String name) {
         this.name = name;
+    }
+
+    public static Category getInstance(String name) {
+        return Arrays.stream(Category.values())
+                .filter(category -> category.getName().equals(name))
+                .findFirst()
+                .orElseThrow(() -> new CategoryNotFoundException(CATEGORY_NOT_FOUND));
     }
 }
