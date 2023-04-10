@@ -25,7 +25,7 @@ public enum SearchParam {
     }
 
     public static Order getOrder(String direction) {
-        if (direction.equals(DESC.paramKey)) return Order.DESC;
+        if (direction.equals(DESC.name())) return Order.DESC;
         return Order.ASC;
     }
 }

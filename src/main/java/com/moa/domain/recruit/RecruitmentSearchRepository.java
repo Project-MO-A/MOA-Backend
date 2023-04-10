@@ -1,17 +1,20 @@
 package com.moa.domain.recruit;
 
 import com.moa.domain.base.OrderByNull;
-import com.moa.domain.base.SearchParam;
 import com.moa.domain.base.SearchRepository;
 import com.moa.dto.recruit.RecruitmentInfo;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
@@ -40,29 +43,18 @@ public class RecruitmentSearchRepository implements SearchRepository<Recruitment
     }
 
     @Override
-    public List<RecruitmentInfo> searchAll(Map<String, String> searchCondition, Pageable pageable) {
+    public Page<RecruitmentInfo> searchAll(Map<String, String> searchCondition, Pageable pageable) {
         List<RecruitmentInfo> infoList = getSearchQuery(searchCondition)
+                .orderBy(getOrderSpecifier(pageable))
                 .fetch();
 
         for (RecruitmentInfo recruitmentInfo : infoList) {
             setTags(recruitmentInfo);
         }
-        return infoList;
+        return getPage(searchCondition, pageable, infoList);
     }
 
-    @Override
-    public List<RecruitmentInfo> searchAll(Map<String, String> searchCondition, Pageable pageable,  String orderField, String direction) {
-        List<RecruitmentInfo> infoList = getSearchQuery(searchCondition)
-                .orderBy(getOrderSpecifier(orderField, direction))
-                .fetch();
-
-        for (RecruitmentInfo recruitmentInfo : infoList) {
-            setTags(recruitmentInfo);
-        }
-        return infoList;
-    }
-
-    private JPAQuery<RecruitmentInfo> getSearchQuery(Map<String, String> searchParameter) {
+    private JPAQuery<RecruitmentInfo> getSearchQuery(Map<String, String> searchCondition) {
         return queryFactory
                 .select(Projections.constructor(RecruitmentInfo.class,
                                 recruitment.id,
@@ -78,22 +70,34 @@ public class RecruitmentSearchRepository implements SearchRepository<Recruitment
                 .from(recruitment)
                 .join(recruitment.user, user).fetchJoin()
                 .join(recruitment.members, recruitMember)
-                .where(allCond(searchParameter));
+                .where(allCond(searchCondition));
     }
 
-    private OrderSpecifier getOrderSpecifier(String orderField, String direction) {
-        if (!StringUtils.hasText(orderField) || !StringUtils.hasText(direction)) {
+    private Page<RecruitmentInfo> getPage(Map<String, String> searchCondition, Pageable pageable, List<RecruitmentInfo> infoList) {
+        JPAQuery<Long> countQuery = queryFactory
+                .select(recruitment.count())
+                .from(recruitment)
+                .join(recruitment.user, user).fetchJoin()
+                .join(recruitment.members, recruitMember)
+                .where(allCond(searchCondition));
+
+        return PageableExecutionUtils.getPage(infoList, pageable, countQuery::fetchOne);
+    }
+
+    private OrderSpecifier getOrderSpecifier(Pageable pageable) {
+        Sort.Order createDateOrder = pageable.getSort().getOrderFor(CREATE_DATE.getParamKey());
+        Sort.Order modifiedDateOrder = pageable.getSort().getOrderFor(MODIFIED_DATE.getParamKey());
+
+        if (Objects.isNull(createDateOrder) && Objects.isNull(modifiedDateOrder)) {
             return OrderByNull.getDefault();
         }
 
-        if (orderField.equals(CREATE_DATE.getParamKey())) {
-            return new OrderSpecifier<>(SearchParam.getOrder(direction), recruitment.createdDate);
+        if (!Objects.isNull(createDateOrder)) {
+            Order order = getOrder(createDateOrder.getDirection().name());
+            return new OrderSpecifier<>(order, recruitment.createdDate);
         }
-        if (orderField.equals(MODIFIED_DATE.getParamKey())) {
-            return new OrderSpecifier<>(SearchParam.getOrder(direction), recruitment.lastModifiedDate);
-        }
-
-        return OrderByNull.getDefault();
+        Order order = getOrder(modifiedDateOrder.getDirection().name());
+        return new OrderSpecifier<>(order, recruitment.lastModifiedDate);
     }
 
     private void setTags(RecruitmentInfo recruitmentInfo) {
