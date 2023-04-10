@@ -14,14 +14,14 @@ import static com.moa.dto.constant.RedirectURIConst.RECRUIT_INFO;
 
 @Getter
 public class UserRecruitmentInterestInfo {
-    private final List<RecruitmentInfo> writing;
+    private final List<RecruitmentInterestInfo> writing;
 
     public UserRecruitmentInterestInfo(User user) {
         this.writing = setWriting(user);
     }
 
-    private List<RecruitmentInfo> setWriting(User user) {
-        List<RecruitmentInfo> result = new ArrayList<>();
+    private List<RecruitmentInterestInfo> setWriting(User user) {
+        List<RecruitmentInterestInfo> result = new ArrayList<>();
 
         for (RecruitmentInterest recruitmentInterest : user.getRecruitmentInterests()) {
             Recruitment recruitment = recruitmentInterest.getRecruitment();

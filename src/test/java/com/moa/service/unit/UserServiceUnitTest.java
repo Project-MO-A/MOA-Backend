@@ -128,7 +128,7 @@ class UserServiceUnitTest extends AbstractServiceTest {
                 new Recruitment(USER, new Post("title2", "content2"), RecruitStatus.RECRUITING, PROGRAMMING),
                 new Recruitment(USER, new Post("title3", "content3"), RecruitStatus.COMPLETE, PROGRAMMING)
         );
-        given(recruitmentRepository.findAllFetchUserById(1L)).willReturn(value);
+        given(recruitmentRepository.findFetchTagsByUserId(1L)).willReturn(value);
 
         //when
         RecruitmentsInfo info = userService.getUserWritingInfoById(1L);
@@ -191,7 +191,7 @@ class UserServiceUnitTest extends AbstractServiceTest {
         //then
         assertThat(info.getWriting().size()).isEqualTo(1);
         assertThat(info.getWriting().get(0).getTitle()).isEqualTo("title");
-        assertThat(info.getWriting().get(0).getRecruitStatus()).startsWith("/recruitment/");
+        assertThat(info.getWriting().get(0).getRedirectUri()).startsWith("/recruitment/");
     }
 
     @Test
