@@ -91,6 +91,6 @@ public class Recruitment extends BaseTimeEntity {
     }
 
     public void updateState(Integer stateCode) {
-        if (stateCode != null) this.status = RecruitStatus.getState(stateCode);
+        if (stateCode != null) this.status = RecruitStatus.getInstance(stateCode);
     }
 }
