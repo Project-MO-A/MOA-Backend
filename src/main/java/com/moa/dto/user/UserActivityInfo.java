@@ -11,9 +11,8 @@ import java.util.List;
 import java.util.Map;
 
 import static com.moa.domain.member.ApprovalStatus.APPROVED;
-import static com.moa.domain.recruit.RecruitStatus.*;
-import static com.moa.dto.constant.RedirectURIConst.RECRUIT_CANCEL;
-import static com.moa.dto.constant.RedirectURIConst.RECRUIT_INFO;
+import static com.moa.domain.recruit.RecruitStatus.CONCURRENT;
+import static com.moa.domain.recruit.RecruitStatus.FINISH;
 
 @Getter
 public class UserActivityInfo {
@@ -43,29 +42,23 @@ public class UserActivityInfo {
 
     private static List<ApprovedInfo> setRecruitmentInfo(List<ApprovedInfo> applimentInfos, Recruitment recruitment) {
         String title = recruitment.getPost().getTitle();
-        String detailsUri = RECRUIT_INFO.of(String.valueOf(recruitment.getId()));
-        applimentInfos.add(new ApprovedInfo(title, detailsUri));
+        applimentInfos.add(new ApprovedInfo(title));
         return applimentInfos;
     }
 
     private static EtcInfo setEtcInfo(ApplimentMember applimentMember) {
         Recruitment recruitment = applimentMember.getRecruitMember().getRecruitment();
-        String cancelUri = RECRUIT_CANCEL.of(String.valueOf(recruitment.getId()));
-        String detailsUri = RECRUIT_INFO.of(String.valueOf(recruitment.getId()));
         String field = applimentMember.getRecruitMember().getRecruitField();
-        return new EtcInfo(recruitment.getPost().getTitle(), field, cancelUri, detailsUri, applimentMember.getStatus().getStatus());
+        return new EtcInfo(recruitment.getPost().getTitle(), field, applimentMember.getStatus().getStatus());
     }
 
     public record ApprovedInfo(
-            String title,
-            String detailsUri
+            String title
     ) {}
 
     public record EtcInfo(
             String title,
             String field,
-            String cancelUri,
-            String detailsUri,
             String status
     ) {}
 }
