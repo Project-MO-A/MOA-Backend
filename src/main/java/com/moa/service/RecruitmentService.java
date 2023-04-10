@@ -176,7 +176,7 @@ public class RecruitmentService {
 
     private List<RecruitmentInfo> convertToRecruitmentInfo(List<Recruitment> recruitments, int replyCount) {
         return recruitments.stream()
-                .map(recruitment -> RecruitmentInfo.of(recruitment, replyCount))
+                .map(RecruitmentInfo::new)
                 .toList();
     }
 }

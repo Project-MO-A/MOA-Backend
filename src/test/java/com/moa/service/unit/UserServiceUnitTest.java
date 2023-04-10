@@ -171,11 +171,8 @@ class UserServiceUnitTest extends AbstractServiceTest {
         assertThat(info.getApprovedProjects().size()).isEqualTo(2);
         assertThat(info.getApprovedProjects().get("CONCURRENT").size()).isEqualTo(1);
         assertThat(info.getApprovedProjects().get("CONCURRENT").get(0).title()).isEqualTo("recruitTitle");
-        assertThat(info.getApprovedProjects().get("CONCURRENT").get(0).detailsUri()).startsWith("/recruitment/");
         assertThat(info.getEtcProjects().size()).isEqualTo(1);
         assertThat(info.getEtcProjects().get(0).title()).isEqualTo("recruitTitle1");
-        assertThat(info.getEtcProjects().get(0).cancelUri()).startsWith("/recruitment/cancel/");
-        assertThat(info.getEtcProjects().get(0).detailsUri()).startsWith("/recruitment/");
         assertThat(info.getEtcProjects().get(0).status()).isEqualTo("대기중");
     }
 
@@ -191,7 +188,7 @@ class UserServiceUnitTest extends AbstractServiceTest {
         //then
         assertThat(info.getWriting().size()).isEqualTo(1);
         assertThat(info.getWriting().get(0).getTitle()).isEqualTo("title");
-        assertThat(info.getWriting().get(0).getRedirectUri()).startsWith("/recruitment/");
+        assertThat(info.getWriting().get(0).getRecruitStatus()).startsWith("모집중");
     }
 
     @Test

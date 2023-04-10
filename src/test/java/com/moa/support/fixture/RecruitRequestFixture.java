@@ -1,9 +1,9 @@
 package com.moa.support.fixture;
 
+import com.moa.domain.recruit.Category;
 import com.moa.dto.member.RecruitMemberRequest;
 import com.moa.dto.recruit.RecruitPostRequest;
 import com.moa.dto.recruit.RecruitUpdateRequest;
-import lombok.Getter;
 
 import java.util.List;
 
@@ -11,23 +11,25 @@ import static com.moa.support.fixture.TagFixture.BACKEND_TAG;
 import static com.moa.support.fixture.TagFixture.FRONTEND_TAG;
 
 public enum RecruitRequestFixture {
-    BASIC_REQUEST("프로젝트 모집", "프로젝트 인원 모집합니다.", BACKEND_TAG.getTags(), List.of(
+    BASIC_REQUEST("프로젝트 모집", "프로젝트 인원 모집합니다.", Category.PROGRAMMING.name(), BACKEND_TAG.getTags(), List.of(
             RecruitMemberRequest.builder().field("백엔드").total(5).build(),
             RecruitMemberRequest.builder().field("프론트").total(4).build()
     )),
-    ANOTHER_REQUEST("사이드 프로젝트 모집", "개발자 모집합니다.", FRONTEND_TAG.getTags(), List.of(
+    ANOTHER_REQUEST("사이드 프로젝트 모집", "개발자 모집합니다.", Category.PROGRAMMING.name(), FRONTEND_TAG.getTags(), List.of(
             RecruitMemberRequest.builder().field("백엔드").total(4).build(),
             RecruitMemberRequest.builder().field("프론트").total(3).build()
     ));
 
     private final String title;
     private final String content;
+    private final String categoryName;
     private final List<String> tags;
     private final List<RecruitMemberRequest> requests;
 
-    RecruitRequestFixture(String title, String content, List<String> tag, List<RecruitMemberRequest> recruitMemberRequests) {
+    RecruitRequestFixture(String title, String content, String categoryName, List<String> tag, List<RecruitMemberRequest> recruitMemberRequests) {
         this.title = title;
         this.content = content;
+        this.categoryName = categoryName;
         this.tags = tag;
         this.requests = recruitMemberRequests;
     }
@@ -64,6 +66,7 @@ public enum RecruitRequestFixture {
         return RecruitPostRequest.builder()
                 .title(this.title)
                 .content(this.content)
+                .categoryName(this.categoryName)
                 .tags(this.tags)
                 .memberFields(this.requests);
     }

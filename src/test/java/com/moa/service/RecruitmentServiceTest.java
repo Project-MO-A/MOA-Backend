@@ -15,6 +15,7 @@ import com.moa.dto.recruit.RecruitUpdateRequest;
 import com.moa.global.exception.service.EntityNotFoundException;
 import com.moa.global.exception.service.InvalidCodeException;
 import com.moa.global.exception.service.InvalidRequestException;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -51,7 +52,8 @@ class RecruitmentServiceTest {
     private RecruitmentRepository recruitmentRepository;
     @Mock
     private UserRepository userRepository;
-
+    @Mock
+    private EntityManager em;
     @InjectMocks
     private RecruitmentService recruitmentService;
 
@@ -71,7 +73,9 @@ class RecruitmentServiceTest {
 
         given(userRepository.getReferenceById(userId)).willReturn(User.builder().build());
         given(recruitmentRepository.save(any())).willReturn(recruitment);
-
+        for (Tag tag : tags) {
+            given(em.merge(tag)).willReturn(tag);
+        }
 
         //when
         Long postId = recruitmentService.post(userId, postRequest, tags);
@@ -172,7 +176,9 @@ class RecruitmentServiceTest {
 
             given(recruitmentRepository.findFetchMembersById(recruitId))
                     .willReturn(Optional.of(basicRecruit));
-
+            for (Tag tag : updateTag) {
+                given(em.merge(tag)).willReturn(tag);
+            }
             //when
             recruitmentService.update(recruitId, updateRequest, updateTag);
 
@@ -202,16 +208,15 @@ class RecruitmentServiceTest {
 
             given(recruitmentRepository.findFetchMembersById(recruitId))
                     .willReturn(Optional.of(basicRecruit));
-
+            for (Tag tag : updateTag) {
+                given(em.merge(tag)).willReturn(tag);
+            }
             //when
             recruitmentService.update(recruitId, updateRequest, updateTag);
 
             //then
             RecruitMember recruitMember1 = basicRecruit.getMembers().get(0);
             RecruitMember recruitMember2 = basicRecruit.getMembers().get(1);
-            for (RecruitMember member : basicRecruit.getMembers()) {
-                System.out.println(member.getRecruitField());
-            }
             assertAll(
                     () -> assertThat(recruitMember1.getRecruitField()).isEqualTo("디자이너"),
                     () -> assertThat(recruitMember2.getRecruitField()).isEqualTo("인프라"),
@@ -233,7 +238,9 @@ class RecruitmentServiceTest {
                     recruitMembers);
             given(recruitmentRepository.findFetchMembersById(recruitId))
                     .willReturn(Optional.of(basicRecruit));
-
+            for (Tag tag : updateTag) {
+                given(em.merge(tag)).willReturn(tag);
+            }
             //when
             recruitmentService.update(recruitId, updateRequest, updateTag);
 
@@ -257,7 +264,9 @@ class RecruitmentServiceTest {
                     List.of(BACKEND_MEMBER.생성(), FRONTEND_MEMBER.생성()));
             given(recruitmentRepository.findFetchMembersById(recruitId))
                     .willReturn(Optional.of(basicRecruit));
-
+            for (Tag tag : updateTag) {
+                given(em.merge(tag)).willReturn(tag);
+            }
             //when & then
             assertThatThrownBy(() -> recruitmentService.update(recruitId, updateRequest, updateTag))
                             .isExactlyInstanceOf(InvalidRequestException.class);

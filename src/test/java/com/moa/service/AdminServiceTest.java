@@ -39,8 +39,7 @@ class AdminServiceTest {
         assertAll(
                 () -> assertThat(applimentMembers.size()).isEqualTo(2),
                 () -> assertThat(applimentMembers.get(0).status()).isEqualTo(PENDING),
-                () -> assertThat(applimentMembers.get(1).status()).isEqualTo(PENDING),
-                () -> assertThat(applimentMembers.get(0).redirectUri()).endsWith(String.valueOf(applimentMembers.get(0).userId()))
+                () -> assertThat(applimentMembers.get(1).status()).isEqualTo(PENDING)
         );
     }
 

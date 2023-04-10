@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.moa.domain.member.ApprovalStatus.PENDING;
+import static com.moa.global.exception.ErrorCode.APPLIMENT_NOT_FOUND;
 import static com.moa.global.exception.ErrorCode.RECRUITMEMEBER_NO_FIELD;
 
 @Service
@@ -28,5 +29,12 @@ public class RecruitMemberService {
                 .orElseThrow(() -> new EntityNotFoundException(RECRUITMEMEBER_NO_FIELD));
         User user = userRepository.getReferenceById(request.userId());
         return applimentMemberRepository.save(new ApplimentMember(recruitMember, user, PENDING)).getStatus().name();
+    }
+
+    public Long cancelRecruit(Long recruitmentId, Long userId) {
+        ApplimentMember applimentMember = applimentMemberRepository.findByRecruitIdAndUserId(recruitmentId, userId)
+                .orElseThrow(() -> new EntityNotFoundException(APPLIMENT_NOT_FOUND));
+        applimentMemberRepository.delete(applimentMember);
+        return applimentMember.getId();
     }
 }
