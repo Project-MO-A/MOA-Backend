@@ -55,4 +55,9 @@ public class RecruitmentController {
         Long deletePostId = recruitmentService.delete(recruitmentId);
         return new ValueResponse<>(deletePostId);
     }
+
+    @PostMapping("/{recruitmentId}/concern")
+    public ValueResponse<Long> concernRecruitment(@PathVariable Long recruitmentId, @AuthenticationPrincipal JwtUser user){
+        return new ValueResponse<>(recruitmentService.concern(recruitmentId, user.id()));
+    }
 }

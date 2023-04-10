@@ -29,9 +29,9 @@ public class User {
     private String name;
     private String nickname;
     @Column(columnDefinition = "decimal(18,10)")
-    private double locationLatitude;
+    private Double locationLatitude;
     @Column(columnDefinition = "decimal(18,10)")
-    private double locationLongitude;
+    private Double locationLongitude;
     @Embedded
     private Popularity popularity;
     @Lob

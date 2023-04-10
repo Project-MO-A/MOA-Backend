@@ -50,4 +50,8 @@ public class AttendMember {
             throw new AssociationMisMatchException(ErrorCode.NOTICE_ASSOCIATION_MISMATCH);
         }
     }
+
+    public boolean canVote() {
+        return this.notice.isVote();
+    }
 }

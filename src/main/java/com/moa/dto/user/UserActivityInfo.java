@@ -27,7 +27,7 @@ public class UserActivityInfo {
     private void setProjects(List<ApplimentMember> info) {
         Map<String, List<ApprovedInfo>> approved = new HashMap<>();
         List<EtcInfo> etc = new ArrayList<>();
-        approved.put(COMPLETE.name(), new ArrayList<>());
+        approved.put(CONCURRENT.name(), new ArrayList<>());
         approved.put(FINISH.name(), new ArrayList<>());
         for (ApplimentMember applimentMember : info) {
             if (applimentMember.getStatus().equals(APPROVED)) {
@@ -52,7 +52,8 @@ public class UserActivityInfo {
         Recruitment recruitment = applimentMember.getRecruitMember().getRecruitment();
         String cancelUri = RECRUIT_CANCEL.of(String.valueOf(recruitment.getId()));
         String detailsUri = RECRUIT_INFO.of(String.valueOf(recruitment.getId()));
-        return new EtcInfo(recruitment.getPost().getTitle(), cancelUri, detailsUri, applimentMember.getStatus().getStatus());
+        String field = applimentMember.getRecruitMember().getRecruitField();
+        return new EtcInfo(recruitment.getPost().getTitle(), field, cancelUri, detailsUri, applimentMember.getStatus().getStatus());
     }
 
     public record ApprovedInfo(
@@ -62,6 +63,7 @@ public class UserActivityInfo {
 
     public record EtcInfo(
             String title,
+            String field,
             String cancelUri,
             String detailsUri,
             String status

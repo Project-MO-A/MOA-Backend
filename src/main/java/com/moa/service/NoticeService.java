@@ -11,17 +11,23 @@ import com.moa.dto.notice.PostNoticeRequest;
 import com.moa.dto.notice.UpdateNoticeRequest;
 import com.moa.global.exception.service.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 import static com.moa.global.exception.ErrorCode.NOTICE_NOT_FOUND;
+import static com.moa.service.util.KakaoUtils.getRecommendedLocationByKakao;
 
 @Service
 @Transactional
 @RequiredArgsConstructor
 public class NoticeService {
+    @Value("${kakao.api.path}")
+    private final String path;
+    @Value("${kakao.api.key}")
+    private String restApiKey;
 
     private final NoticeRepository noticeRepository;
     private final RecruitmentRepository recruitmentRepository;
@@ -57,5 +63,22 @@ public class NoticeService {
                 .toList();
         List<AttendMember> attendMembers = attendMemberRepository.findAllByNoticeIdIn(noticeIds);
         return new NoticesResponse(notices, attendMembers);
+    }
+
+    public String finishVote(Long recruitmentId, Long noticeId) {
+        Notice notice = noticeRepository.findFetchMemberByIdAndRecruitmentId(noticeId, recruitmentId)
+                .orElseThrow(() -> new EntityNotFoundException(NOTICE_NOT_FOUND));
+        String recommendedLocation = findLocation(notice.getAttendMembers());
+        notice.recommend(recommendedLocation);
+        notice.finishVote();
+        return recommendedLocation;
+    }
+
+    private String findLocation(List<AttendMember> attendMembers) {
+        return getRecommendedLocationByKakao(attendMembers, path, restApiKey)
+                .block()
+                .documents()
+                .get(0)
+                .place_name();
     }
 }

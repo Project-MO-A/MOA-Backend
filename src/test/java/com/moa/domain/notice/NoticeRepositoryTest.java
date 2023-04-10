@@ -44,9 +44,9 @@ class NoticeRepositoryTest {
         recruitment = recruitmentRepository.save(new Recruitment(user, new Post("title", "content"),
                 RecruitStatus.RECRUITING, Category.EMPLOYMENT));
         saved1 = noticeRepository.save(new Notice(recruitment, new Post("notice1", "first notice"),
-                LocalDateTime.parse("2023-04-01T12:00:00"), "서울역", true));
+                LocalDateTime.parse("2023-04-01T12:00:00"), "서울역", "",true));
         saved2 = noticeRepository.save(new Notice(recruitment, new Post("notice2", "second notice"),
-                LocalDateTime.parse("2023-04-02T12:00:00"), "용산역", true));
+                LocalDateTime.parse("2023-04-02T12:00:00"), "용산역", "",true));
     }
 
     @Test
