@@ -3,6 +3,7 @@ package com.moa.domain.recruit;
 import com.moa.domain.base.OrderByNull;
 import com.moa.domain.base.SearchRepository;
 import com.moa.dto.recruit.RecruitmentInfo;
+import com.moa.global.exception.service.NumberFormatException;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Order;
 import com.querydsl.core.types.OrderSpecifier;
@@ -18,6 +19,9 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -28,6 +32,7 @@ import static com.moa.domain.recruit.QRecruitment.recruitment;
 import static com.moa.domain.recruit.tag.QRecruitTag.recruitTag;
 import static com.moa.domain.recruit.tag.QTag.tag;
 import static com.moa.domain.user.QUser.user;
+import static com.moa.global.exception.ErrorCode.NUMBER_FORMAT;
 
 @RequiredArgsConstructor
 @Repository
@@ -46,6 +51,8 @@ public class RecruitmentSearchRepository implements SearchRepository<Recruitment
     public Page<RecruitmentInfo> searchAll(Map<String, String> searchCondition, Pageable pageable) {
         List<RecruitmentInfo> infoList = getSearchQuery(searchCondition)
                 .orderBy(getOrderSpecifier(pageable))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .fetch();
 
         for (RecruitmentInfo recruitmentInfo : infoList) {
@@ -63,22 +70,21 @@ public class RecruitmentSearchRepository implements SearchRepository<Recruitment
                                 recruitment.createdDate,
                                 recruitment.status,
                                 recruitment.category,
-                                recruitMember.totalRecruitCount,
-                                recruitMember.currentRecruitCount
+                                recruitMember.totalRecruitCount.sum(),
+                                recruitMember.currentRecruitCount.sum()
                         )
                 )
                 .from(recruitment)
-                .join(recruitment.user, user).fetchJoin()
+                .join(recruitment.user, user)
                 .join(recruitment.members, recruitMember)
-                .where(allCond(searchCondition));
+                .where(allCond(searchCondition))
+                .groupBy(recruitment.id);
     }
 
     private Page<RecruitmentInfo> getPage(Map<String, String> searchCondition, Pageable pageable, List<RecruitmentInfo> infoList) {
         JPAQuery<Long> countQuery = queryFactory
                 .select(recruitment.count())
                 .from(recruitment)
-                .join(recruitment.user, user).fetchJoin()
-                .join(recruitment.members, recruitMember)
                 .where(allCond(searchCondition));
 
         return PageableExecutionUtils.getPage(infoList, pageable, countQuery::fetchOne);
@@ -102,6 +108,7 @@ public class RecruitmentSearchRepository implements SearchRepository<Recruitment
 
     private void setTags(RecruitmentInfo recruitmentInfo) {
         if (Objects.isNull(recruitmentInfo)) return;
+
         List<String> tags = getTags(recruitmentInfo.getId());
         recruitmentInfo.setTags(tags);
     }
@@ -123,7 +130,19 @@ public class RecruitmentSearchRepository implements SearchRepository<Recruitment
                 .and(titleLike(searchParameter.getOrDefault(TITLE.getParamKey(), null)))
                 .and(categoryEq(searchParameter.getOrDefault(CATEGORY.getParamKey(), null)))
                 .and(tagLike(searchParameter.getOrDefault(TAG.getParamKey(), null)))
-                .and(stateEq(Integer.parseInt(searchParameter.getOrDefault(STATE_CODE.getParamKey(), null))));
+                .and(stateEq(searchParameter.getOrDefault(STATE_CODE.getParamKey(), null)))
+                .and(withInDays(searchParameter.getOrDefault(DAYS_AGO.getParamKey(), null)));
+    }
+
+    private BooleanExpression withInDays(String daysAgo) {
+        if (Objects.isNull(daysAgo)) return null;
+
+        Long days = convertLong(daysAgo);
+        LocalDateTime now = LocalDateTime.now();
+        LocalDate startDate = now.toLocalDate().minusDays(days);
+        LocalDateTime startDateTime = LocalDateTime.of(startDate, LocalTime.MIN);
+
+        return recruitment.createdDate.goe(startDateTime);
     }
 
     private BooleanExpression titleEq(String title) {
@@ -136,6 +155,7 @@ public class RecruitmentSearchRepository implements SearchRepository<Recruitment
 
     private BooleanExpression tagLike(String tagName) {
         if (!StringUtils.hasText(tagName)) return null;
+
         List<Long> recruitIdList = queryFactory
                 .select(recruitment.id)
                 .from(recruitment)
@@ -147,12 +167,33 @@ public class RecruitmentSearchRepository implements SearchRepository<Recruitment
     }
 
     private BooleanExpression categoryEq(String category) {
+        if (Objects.isNull(category)) return null;
+
         Category instance = Category.getInstance(category);
         return recruitment.category.eq(instance);
     }
 
-    private BooleanExpression stateEq(Integer stateCode) {
-        RecruitStatus instance = RecruitStatus.getInstance(stateCode);
+    private BooleanExpression stateEq(String stateCode) {
+        if (Objects.isNull(stateCode)) return null;
+
+        Integer code = convertInteger(stateCode);
+        RecruitStatus instance = RecruitStatus.getInstance(code);
         return recruitment.status.eq(instance);
+    }
+
+    private Long convertLong(String number) {
+        try {
+            return Long.parseLong(number);
+        } catch (NumberFormatException numberFormatException) {
+            throw new NumberFormatException(NUMBER_FORMAT);
+        }
+    }
+
+    private Integer convertInteger(String number) {
+        try {
+            return Integer.parseInt(number);
+        } catch (NumberFormatException numberFormatException) {
+            throw new NumberFormatException(NUMBER_FORMAT);
+        }
     }
 }
