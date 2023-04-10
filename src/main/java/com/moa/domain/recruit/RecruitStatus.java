@@ -10,7 +10,7 @@ import static com.moa.global.exception.ErrorCode.STATUS_CODE_INVALID;
 @Getter
 public enum RecruitStatus {
     RECRUITING(1, "모집중"),
-    COMPLETE(2, "모집완료"),
+    CONCURRENT(2, "진행중"),
     FINISH(3, "종료");
 
     private final int code;

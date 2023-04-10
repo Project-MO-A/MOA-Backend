@@ -43,7 +43,7 @@ class NoticeServiceUnitTest extends AbstractServiceTest {
     @DisplayName("공지글 등록에 성공한다")
     void successPostNotice() {
         //given
-        PostNoticeRequest request = new PostNoticeRequest("title", "content", LocalDateTime.parse("2023-03-30T18:00:00"), "서울역", true);
+        PostNoticeRequest request = new PostNoticeRequest("content", true);
         Notice savedNotice = request.toEntity(recruitment);
 
         given(recruitmentRepository.getReferenceById(recruitmentId)).willReturn(recruitment);
@@ -65,7 +65,7 @@ class NoticeServiceUnitTest extends AbstractServiceTest {
     @DisplayName("공지사항 수정에 성공한다")
     void successUpdateNotice() {
         //given
-        UpdateNoticeRequest request = new UpdateNoticeRequest("title2", null, null, "용산역", null);
+        UpdateNoticeRequest request = new UpdateNoticeRequest("content2", null);
 
         given(recruitmentRepository.getReferenceById(recruitmentId)).willReturn(recruitment);
         given(noticeRepository.findById(noticeId)).willReturn(Optional.of(notice));
@@ -75,10 +75,7 @@ class NoticeServiceUnitTest extends AbstractServiceTest {
 
         //then
         assertAll(
-                () -> assertThat(notice.getConfirmedLocation()).isEqualTo("용산역"),
                 () -> assertThat(notice.getPost().getContent()).isEqualTo(notice.getPost().getContent()),
-                () -> assertThat(notice.getPost().getTitle()).isEqualTo("title2"),
-                () -> assertThat(notice.getConfirmedTime()).isEqualTo(notice.getConfirmedTime()),
                 () -> assertThat(notice.isCheckVote()).isEqualTo(notice.isCheckVote()),
                 () -> verify(recruitmentRepository).getReferenceById(recruitmentId),
                 () -> verify(noticeRepository).findById(noticeId)
@@ -89,7 +86,7 @@ class NoticeServiceUnitTest extends AbstractServiceTest {
     @DisplayName("공지사항이 없어 수정에 실패한다")
     void failUpdateNoticeByNoNotice() {
         //given
-        UpdateNoticeRequest request = new UpdateNoticeRequest("title2", null, null, "용산역", null);
+        UpdateNoticeRequest request = new UpdateNoticeRequest( null, null);
 
         given(recruitmentRepository.getReferenceById(recruitmentId)).willReturn(recruitment);
         given(noticeRepository.findById(noticeId)).willThrow(EntityNotFoundException.class);
@@ -153,7 +150,7 @@ class NoticeServiceUnitTest extends AbstractServiceTest {
             Long id = 1L;
             for (Map.Entry<Long, NoticeResponse> entry : response.notices().entrySet()) {
                 assertThat(entry.getKey()).isEqualTo(id);
-                assertThat(entry.getValue().title()).isEqualTo("title" + id++);
+                assertThat(entry.getValue().content()).isEqualTo("content" + id++);
             }
         });
     }
@@ -162,7 +159,7 @@ class NoticeServiceUnitTest extends AbstractServiceTest {
         private final Long id;
 
         public ProxyNotice(Recruitment recruitment, Post post, LocalDateTime confirmedTime, String confirmedLocation, boolean checkVote, Long id) {
-            super(recruitment, post, confirmedTime, confirmedLocation, checkVote);
+            super(recruitment, post, confirmedTime, confirmedLocation, "", checkVote);
             this.id = id;
         }
 

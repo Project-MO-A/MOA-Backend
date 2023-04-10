@@ -10,8 +10,6 @@ import lombok.Getter;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.moa.dto.constant.RedirectURIConst.RECRUIT_INFO;
-
 @Getter
 public class UserRecruitmentInterestInfo {
     private final List<RecruitmentInfo> writing;

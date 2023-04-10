@@ -18,8 +18,9 @@ public class RecruitmentInfo {
     protected final List<String> tags;
     protected final int totalCount;
     protected final int approvedCount;
+    protected String profileImage,
     protected final int replyCount;
-
+    
     public RecruitmentInfo(Recruitment recruitment) {
         this.id = recruitment.getId();
         this.title = recruitment.getPost().getTitle();
@@ -30,6 +31,7 @@ public class RecruitmentInfo {
         this.tags = getTagNames(recruitment);
         this.totalCount = getTotal(recruitment);
         this.approvedCount = getApproved(recruitment);
+        this.profileImage = "profileImage";
 
         // TO DO
         this.replyCount = 0;
