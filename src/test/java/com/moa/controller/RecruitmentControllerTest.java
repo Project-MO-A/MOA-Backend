@@ -36,7 +36,7 @@ import org.springframework.web.context.WebApplicationContext;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.moa.domain.recruit.RecruitStatus.COMPLETE;
+import static com.moa.domain.recruit.RecruitStatus.CONCURRENT;
 import static com.moa.global.exception.ErrorCode.RECRUITMENT_NOT_FOUND;
 import static com.moa.global.exception.ErrorCode.STATUS_CODE_INVALID;
 import static com.moa.support.fixture.RecruitMemberFixture.BACKEND_MEMBER;
@@ -446,7 +446,7 @@ class RecruitmentControllerTest {
         @Test
         void updateStatus() throws Exception {
             //given
-            String name = COMPLETE.name();
+            String name = CONCURRENT.name();
             given(recruitmentService.updateStatus(1L, 2))
                     .willReturn(new StatusResponse(name));
 
@@ -460,7 +460,7 @@ class RecruitmentControllerTest {
             //then
             action.andExpectAll(
                     status().isOk(),
-                    jsonPath("$.status").value("COMPLETE")
+                    jsonPath("$.status").value("CONCURRENT")
             );
 
             verify(recruitmentService).updateStatus(1L, 2);

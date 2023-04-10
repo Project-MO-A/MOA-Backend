@@ -22,8 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -66,9 +64,6 @@ class NoticeServiceTest {
 
         List<String> categoryString = List.of("프로젝트", "스터디");
         List<Tag> tag = tagService.update(categoryString);
-        List<Long> categoryIds = tag.stream()
-                .map(Tag::getId)
-                .toList();
 
         List<RecruitMemberRequest> memberFields = List.of(
                 RecruitMemberRequest.builder().field("backend").total(2).build(),
@@ -86,13 +81,7 @@ class NoticeServiceTest {
     @DisplayName("post Notice success")
     void postNoticeSuccess() {
         //given
-        Long noticeId = noticeService.post(recruitmentId, new PostNoticeRequest(
-                "notice Title",
-                "notice content",
-                LocalDateTime.parse("2023-03-27T19:00:00"),
-                "서울역",
-                true
-        ));
+        Long noticeId = noticeService.post(recruitmentId, new PostNoticeRequest("notice content", true));
 
         //when
         List<AttendMember> attendMembers = attendMemberRepository.findAllByNoticeIdIn(List.of(noticeId));
@@ -100,10 +89,7 @@ class NoticeServiceTest {
         Notice newNotice = noticeRepository.findById(noticeId).get();
 
         //then
-        assertThat(newNotice.getPost().getTitle()).isEqualTo("notice Title");
         assertThat(newNotice.getPost().getContent()).isEqualTo("notice content");
-        assertThat(newNotice.getConfirmedTime()).isEqualTo(LocalDateTime.parse("2023-03-27 19:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-        assertThat(newNotice.getConfirmedLocation()).isEqualTo("서울역");
         assertThat(newNotice.isCheckVote()).isEqualTo(true);
         assertThat(attendMembers.size()).isEqualTo(1);
     }
@@ -112,26 +98,16 @@ class NoticeServiceTest {
     @DisplayName("notice update success")
     void noticeUpdate() {
         //given
-        Long noticeId = noticeService.post(recruitmentId, new PostNoticeRequest(
-                "notice Title",
-                "notice content",
-                LocalDateTime.parse("2023-03-27T19:00:00"),
-                "서울역",
-                true
-        ));
+        Long noticeId = noticeService.post(recruitmentId, new PostNoticeRequest("notice content", true));
 
-        LocalDateTime dateTime = LocalDateTime.of(2023, 3, 30, 12, 0);
-        UpdateNoticeRequest request = new UpdateNoticeRequest("new Title", "", dateTime, null, null);
+        UpdateNoticeRequest request = new UpdateNoticeRequest("", null);
 
         //when
         Long updateNoticeId = noticeService.update(recruitmentId, noticeId, request);
         Notice newNotice = noticeRepository.findById(updateNoticeId).get();
 
         //then
-        assertThat(newNotice.getPost().getTitle()).isEqualTo("new Title");
         assertThat(newNotice.getPost().getContent()).isEqualTo("notice content");
-        assertThat(newNotice.getConfirmedTime()).isEqualTo(LocalDateTime.parse("2023-03-30 12:00:00", DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
-        assertThat(newNotice.getConfirmedLocation()).isEqualTo("서울역");
         assertThat(newNotice.isCheckVote()).isEqualTo(true);
     }
 
@@ -139,8 +115,7 @@ class NoticeServiceTest {
     @DisplayName("notice update fail - has no notice id")
     void noticeUpdateFail() {
         //given
-        LocalDateTime dateTime = LocalDateTime.of(2023, 3, 30, 12, 0);
-        UpdateNoticeRequest request = new UpdateNoticeRequest("new Title", "", dateTime, null, null);
+        UpdateNoticeRequest request = new UpdateNoticeRequest("", null);
 
         //when & then
         assertThatThrownBy(() -> noticeService.update(recruitmentId, 0L, request))
@@ -152,10 +127,7 @@ class NoticeServiceTest {
     void noticeDeleteSuccess() {
         //given
         Long noticeId = noticeService.post(recruitmentId, new PostNoticeRequest(
-                "notice Title",
                 "notice content",
-                LocalDateTime.parse("2023-03-27T19:00:00"),
-                "서울역",
                 true
         ));
 
@@ -183,10 +155,7 @@ class NoticeServiceTest {
         List<Long> noticeIds = new ArrayList<>();
         for (int i = 1; i <= 5; i++) {
             Long noticeId = noticeService.post(recruitmentId, new PostNoticeRequest(
-                    "notice Title" + i,
                     "notice content" + i,
-                    LocalDateTime.parse("2023-03-27T19:00:00"),
-                    "서울역",
                     true
             ));
 
@@ -198,6 +167,6 @@ class NoticeServiceTest {
 
         //then
         assertThat(response.notices().size()).isEqualTo(5);
-        assertThat(response.notices().get(noticeIds.get(0)).title()).isEqualTo("notice Title1");
+        assertThat(response.notices().get(noticeIds.get(0)).content()).isEqualTo("notice content1");
     }
 }
