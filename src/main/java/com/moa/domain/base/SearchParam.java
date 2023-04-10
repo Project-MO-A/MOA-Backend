@@ -8,9 +8,10 @@ public enum SearchParam {
     CATEGORY("category"),
     TITLE("title"),
     TAG("tag"),
+    STATE_CODE("stateCode"),
+
     NAME("name"),
     NICKNAME("nickname"),
-    STATE_CODE("stateCode"),
 
     CREATE_DATE("createDate"),
     MODIFIED_DATE("modifiedDate"),

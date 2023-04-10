@@ -10,7 +10,10 @@ public enum RecruitMemberFixture {
     BACKEND_MEMBER("백엔드", 5),
     FRONTEND_MEMBER("프론트엔드", 3),
     DESIGNER_MEMBER("디자이너", 1),
-    PM_MEMBER("PM", 1);
+    PM_MEMBER("PM", 1),
+
+    ALL("팀원", 7)
+    ;
 
     private final String field;
     private final int total;
