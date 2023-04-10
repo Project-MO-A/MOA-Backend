@@ -11,8 +11,10 @@ public enum SearchParam {
     NAME("name"),
     NICKNAME("nickname"),
     STATE_CODE("stateCode"),
+
     CREATE_DATE("createDate"),
     MODIFIED_DATE("modifiedDate"),
+    DAYS_AGO("daysAgo"),
 
     DESC("desc"),
     ASC("asc")
