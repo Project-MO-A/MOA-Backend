@@ -1,0 +1,4 @@
+[submodule "SecuritySubmodule"]
+	path = src/main/resources/SecuritySubmodule
+	url = https://github.com/Project-MO-A/SecuritySubmodule.git
+	branch = main
