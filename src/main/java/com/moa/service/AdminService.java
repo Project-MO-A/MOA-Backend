@@ -1,9 +1,10 @@
 package com.moa.service;
 
-import com.moa.domain.member.*;
+import com.moa.domain.member.ApplimentMember;
+import com.moa.domain.member.ApplimentSearchRepository;
+import com.moa.domain.member.ApprovalStatus;
 import com.moa.dto.member.ApplimentMemberResponse;
 import com.moa.dto.member.ApprovedMemberResponse;
-import com.moa.dto.member.ApprovedPopularityRequest;
 import com.moa.global.exception.service.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

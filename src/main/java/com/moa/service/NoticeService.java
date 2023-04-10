@@ -25,7 +25,7 @@ import static com.moa.service.util.KakaoUtils.getRecommendedLocationByKakao;
 @RequiredArgsConstructor
 public class NoticeService {
     @Value("${kakao.api.path}")
-    private final String path;
+    private String path;
     @Value("${kakao.api.key}")
     private String restApiKey;
 

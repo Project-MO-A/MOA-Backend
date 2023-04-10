@@ -18,7 +18,7 @@ public class RecruitmentInfo {
     protected final List<String> tags;
     protected final int totalCount;
     protected final int approvedCount;
-    protected String profileImage,
+    protected String profileImage;
     protected final int replyCount;
     
     public RecruitmentInfo(Recruitment recruitment) {

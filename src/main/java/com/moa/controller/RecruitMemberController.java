@@ -21,4 +21,9 @@ public class RecruitMemberController {
         RecruitApplyRequest request = new RecruitApplyRequest(recruitmentId, position, user.id());
         return new ValueResponse<>(recruitMemberService.applyMember(request));
     }
+
+    @PostMapping("/{recruitmentId}/cancel")
+    public ValueResponse<Long> cancelToRecruit(@PathVariable Long recruitmentId, @AuthenticationPrincipal JwtUser user) {
+        return new ValueResponse<>(recruitMemberService.cancelRecruit(recruitmentId, user.id()));
+    }
 }
