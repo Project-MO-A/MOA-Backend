@@ -4,6 +4,8 @@ spring:
     encoding: UTF-8
   config:
     import: SecuritySubmodule/application-kakao.yml
+  profiles:
+    active: dev
 ---
 spring:
   config:
