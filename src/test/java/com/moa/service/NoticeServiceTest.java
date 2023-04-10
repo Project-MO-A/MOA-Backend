@@ -4,6 +4,7 @@ import com.moa.domain.member.AttendMember;
 import com.moa.domain.member.AttendMemberRepository;
 import com.moa.domain.notice.Notice;
 import com.moa.domain.notice.NoticeRepository;
+import com.moa.domain.recruit.Category;
 import com.moa.domain.recruit.tag.Tag;
 import com.moa.domain.user.User;
 import com.moa.domain.user.UserRepository;
@@ -69,12 +70,12 @@ class NoticeServiceTest {
                 RecruitMemberRequest.builder().field("backend").total(2).build(),
                 RecruitMemberRequest.builder().field("frontend").total(2).build()
         );
-
         recruitmentId = recruitmentService.post(user.getId(),
                 new RecruitPostRequest("title",
                         "content",
                         memberFields,
-                        categoryString), tag);
+                        Category.PROGRAMMING.name(), tag.stream().map(Tag::getName).toList()), tag);
+
     }
 
     @Test
