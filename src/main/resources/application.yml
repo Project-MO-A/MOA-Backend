@@ -1,32 +1,19 @@
 spring:
-  datasource:
-    url: jdbc:h2:mem:testdb;Mode=MySQL
-  jpa:
-    hibernate:
-      ddl-auto: create
-    properties:
-      hibernate:
-        show_sql: true
-        format_sql: true
-        dialect: org.hibernate.dialect.MySQL8Dialect
-    open-in-view: false
-  h2:
-    console:
-      enabled: true
   messages:
     basename: messages
     encoding: UTF-8
-
-jwt:
-  secretKey: 2dae84f846e4f4b158a8d26681707f4338495bc7ab681523E6BE37DB3818CC36871E26235DD67D32FE4041492
-  info:
-    AccessToken:
-      expiration: 200
-      header: Authorization
-    RefreshToken:
-      expiration: 300
-      header: AuthorizationRefresh
-kakao:
-  api:
-    key: KakaoAK e9af3c3edbdf27c19c11d6d907321998
-    path: https://dapi.kakao.com/v2/local/search/keyword.json
+  config:
+    import: SecuritySubmodule/application-kakao.yml
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+    import: dev/application-db.yml, dev/application-jwt.yml
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+    import: SecuritySubmodule/application-db.yml, SecuritySubmodule/application-jwt.yml
+---
