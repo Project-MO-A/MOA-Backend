@@ -24,7 +24,7 @@ public class RecruitmentAuthorizationManagerForAuthor implements AuthorizationMa
     }
 
     private boolean canAccess(JwtUser user, String requestURI) {
-        return recruitmentRepository.findListByIdFetchUser(user.id()).stream()
+        return recruitmentRepository.findAllFetchUserById(user.id()).stream()
                 .map(Recruitment::getId)
                 .anyMatch(recruitmentId -> match(recruitmentId, requestURI));
     }

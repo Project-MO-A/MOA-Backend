@@ -11,13 +11,14 @@ public class RecruitmentsInfo {
     private final List<RecruitmentInfo> writing;
 
     public RecruitmentsInfo(List<Recruitment> recruitments) {
-        this.writing = setRecruitPostInfo(recruitments);
+        this.writing = getRecruitmentInfo(recruitments);
     }
 
-    private List<RecruitmentInfo> setRecruitPostInfo(List<Recruitment> recruitments) {
+    private List<RecruitmentInfo> getRecruitmentInfo(List<Recruitment> recruitments) {
         List<RecruitmentInfo> infos = new ArrayList<>();
+
         for (Recruitment recruitment : recruitments) {
-            infos.add(RecruitmentInfo.of(recruitment, 0));
+            infos.add(new RecruitmentInfo(recruitment));
         }
         return infos;
     }
