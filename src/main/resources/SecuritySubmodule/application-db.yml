@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    url: moa-db-dev.c6vsqoifbnvm.ap-northeast-2.rds.amazonaws.com:3306/moa?serverTimezone=UTC&characterEncoding=UTF-8
+    username: admin
+    password: rootadmin
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+    open-in-view: false
