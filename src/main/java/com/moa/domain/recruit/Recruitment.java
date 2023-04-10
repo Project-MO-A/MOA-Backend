@@ -1,11 +1,11 @@
 package com.moa.domain.recruit;
 
+import com.moa.domain.base.BaseTimeEntity;
 import com.moa.domain.member.RecruitMember;
 import com.moa.domain.notice.Post;
 import com.moa.domain.recruit.tag.RecruitTag;
 import com.moa.domain.user.User;
 import com.moa.dto.recruit.RecruitUpdateRequest;
-import com.moa.global.exception.service.InvalidRequestException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -15,13 +15,12 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.moa.global.exception.ErrorCode.REQUEST_INVALID;
 import static jakarta.persistence.EnumType.STRING;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class Recruitment {
+public class Recruitment extends BaseTimeEntity {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "RECRUIMENT_ID")
     private Long id;

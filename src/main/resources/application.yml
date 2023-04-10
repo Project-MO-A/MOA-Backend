@@ -26,3 +26,7 @@ jwt:
     RefreshToken:
       expiration: 300
       header: AuthorizationRefresh
+kakao:
+  api:
+    key: KakaoAK e9af3c3edbdf27c19c11d6d907321998
+    path: https://dapi.kakao.com/v2/local/search/keyword.json

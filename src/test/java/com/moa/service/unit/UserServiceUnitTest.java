@@ -126,7 +126,7 @@ class UserServiceUnitTest extends AbstractServiceTest {
         List<Recruitment> value = List.of(
                 new Recruitment(USER, new Post("title1", "content1"), RecruitStatus.RECRUITING, PROGRAMMING),
                 new Recruitment(USER, new Post("title2", "content2"), RecruitStatus.RECRUITING, PROGRAMMING),
-                new Recruitment(USER, new Post("title3", "content3"), RecruitStatus.COMPLETE, PROGRAMMING)
+                new Recruitment(USER, new Post("title3", "content3"), RecruitStatus.CONCURRENT, PROGRAMMING)
         );
         given(recruitmentRepository.findListByIdFetchUser(1L)).willReturn(value);
 
@@ -146,7 +146,7 @@ class UserServiceUnitTest extends AbstractServiceTest {
         Recruitment recruitment1 = new Recruitment(
                 User.builder().email("admin@email.com").build(),
                 new Post("recruitTitle", "content"),
-                RecruitStatus.COMPLETE, PROGRAMMING);
+                RecruitStatus.CONCURRENT, PROGRAMMING);
         Recruitment recruitment2 = new Recruitment(
                 User.builder().email("admin@email.com").build(),
                 new Post("recruitTitle1", "content1"),
@@ -169,9 +169,9 @@ class UserServiceUnitTest extends AbstractServiceTest {
 
         //then
         assertThat(info.getApprovedProjects().size()).isEqualTo(2);
-        assertThat(info.getApprovedProjects().get("COMPLETE").size()).isEqualTo(1);
-        assertThat(info.getApprovedProjects().get("COMPLETE").get(0).title()).isEqualTo("recruitTitle");
-        assertThat(info.getApprovedProjects().get("COMPLETE").get(0).detailsUri()).startsWith("/recruitment/");
+        assertThat(info.getApprovedProjects().get("CONCURRENT").size()).isEqualTo(1);
+        assertThat(info.getApprovedProjects().get("CONCURRENT").get(0).title()).isEqualTo("recruitTitle");
+        assertThat(info.getApprovedProjects().get("CONCURRENT").get(0).detailsUri()).startsWith("/recruitment/");
         assertThat(info.getEtcProjects().size()).isEqualTo(1);
         assertThat(info.getEtcProjects().get(0).title()).isEqualTo("recruitTitle1");
         assertThat(info.getEtcProjects().get(0).cancelUri()).startsWith("/recruitment/cancel/");

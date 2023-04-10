@@ -35,17 +35,12 @@ public record NoticesResponse(Map<Long, NoticeResponse> notices) {
     }
 
     public record NoticeResponse(
-            String title,
             String content,
             String createdAt,
-            String meetingTime,
-            String meetingPlace,
             Map<String, List<String>> members
     ) {
         public NoticeResponse(Notice notice) {
-            this(notice.getPost().getTitle(), notice.getPost().getTitle(), notice.getCreatedDate().format(DateTimeFormatter.ofPattern("yy.MM.dd")),
-                    notice.getConfirmedTime().format(DateTimeFormatter.ofPattern("yy.MM.dd hh:mm:ss")), notice.getConfirmedLocation(),
-                    attendanceMap());
+            this(notice.getPost().getContent(), notice.getCreatedDate().format(DateTimeFormatter.ofPattern("yy.MM.dd")),attendanceMap());
         }
 
         public void addMember(String attendance, AttendMember attendMember) {
