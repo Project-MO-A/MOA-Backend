@@ -5,6 +5,7 @@ import com.moa.domain.recruit.RecruitmentRepository;
 import com.moa.domain.reply.ReplyRepository;
 import com.moa.domain.user.User;
 import com.moa.domain.user.UserRepository;
+import com.moa.dto.reply.RepliesInfo;
 import com.moa.dto.reply.ReplyPostRequest;
 import com.moa.global.exception.ErrorCode;
 import com.moa.global.exception.service.EntityNotFoundException;
@@ -26,6 +27,10 @@ public class ReplyService {
         User user = userRepository.getReferenceById(request.userId());
         Recruitment recruitment = recruitmentRepository.getReferenceById(request.recruitmentId());
         return replyRepository.save(request.toEntity(user, recruitment)).getId();
+    }
+
+    public RepliesInfo getAllReply(Long recruitmentId) {
+        return new RepliesInfo(replyRepository.findByRecruitmentIdOrderByParentIdAsc(recruitmentId));
     }
 
     private void validParentId(ReplyPostRequest request) {
