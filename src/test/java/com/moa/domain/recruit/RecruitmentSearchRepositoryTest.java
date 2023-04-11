@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -28,6 +29,7 @@ import static com.moa.support.fixture.TagFixture.*;
 import static com.moa.support.fixture.UserFixture.KAI;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.springframework.data.domain.Sort.Direction.ASC;
 import static org.springframework.data.domain.Sort.Direction.DESC;
 
 class RecruitmentSearchRepositoryTest extends RepositoryTestCustom {
@@ -317,9 +319,67 @@ class RecruitmentSearchRepositoryTest extends RepositoryTestCustom {
                 () -> assertThat(recruitmentInfoPage.getContent().size()).isEqualTo(5),
                 () -> assertThat(recruitmentInfoPage.getTotalElements()).isEqualTo(30),
                 () -> assertThat(recruitmentInfoPage.getTotalPages()).isEqualTo(6),
-                () -> assertThat(recruitmentInfoPage.getSize()).isEqualTo(5),
+                () -> assertThat(recruitmentInfoPage.getSize()).isEqualTo(5)
+        );
+    }
+
+    @DisplayName("모집글이 최신순으로 정렬된다.")
+    @Test
+    void searchAll_OrderByCreatedDateDesc() {
+        //given
+        PageRequest pageRequest = PageRequest.of(2, 5, DESC, CREATE_DATE.getParamKey());
+
+        //when
+        Page<RecruitmentInfo> recruitmentInfoPage = searchRepository.searchAll(new ConcurrentHashMap<>(), pageRequest);
+
+        //then
+        List<RecruitmentInfo> content = recruitmentInfoPage.getContent();
+        assertAll(
+                () -> assertThat(content.get(0).getCreatedDate()
+                        .isAfter(content.get(1).getCreatedDate())).isTrue(),
                 () -> assertThat(recruitmentInfoPage.getSort()
                         .getOrderFor(CREATE_DATE.getParamKey()).isDescending()).isTrue()
         );
     }
+
+    @DisplayName("모집글이 오래된순으로 정렬된다.")
+    @Test
+    void searchAll_OrderByCreatedDateAsc() {
+        //given
+        PageRequest pageRequest = PageRequest.of(2, 5, ASC, CREATE_DATE.getParamKey());
+
+        //when
+        Page<RecruitmentInfo> recruitmentInfoPage = searchRepository.searchAll(new ConcurrentHashMap<>(), pageRequest);
+
+        //then
+        List<RecruitmentInfo> content = recruitmentInfoPage.getContent();
+        assertAll(
+                () -> assertThat(content.get(0).getCreatedDate()
+                        .isBefore(content.get(1).getCreatedDate())).isTrue(),
+                () -> assertThat(recruitmentInfoPage.getSort()
+                        .getOrderFor(CREATE_DATE.getParamKey()).isAscending()).isTrue()
+        );
+    }
+
+    @DisplayName("모집글이 최신순으로 페이징 되어 반환된다")
+    @Test
+    void searchAll_OrderByPaging() {
+        //given
+        PageRequest pageRequest = PageRequest.of(2, 5, DESC, CREATE_DATE.getParamKey());
+
+        //when
+        Page<RecruitmentInfo> recruitmentInfoPage = searchRepository.searchAll(new ConcurrentHashMap<>(), pageRequest);
+
+        //then
+        List<RecruitmentInfo> content = recruitmentInfoPage.getContent();
+        assertAll(
+                () -> assertThat(content.get(0).getCreatedDate()
+                        .isAfter(content.get(1).getCreatedDate())).isTrue(),
+                () -> assertThat(recruitmentInfoPage.getSort()
+                        .getOrderFor(CREATE_DATE.getParamKey()).isDescending()).isTrue(),
+                () -> assertThat(recruitmentInfoPage.getTotalElements()).isEqualTo(30),
+                () -> assertThat(recruitmentInfoPage.getSize()).isEqualTo(5)
+        );
+    }
+
 }
