@@ -13,7 +13,7 @@ public enum SearchParam {
     NAME("name"),
     NICKNAME("nickname"),
 
-    CREATE_DATE("createDate"),
+    CREATED_DATE("createdDate"),
     MODIFIED_DATE("modifiedDate"),
     DAYS_AGO("daysAgo"),
 
