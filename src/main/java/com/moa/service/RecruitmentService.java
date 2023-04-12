@@ -89,8 +89,8 @@ public class RecruitmentService {
         return recruitmentInterestsRepository.save(new RecruitmentInterest(user, recruitment)).getId();
     }
 
-    public List<RecruitmentInfo> getTopThreeRecruitment() {
-        List<Recruitment> recruitments = recruitmentRepository.findAllDescByCount(PageRequest.of(0, 3));
+    public List<RecruitmentInfo> getTopRecruitment() {
+        List<Recruitment> recruitments = recruitmentRepository.findAllDescByCount(PageRequest.of(0, 10));
         //TODO
         //댓글 기능 완성 후 값 주입
         int replyCount = 0;

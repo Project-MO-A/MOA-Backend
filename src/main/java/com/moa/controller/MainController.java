@@ -21,7 +21,7 @@ public class MainController {
 
     @GetMapping("/recruitment/popular")
     public ValueResponse<List<RecruitmentInfo>> getPopularRecruitment(){
-        return new ValueResponse<>(recruitmentService.getTopThreeRecruitment());
+        return new ValueResponse<>(recruitmentService.getTopRecruitment());
     }
 
     @GetMapping("/recruitment/recommend")
