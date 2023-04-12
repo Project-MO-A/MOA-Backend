@@ -1,5 +1,6 @@
 package com.moa.domain.recruit;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.moa.base.RepositoryTestCustom;
 import com.moa.domain.base.SearchParam;
 import com.moa.domain.member.RecruitMember;
@@ -13,7 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Slice;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -119,8 +120,8 @@ class RecruitmentSearchRepositoryTest extends RepositoryTestCustom {
         searchCondition.put(SearchParam.TITLE.getParamKey(), TITLE_PREFIX);
 
         //when
-        PageRequest pageRequest = PageRequest.of(0, 100, DESC, CREATE_DATE.getParamKey());
-        Page<RecruitmentInfo> recruitmentInfoPage = searchRepository.searchAll(searchCondition, pageRequest);
+        PageRequest pageRequest = PageRequest.of(0, 100, DESC, CREATED_DATE.getParamKey());
+        Page<RecruitmentInfo> recruitmentInfoPage = searchRepository.searchPage(searchCondition, pageRequest);
 
         for (RecruitmentInfo recruitmentInfo : recruitmentInfoPage) {
             System.out.println(recruitmentInfo);
@@ -146,8 +147,8 @@ class RecruitmentSearchRepositoryTest extends RepositoryTestCustom {
         searchCondition.put(CATEGORY.getParamKey(), CATEGORY_NAME);
 
         //when
-        PageRequest pageRequest = PageRequest.of(0, 100, DESC, CREATE_DATE.getParamKey());
-        Page<RecruitmentInfo> recruitmentInfoPage = searchRepository.searchAll(searchCondition, pageRequest);
+        PageRequest pageRequest = PageRequest.of(0, 100, DESC, CREATED_DATE.getParamKey());
+        Page<RecruitmentInfo> recruitmentInfoPage = searchRepository.searchPage(searchCondition, pageRequest);
 
         for (RecruitmentInfo recruitmentInfo : recruitmentInfoPage) {
             System.out.println(recruitmentInfo);
@@ -173,8 +174,8 @@ class RecruitmentSearchRepositoryTest extends RepositoryTestCustom {
         searchCondition.put(TAG.getParamKey(), TAG_NAME);
 
         //when
-        PageRequest pageRequest = PageRequest.of(0, 100, DESC, CREATE_DATE.getParamKey());
-        Page<RecruitmentInfo> recruitmentInfoPage = searchRepository.searchAll(searchCondition, pageRequest);
+        PageRequest pageRequest = PageRequest.of(0, 100, DESC, CREATED_DATE.getParamKey());
+        Page<RecruitmentInfo> recruitmentInfoPage = searchRepository.searchPage(searchCondition, pageRequest);
 
         for (RecruitmentInfo recruitmentInfo : recruitmentInfoPage) {
             System.out.println(recruitmentInfo);
@@ -200,8 +201,8 @@ class RecruitmentSearchRepositoryTest extends RepositoryTestCustom {
         searchCondition.put(STATE_CODE.getParamKey(), String.valueOf(CODE));
 
         //when
-        PageRequest pageRequest = PageRequest.of(0, 100, DESC, CREATE_DATE.getParamKey());
-        Page<RecruitmentInfo> recruitmentInfoPage = searchRepository.searchAll(searchCondition, pageRequest);
+        PageRequest pageRequest = PageRequest.of(0, 100, DESC, CREATED_DATE.getParamKey());
+        Page<RecruitmentInfo> recruitmentInfoPage = searchRepository.searchPage(searchCondition, pageRequest);
 
         for (RecruitmentInfo recruitmentInfo : recruitmentInfoPage) {
             System.out.println(recruitmentInfo);
@@ -228,8 +229,8 @@ class RecruitmentSearchRepositoryTest extends RepositoryTestCustom {
         searchCondition.put(SearchParam.DAYS_AGO.getParamKey(), DAYS_AGO);
 
         //when
-        PageRequest pageRequest = PageRequest.of(0, 100, DESC, CREATE_DATE.getParamKey());
-        Page<RecruitmentInfo> recruitmentInfoPage = searchRepository.searchAll(searchCondition, pageRequest);
+        PageRequest pageRequest = PageRequest.of(0, 100, DESC, CREATED_DATE.getParamKey());
+        Page<RecruitmentInfo> recruitmentInfoPage = searchRepository.searchPage(searchCondition, pageRequest);
 
         for (RecruitmentInfo recruitmentInfo : recruitmentInfoPage) {
             System.out.println(recruitmentInfo);
@@ -258,8 +259,8 @@ class RecruitmentSearchRepositoryTest extends RepositoryTestCustom {
         searchCondition.put(STATE_CODE.getParamKey(), String.valueOf(RECRUITING.getCode()));
 
         //when
-        PageRequest pageRequest = PageRequest.of(0, 100, DESC, CREATE_DATE.getParamKey());
-        Page<RecruitmentInfo> recruitmentInfoPage = searchRepository.searchAll(searchCondition, pageRequest);
+        PageRequest pageRequest = PageRequest.of(0, 100, DESC, CREATED_DATE.getParamKey());
+        Page<RecruitmentInfo> recruitmentInfoPage = searchRepository.searchPage(searchCondition, pageRequest);
 
         for (RecruitmentInfo recruitmentInfo : recruitmentInfoPage) {
             System.out.println(recruitmentInfo);
@@ -286,8 +287,8 @@ class RecruitmentSearchRepositoryTest extends RepositoryTestCustom {
         searchCondition.put(TITLE.getParamKey(), "프로젝트");
 
         //when
-        PageRequest pageRequest = PageRequest.of(0, 100, DESC, CREATE_DATE.getParamKey());
-        Page<RecruitmentInfo> recruitmentInfoPage = searchRepository.searchAll(searchCondition, pageRequest);
+        PageRequest pageRequest = PageRequest.of(0, 100, DESC, CREATED_DATE.getParamKey());
+        Page<RecruitmentInfo> recruitmentInfoPage = searchRepository.searchPage(searchCondition, pageRequest);
 
         for (RecruitmentInfo recruitmentInfo : recruitmentInfoPage) {
             System.out.println(recruitmentInfo);
@@ -307,12 +308,12 @@ class RecruitmentSearchRepositoryTest extends RepositoryTestCustom {
 
     @DisplayName("특정 페이지의 데이터가 조회된다.")
     @Test
-    void searchAll_Paging() {
+    void searchAll_Paging() throws JsonProcessingException {
         //given
-        PageRequest pageRequest = PageRequest.of(2, 5, DESC, CREATE_DATE.getParamKey());
+        PageRequest pageRequest = PageRequest.of(2, 5, DESC, CREATED_DATE.getParamKey());
 
         //when
-        Page<RecruitmentInfo> recruitmentInfoPage = searchRepository.searchAll(new ConcurrentHashMap<>(), pageRequest);
+        Page<RecruitmentInfo> recruitmentInfoPage = searchRepository.searchPage(new ConcurrentHashMap<>(), pageRequest);
 
         //then
         assertAll(
@@ -323,14 +324,34 @@ class RecruitmentSearchRepositoryTest extends RepositoryTestCustom {
         );
     }
 
+    @DisplayName("다음 페이지 존재 여부를 포함한 특정 페이지의 데이터가 조회된다.")
+    @Test
+    void searchSlice() throws JsonProcessingException {
+        //given
+        PageRequest pageRequest = PageRequest.of(1, 5, DESC, CREATED_DATE.getParamKey());
+        Map<String, String> searchCondition = new ConcurrentHashMap<>();
+        searchCondition.put(TITLE.getParamKey(), "프로젝트");
+
+        //when
+        Slice<RecruitmentInfo> recruitmentInfos = searchRepository.searchSlice(searchCondition, pageRequest);
+
+        //then
+        assertAll(
+                () -> assertThat(recruitmentInfos.getContent().get(0).getTitle()).contains("5"),
+                () -> assertThat(recruitmentInfos.getNumberOfElements()).isEqualTo(5),
+                () -> assertThat(recruitmentInfos.isLast()).isTrue(),
+                () -> assertThat(recruitmentInfos.isFirst()).isFalse()
+        );
+    }
+
     @DisplayName("모집글이 최신순으로 정렬된다.")
     @Test
     void searchAll_OrderByCreatedDateDesc() {
         //given
-        PageRequest pageRequest = PageRequest.of(2, 5, DESC, CREATE_DATE.getParamKey());
+        PageRequest pageRequest = PageRequest.of(2, 5, DESC, CREATED_DATE.getParamKey());
 
         //when
-        Page<RecruitmentInfo> recruitmentInfoPage = searchRepository.searchAll(new ConcurrentHashMap<>(), pageRequest);
+        Page<RecruitmentInfo> recruitmentInfoPage = searchRepository.searchPage(new ConcurrentHashMap<>(), pageRequest);
 
         //then
         List<RecruitmentInfo> content = recruitmentInfoPage.getContent();
@@ -338,7 +359,7 @@ class RecruitmentSearchRepositoryTest extends RepositoryTestCustom {
                 () -> assertThat(content.get(0).getCreatedDate()
                         .isAfter(content.get(1).getCreatedDate())).isTrue(),
                 () -> assertThat(recruitmentInfoPage.getSort()
-                        .getOrderFor(CREATE_DATE.getParamKey()).isDescending()).isTrue()
+                        .getOrderFor(CREATED_DATE.getParamKey()).isDescending()).isTrue()
         );
     }
 
@@ -346,10 +367,10 @@ class RecruitmentSearchRepositoryTest extends RepositoryTestCustom {
     @Test
     void searchAll_OrderByCreatedDateAsc() {
         //given
-        PageRequest pageRequest = PageRequest.of(2, 5, ASC, CREATE_DATE.getParamKey());
+        PageRequest pageRequest = PageRequest.of(2, 5, ASC, CREATED_DATE.getParamKey());
 
         //when
-        Page<RecruitmentInfo> recruitmentInfoPage = searchRepository.searchAll(new ConcurrentHashMap<>(), pageRequest);
+        Page<RecruitmentInfo> recruitmentInfoPage = searchRepository.searchPage(new ConcurrentHashMap<>(), pageRequest);
 
         //then
         List<RecruitmentInfo> content = recruitmentInfoPage.getContent();
@@ -357,18 +378,18 @@ class RecruitmentSearchRepositoryTest extends RepositoryTestCustom {
                 () -> assertThat(content.get(0).getCreatedDate()
                         .isBefore(content.get(1).getCreatedDate())).isTrue(),
                 () -> assertThat(recruitmentInfoPage.getSort()
-                        .getOrderFor(CREATE_DATE.getParamKey()).isAscending()).isTrue()
+                        .getOrderFor(CREATED_DATE.getParamKey()).isAscending()).isTrue()
         );
     }
 
     @DisplayName("모집글이 최신순으로 페이징 되어 반환된다")
     @Test
-    void searchAll_OrderByPaging() {
+    void searchAll_OrderByPaging() throws JsonProcessingException {
         //given
-        PageRequest pageRequest = PageRequest.of(2, 5, DESC, CREATE_DATE.getParamKey());
+        PageRequest pageRequest = PageRequest.of(2, 5, DESC, CREATED_DATE.getParamKey());
 
         //when
-        Page<RecruitmentInfo> recruitmentInfoPage = searchRepository.searchAll(new ConcurrentHashMap<>(), pageRequest);
+        Page<RecruitmentInfo> recruitmentInfoPage = searchRepository.searchPage(new ConcurrentHashMap<>(), pageRequest);
 
         //then
         List<RecruitmentInfo> content = recruitmentInfoPage.getContent();
@@ -376,7 +397,7 @@ class RecruitmentSearchRepositoryTest extends RepositoryTestCustom {
                 () -> assertThat(content.get(0).getCreatedDate()
                         .isAfter(content.get(1).getCreatedDate())).isTrue(),
                 () -> assertThat(recruitmentInfoPage.getSort()
-                        .getOrderFor(CREATE_DATE.getParamKey()).isDescending()).isTrue(),
+                        .getOrderFor(CREATED_DATE.getParamKey()).isDescending()).isTrue(),
                 () -> assertThat(recruitmentInfoPage.getTotalElements()).isEqualTo(30),
                 () -> assertThat(recruitmentInfoPage.getSize()).isEqualTo(5)
         );
