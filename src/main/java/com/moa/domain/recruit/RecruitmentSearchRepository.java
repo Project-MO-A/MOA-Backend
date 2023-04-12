@@ -12,9 +12,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -48,7 +46,7 @@ public class RecruitmentSearchRepository implements SearchRepository<Recruitment
     }
 
     @Override
-    public Page<RecruitmentInfo> searchAll(Map<String, String> searchCondition, Pageable pageable) {
+    public Page<RecruitmentInfo> searchPage(Map<String, String> searchCondition, Pageable pageable) {
         List<RecruitmentInfo> infoList = getSearchQuery(searchCondition)
                 .orderBy(getOrderSpecifier(pageable))
                 .offset(pageable.getOffset())
@@ -58,7 +56,25 @@ public class RecruitmentSearchRepository implements SearchRepository<Recruitment
         for (RecruitmentInfo recruitmentInfo : infoList) {
             setTags(recruitmentInfo);
         }
+
         return getPage(searchCondition, pageable, infoList);
+    }
+
+    @Override
+    public Slice<RecruitmentInfo> searchSlice(Map<String, String> searchCondition, Pageable pageable) {
+        int pageSize = pageable.getPageSize();
+        List<RecruitmentInfo> infoList = getSearchQuery(searchCondition)
+                .orderBy(getOrderSpecifier(pageable))
+                .offset(pageable.getOffset())
+                .limit(pageSize + 1)
+                .fetch();
+
+        boolean hasNext = isHasNext(pageSize, infoList);
+        for (RecruitmentInfo recruitmentInfo : infoList) {
+            setTags(recruitmentInfo);
+        }
+
+        return new SliceImpl<>(infoList, pageable, hasNext);
     }
 
     private JPAQuery<RecruitmentInfo> getSearchQuery(Map<String, String> searchCondition) {
@@ -91,7 +107,7 @@ public class RecruitmentSearchRepository implements SearchRepository<Recruitment
     }
 
     private OrderSpecifier getOrderSpecifier(Pageable pageable) {
-        Sort.Order createDateOrder = pageable.getSort().getOrderFor(CREATE_DATE.getParamKey());
+        Sort.Order createDateOrder = pageable.getSort().getOrderFor(CREATED_DATE.getParamKey());
         Sort.Order modifiedDateOrder = pageable.getSort().getOrderFor(MODIFIED_DATE.getParamKey());
 
         if (Objects.isNull(createDateOrder) && Objects.isNull(modifiedDateOrder)) {
@@ -111,6 +127,14 @@ public class RecruitmentSearchRepository implements SearchRepository<Recruitment
 
         List<String> tags = getTags(recruitmentInfo.getId());
         recruitmentInfo.setTags(tags);
+    }
+
+    private boolean isHasNext(int pageSize, List<RecruitmentInfo> infoList) {
+        if (infoList.size() > pageSize) {
+            infoList.remove(pageSize);
+            return true;
+        }
+        return false;
     }
 
     private List<String> getTags(Long recruitId) {
