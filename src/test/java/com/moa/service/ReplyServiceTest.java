@@ -6,7 +6,12 @@ import com.moa.domain.reply.Reply;
 import com.moa.domain.user.User;
 import com.moa.dto.reply.RepliesInfo;
 import com.moa.dto.reply.ReplyPostRequest;
+import com.moa.dto.reply.ReplyUpdateRequest;
+import com.moa.global.auth.model.JwtUser;
+import com.moa.global.exception.ErrorCode;
 import com.moa.global.exception.service.EntityNotFoundException;
+import com.moa.global.exception.service.ReplyAuthorityException;
+import com.moa.support.fixture.UserFixture;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -14,14 +19,16 @@ import org.mockito.InjectMocks;
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
+import static com.moa.global.exception.ErrorCode.REPLY_NOT_FOUND;
+import static com.moa.support.fixture.UserFixture.KAI;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 class ReplyServiceTest extends AbstractServiceTest {
 
@@ -109,4 +116,152 @@ class ReplyServiceTest extends AbstractServiceTest {
         assertThat(repliesInfo.getInfo().size()).isEqualTo(2);
     }
 
+    @DisplayName("댓글을 수정한다.")
+    @Test
+    void update() throws NoSuchFieldException, IllegalAccessException {
+        //given
+        final Long replyId = 3L;
+        final ReplyUpdateRequest request = new ReplyUpdateRequest("수정된 댓글");
+        final JwtUser jwtUser = new JwtUser(3L);
+        Optional<Reply> reply = Optional.of(
+                Reply.builder()
+                        .user(KAI.아이디를_입력하여_생성(3L))
+                        .content("내용")
+                        .build());
+
+        given(replyRepository.findFetchUserById(replyId))
+                .willReturn(reply);
+
+        //when
+        Long updateReplyId = replyService.updateReply(replyId, request, jwtUser);
+
+        //then
+        assertAll(
+                () -> assertThat(updateReplyId).isEqualTo(replyId),
+                () -> assertThat(reply.get().getContent()).isEqualTo("수정된 댓글"),
+                () -> verify(replyRepository).findFetchUserById(replyId)
+        );
+    }
+
+    @DisplayName("댓글을 작성한 사람이 아니면 수정에 실패한다.")
+    @Test
+    void updateFail_authority() throws NoSuchFieldException, IllegalAccessException {
+        //given
+        final Long replyId = 3L;
+        final ReplyUpdateRequest request = new ReplyUpdateRequest("수정된 댓글");
+        final JwtUser diffUser = new JwtUser(2L);
+        Optional<Reply> reply = Optional.of(
+                Reply.builder()
+                        .user(KAI.아이디를_입력하여_생성(3L))
+                        .content("내용")
+                        .build());
+
+        given(replyRepository.findFetchUserById(replyId))
+                .willReturn(reply);
+
+        //when & then
+        assertAll(
+                () -> assertThatThrownBy(() -> replyService.updateReply(replyId, request, diffUser))
+                        .isExactlyInstanceOf(ReplyAuthorityException.class),
+                () -> verify(replyRepository).findFetchUserById(replyId)
+        );
+    }
+
+    @DisplayName("댓글 ID가 잘못되었다면 수정에 실패한다.")
+    @Test
+    void updateFail_id() throws NoSuchFieldException, IllegalAccessException {
+        //given
+        final Long invalidReplyId = 2L;
+        final ReplyUpdateRequest request = new ReplyUpdateRequest("수정된 댓글");
+        final JwtUser jwtUser = new JwtUser(3L);
+        Optional<Reply> reply = Optional.of(
+                Reply.builder()
+                        .user(KAI.아이디를_입력하여_생성(3L))
+                        .content("내용")
+                        .build());
+
+        given(replyRepository.findFetchUserById(invalidReplyId))
+                .willThrow(new EntityNotFoundException(REPLY_NOT_FOUND));
+
+        //when & then
+        assertAll(
+                () -> assertThatThrownBy(() -> replyService.updateReply(invalidReplyId, request, jwtUser))
+                        .isExactlyInstanceOf(EntityNotFoundException.class),
+                () -> verify(replyRepository).findFetchUserById(invalidReplyId)
+        );
+    }
+
+    @DisplayName("댓글을 삭제한다.")
+    @Test
+    void delete() throws NoSuchFieldException, IllegalAccessException {
+        //given
+        final Long replyId = 3L;
+        final JwtUser jwtUser = new JwtUser(3L);
+        Optional<Reply> reply = Optional.of(
+                Reply.builder()
+                        .user(KAI.아이디를_입력하여_생성(3L))
+                        .content("내용")
+                        .build());
+
+        given(replyRepository.findFetchUserById(replyId))
+                .willReturn(reply);
+
+        //when
+        Long deletedReplyId = replyService.deleteReply(replyId, jwtUser);
+
+        //then
+        assertAll(
+                () -> assertThat(deletedReplyId).isEqualTo(replyId),
+                () -> verify(replyRepository).findFetchUserById(replyId),
+                () -> verify(replyRepository).delete(reply.get())
+        );
+    }
+
+    @DisplayName("댓글을 작성한 사람이 아니면 삭제할 수 없다.")
+    @Test
+    void deleteFail_authority() throws NoSuchFieldException, IllegalAccessException {
+        //given
+        final Long replyId = 3L;
+        final JwtUser diffUser = new JwtUser(2L);
+        Optional<Reply> reply = Optional.of(
+                Reply.builder()
+                        .user(KAI.아이디를_입력하여_생성(3L))
+                        .content("내용")
+                        .build());
+
+        given(replyRepository.findFetchUserById(replyId))
+                .willReturn(reply);
+
+        //when & then
+        assertAll(
+                () -> assertThatThrownBy(() -> replyService.deleteReply(replyId, diffUser))
+                        .isExactlyInstanceOf(ReplyAuthorityException.class),
+                () -> verify(replyRepository).findFetchUserById(replyId),
+                () -> verify(replyRepository, times(0)).delete(reply.get())
+        );
+    }
+
+    @DisplayName("댓글 ID가 잘못되었다면 삭제할 수 없다.")
+    @Test
+    void deleteFail_id() throws NoSuchFieldException, IllegalAccessException {
+        //given
+        final Long invalidReplyId = 2L;
+        final JwtUser jwtUser = new JwtUser(2L);
+        Optional<Reply> reply = Optional.of(
+                Reply.builder()
+                        .user(KAI.아이디를_입력하여_생성(3L))
+                        .content("내용")
+                        .build());
+
+        given(replyRepository.findFetchUserById(invalidReplyId))
+                .willThrow(new EntityNotFoundException(REPLY_NOT_FOUND));
+
+        //when & then
+        assertAll(
+                () -> assertThatThrownBy(() -> replyService.deleteReply(invalidReplyId, jwtUser))
+                        .isExactlyInstanceOf(EntityNotFoundException.class),
+                () -> verify(replyRepository).findFetchUserById(invalidReplyId),
+                () -> verify(replyRepository, times(0)).delete(reply.get())
+        );
+    }
 }
