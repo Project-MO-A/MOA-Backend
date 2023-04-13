@@ -10,6 +10,8 @@ public interface ReplyRepository extends JpaRepository<Reply, Long> {
     @EntityGraph(attributePaths = {"user"})
     List<Reply> findByRecruitmentIdOrderByParentIdAsc(Long recruitmentId);
 
+    int countRepliesByRecruitmentId(Long recruitmentId);
+
     @EntityGraph(attributePaths = {"user"})
     Optional<Reply> findFetchUserById(Long id);
 }
