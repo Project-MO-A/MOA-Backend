@@ -5,6 +5,7 @@ import com.moa.domain.member.AttendMemberRepository;
 import com.moa.domain.member.RecruitMemberRepository;
 import com.moa.domain.notice.NoticeRepository;
 import com.moa.domain.recruit.RecruitmentRepository;
+import com.moa.domain.reply.ReplyRepository;
 import com.moa.domain.user.UserRepository;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -29,4 +30,7 @@ public abstract class AbstractServiceTest {
     protected NoticeRepository noticeRepository;
     @Mock
     protected AttendMemberRepository attendMemberRepository;
+
+    @Mock
+    protected ReplyRepository replyRepository;
 }
