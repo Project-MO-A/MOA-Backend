@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.moa.domain.recruit.RecruitStatus.getState;
+import static com.moa.domain.recruit.RecruitStatus.getInstance;
 import static com.moa.support.fixture.RecruitMemberFixture.BACKEND_MEMBER;
 import static com.moa.support.fixture.RecruitMemberFixture.FRONTEND_MEMBER;
 import static com.moa.support.fixture.RecruitRequestFixture.ANOTHER_REQUEST;
@@ -306,7 +306,7 @@ class RecruitmentServiceTest {
 
             //then
             assertAll(
-                    () -> assertThat(statusResponse.status()).isEqualTo(getState(statusCode).name()),
+                    () -> assertThat(statusResponse.status()).isEqualTo(getInstance(statusCode).name()),
                     () -> verify(recruitmentRepository).findById(recruitId)
             );
         }
