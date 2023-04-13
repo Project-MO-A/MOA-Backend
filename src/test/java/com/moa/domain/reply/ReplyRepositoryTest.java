@@ -71,6 +71,27 @@ class ReplyRepositoryTest {
         assertThat(repliesResponse.get(2).getParentId()).isEqualTo(1L);
     }
 
+    @DisplayName("모집글에 달린 댓글 개수를 가져온다")
+    @Test
+    void count() {
+        //given
+        Long recruitmentId = recruitment.getId();
+        List<Reply> replies = List.of(
+                new Reply("reply1", null, user, recruitment),
+                new Reply("reply2", null, user, recruitment),
+                new Reply("reply3", 1L, user, recruitment),
+                new Reply("reply4", 1L, user, recruitment),
+                new Reply("reply5", 2L, user, recruitment)
+        );
+        replyRepository.saveAll(replies);
+
+        //when
+        int count = replyRepository.countRepliesByRecruitmentId(recruitmentId);
+
+        //then
+        assertThat(count).isEqualTo(5);
+    }
+
     @DisplayName("아이디로 유저 데이터와 함께 댓글 데이터를 조회한다.")
     @Test
     void findFetchUserById() {
