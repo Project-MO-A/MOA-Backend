@@ -11,6 +11,10 @@ spring:
     import: SecuritySubmodule/application-kakao.yml
   profiles:
     active: dev
+  jpa:
+    properties:
+      hibernate:
+        default_batch_fetch_size: 100
 ---
 spring:
   config:

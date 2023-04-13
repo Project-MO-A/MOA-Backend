@@ -26,7 +26,7 @@ public class UserController {
     }
 
     @ResponseStatus(OK)
-    @DeleteMapping("/sign-out")
+    @DeleteMapping("/withdraw")
     public void signOut(@AuthenticationPrincipal JwtUser user){
         userService.deleteUser(user.id());
     }
