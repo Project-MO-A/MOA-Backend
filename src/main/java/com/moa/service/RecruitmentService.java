@@ -12,6 +12,7 @@ import com.moa.domain.recruit.tag.RecruitTagRepository;
 import com.moa.domain.recruit.tag.Tag;
 import com.moa.domain.user.User;
 import com.moa.domain.user.UserRepository;
+import com.moa.dto.PageCustomResponse;
 import com.moa.dto.StatusResponse;
 import com.moa.dto.member.RecruitMemberRequest;
 import com.moa.dto.recruit.RecruitInfoResponse;
@@ -23,6 +24,8 @@ import com.moa.global.exception.service.InvalidRequestException;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,7 +42,6 @@ import static com.moa.global.exception.ErrorCode.*;
 @Transactional
 @Service
 public class RecruitmentService {
-    private final RecruitTagRepository recruitTagRepository;
     private final RecruitmentInterestsRepository recruitmentInterestsRepository;
     private final RecruitmentRepository recruitmentRepository;
     private final UserRepository userRepository;
@@ -91,26 +93,20 @@ public class RecruitmentService {
 
     public List<RecruitmentInfo> getTopRecruitment() {
         List<Recruitment> recruitments = recruitmentRepository.findAllDescByCount(PageRequest.of(0, 10));
-        //TODO
-        //댓글 기능 완성 후 값 주입
-        int replyCount = 0;
-        return convertToRecruitmentInfo(recruitments, replyCount);
+        return convertToRecruitmentInfo(recruitments);
     }
 
-    public List<RecruitmentInfo> getRecommendRecruitment(Long id) {
-        List<String> interests = userRepository.findById(id)
+    public PageCustomResponse<RecruitmentInfo> getRecommendRecruitment(Long id, Pageable pageable) {
+        List<String> interests = userRepository.findFetchInterestsById(id)
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND))
                 .getInterests()
                 .stream()
                 .map(Interests::getName)
                 .toList();
 
-        List<RecruitTag> recruitTags = recruitTagRepository.findByTagNameIn(interests);
-        List<Recruitment> recruitments = recruitmentRepository.findByTagsIn(recruitTags);
-        //TODO
-        //댓글 기능 완성 후 값 주입
-        int replyCount = 0;
-        return convertToRecruitmentInfo(recruitments, replyCount);
+        Slice<Recruitment> sliceContent = recruitmentRepository.findByIdIn(interests, pageable);
+        List<RecruitmentInfo> content = convertToRecruitmentInfo(sliceContent.getContent());
+        return new PageCustomResponse<>(content, sliceContent);
     }
 
     private void updateRecruitMember(RecruitUpdateRequest request, Recruitment recruitment) {
@@ -174,7 +170,7 @@ public class RecruitmentService {
         recruitment.setMember(leaderMember);
     }
 
-    private List<RecruitmentInfo> convertToRecruitmentInfo(List<Recruitment> recruitments, int replyCount) {
+    private List<RecruitmentInfo> convertToRecruitmentInfo(List<Recruitment> recruitments) {
         return recruitments.stream()
                 .map(RecruitmentInfo::new)
                 .toList();

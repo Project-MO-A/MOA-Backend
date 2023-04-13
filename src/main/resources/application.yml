@@ -1,4 +1,8 @@
 spring:
+  data:
+    web:
+      pageable:
+        default-page-size: 12
   messages:
     basename: messages
     encoding: UTF-8
@@ -6,6 +10,10 @@ spring:
     import: SecuritySubmodule/application-kakao.yml
   profiles:
     active: dev
+  jpa:
+    properties:
+      hibernate:
+        default_batch_fetch_size: 100
 ---
 spring:
   config:

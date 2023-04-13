@@ -1,7 +1,7 @@
 package com.moa.domain.recruit;
 
-import com.moa.domain.recruit.tag.RecruitTag;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -34,5 +34,14 @@ public interface RecruitmentRepository extends JpaRepository<Recruitment, Long> 
             )""")
     List<Recruitment> findAllDescByCount(Pageable limit);
 
-    List<Recruitment> findByTagsIn(List<RecruitTag> tags);
+    @Query("""
+            select r
+            from Recruitment r
+            where r.id in (
+                select distinct t.recruitment.id
+                from RecruitTag t
+                where t.tag.name in :tagName
+            )
+            """)
+    Slice<Recruitment> findByIdIn(@Param("tagName") List<String> tagName, Pageable pageable);
 }
