@@ -25,9 +25,10 @@ public class RepliesInfo {
             Long parentId = reply.getParentId();
             String content = reply.getContent();
             String nickname = reply.getUser().getNickname();
+            Long userId = reply.getUser().getId();
             String createdDate = reply.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss a").withLocale(ENGLISH));
 
-            ReplyInfo replyInfo = new ReplyInfo(id, nickname, content, createdDate, new HashMap<>());
+            ReplyInfo replyInfo = new ReplyInfo(id, userId, nickname, content, createdDate, new HashMap<>());
             if (parentId == null) {
                 parentInfo.put(id, id);
                 result.put(id, replyInfo);
@@ -37,13 +38,6 @@ public class RepliesInfo {
             getSubRepliesLoop(result, parentInfo, parentId).put(id, replyInfo);
         }
         this.info = result;
-    }
-
-    private Map<Long, ReplyInfo> getSubRepliesRecursive(Map<Long, ReplyInfo> result, Map<Long, Long> parentInfo, Long parentId) {
-        if (isRootReply(parentInfo, parentId)) {
-            return result.get(parentId).subReplies;
-        }
-        return getSubRepliesRecursive(result, parentInfo, parentInfo.get(parentId)).get(parentId).subReplies;
     }
 
     private Map<Long, ReplyInfo> getSubRepliesLoop(Map<Long, ReplyInfo> result, Map<Long, Long> parentInfo, Long parentId) {
@@ -69,7 +63,8 @@ public class RepliesInfo {
     }
 
     record ReplyInfo(
-            Long id,
+            Long replyId,
+            Long userId,
             String author,
             String content,
             String createDate,
