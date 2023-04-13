@@ -122,14 +122,14 @@ class UserControllerTest extends AbstractControllerTest {
     @WithMockCustomUser(id = "2")
     void signOutSuccess() throws Exception {
         //when
-        ResultActions action = mvc.perform(delete("/user/sign-out")
+        ResultActions action = mvc.perform(delete("/user/withdraw")
                 .header(HttpHeaders.AUTHORIZATION, "access.jwt.token")
                 .header("AuthorizationRefresh", "refresh.jwt.token"));
 
         //then
         action.andExpect(status().isOk())
                 .andDo(
-                        document("user/sign-out",
+                        document("user/withdraw",
                                 requestHeaders(
                                         headerWithName("Authorization").description("access token"),
                                         headerWithName("AuthorizationRefresh").description("refresh token").optional()
