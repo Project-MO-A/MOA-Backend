@@ -15,7 +15,10 @@ public enum Category {
     HOBBY("취미"),
     CERTIFICATE("자격증"),
     EXAMINATION("고시"),
-    INTERVIEW("면접");
+    INTERVIEW("면접"),
+    AUTONOMY("자율"),
+    ETC("기타")
+    ;
 
     private final String name;
     Category(String name) {
