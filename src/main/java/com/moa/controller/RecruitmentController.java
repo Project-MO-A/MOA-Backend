@@ -3,10 +3,13 @@ package com.moa.controller;
 import com.moa.domain.recruit.tag.Tag;
 import com.moa.dto.StatusResponse;
 import com.moa.dto.ValueResponse;
+import com.moa.dto.recruit.RecruitInfoReplyResponse;
 import com.moa.dto.recruit.RecruitInfoResponse;
 import com.moa.dto.recruit.RecruitPostRequest;
 import com.moa.dto.recruit.RecruitUpdateRequest;
+import com.moa.dto.reply.RepliesInfo;
 import com.moa.global.auth.model.JwtUser;
+import com.moa.service.ReplyService;
 import com.moa.service.TagService;
 import com.moa.service.RecruitmentService;
 import jakarta.validation.Valid;
@@ -23,6 +26,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class RecruitmentController {
     private final RecruitmentService recruitmentService;
+    private final ReplyService replyService;
     private final TagService tagService;
 
     @ResponseStatus(HttpStatus.CREATED)
@@ -34,8 +38,10 @@ public class RecruitmentController {
     }
 
     @GetMapping("/{recruitmentId}")
-    public RecruitInfoResponse info(@PathVariable Long recruitmentId) {
-        return recruitmentService.getInfo(recruitmentId);
+    public RecruitInfoReplyResponse info(@PathVariable Long recruitmentId) {
+        RecruitInfoResponse recruitInfo = recruitmentService.getInfo(recruitmentId);
+        RepliesInfo repliesInfo = replyService.getAllReply(recruitmentId);
+        return new RecruitInfoReplyResponse(recruitInfo, repliesInfo);
     }
 
     @PatchMapping("/{recruitmentId}")

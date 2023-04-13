@@ -31,6 +31,8 @@ public enum ErrorCode {
     REQUEST_INVALID(400, "request.invalid", "RQ001"),
     COUNT_INVALID(400, "count.invalid", "C0001"),
     NUMBER_FORMAT(400, "number.format", "NU001")
+
+    REPLY_NOT_FOUND(400, "reply.not.found", "R0001")
     ;
 
     private final int statusCode;
