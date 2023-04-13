@@ -8,8 +8,8 @@ import com.moa.domain.member.RecruitMember;
 import com.moa.domain.recruit.Recruitment;
 import com.moa.domain.recruit.RecruitmentRepository;
 import com.moa.domain.recruit.tag.RecruitTag;
-import com.moa.domain.recruit.tag.RecruitTagRepository;
 import com.moa.domain.recruit.tag.Tag;
+import com.moa.domain.reply.ReplyRepository;
 import com.moa.domain.user.User;
 import com.moa.domain.user.UserRepository;
 import com.moa.dto.PageCustomResponse;
@@ -44,6 +44,7 @@ import static com.moa.global.exception.ErrorCode.*;
 public class RecruitmentService {
     private final RecruitmentInterestsRepository recruitmentInterestsRepository;
     private final RecruitmentRepository recruitmentRepository;
+    private final ReplyRepository replyRepository;
     private final UserRepository userRepository;
     private final EntityManager em;
 
@@ -171,8 +172,10 @@ public class RecruitmentService {
     }
 
     private List<RecruitmentInfo> convertToRecruitmentInfo(List<Recruitment> recruitments) {
-        return recruitments.stream()
+        List<RecruitmentInfo> recruitmentInfos = recruitments.stream()
                 .map(RecruitmentInfo::new)
                 .toList();
+        recruitmentInfos.forEach(recruitmentInfo -> recruitmentInfo.setReplyCount(replyRepository.countRepliesByRecruitmentId(recruitmentInfo.getId())));
+        return recruitmentInfos;
     }
 }
