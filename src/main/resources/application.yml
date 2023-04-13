@@ -3,6 +3,7 @@ spring:
     web:
       pageable:
         default-page-size: 12
+        one-indexed-parameters: true
   messages:
     basename: messages
     encoding: UTF-8

@@ -13,6 +13,7 @@ import com.moa.global.config.WebBeanConfig;
 import com.moa.global.exception.service.EntityNotFoundException;
 import com.moa.global.exception.service.InvalidCodeException;
 import com.moa.service.RecruitmentService;
+import com.moa.service.ReplyService;
 import com.moa.service.TagService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -67,6 +68,8 @@ class RecruitmentControllerTest {
     private RecruitmentService recruitmentService;
     @MockBean
     private TagService tagService;
+    @MockBean
+    private ReplyService replyService;
     @Autowired
     private ObjectMapper mapper;
     private MockMvc mvc;
@@ -249,9 +252,9 @@ class RecruitmentControllerTest {
         //then
         action.andExpectAll(
                 status().isOk(),
-                jsonPath("$.title").value(PROGRAMMING_POST.getTitle()),
-                jsonPath("$.postUser.userName").value(PINGU.getName()),
-                jsonPath("$.members.[0].recruitField").value(BACKEND_MEMBER.getField())
+                jsonPath("$.recruitInfo.title").value(PROGRAMMING_POST.getTitle()),
+                jsonPath("$.recruitInfo.postUser.userName").value(PINGU.getName()),
+                jsonPath("$.recruitInfo.members.[0].recruitField").value(BACKEND_MEMBER.getField())
         );
 
         verify(recruitmentService).getInfo(1L);

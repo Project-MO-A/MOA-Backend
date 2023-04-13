@@ -3,8 +3,8 @@ package com.moa.support.fixture;
 import com.moa.domain.interests.Interests;
 import com.moa.domain.user.Popularity;
 import com.moa.domain.user.User;
-import lombok.Getter;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,6 +54,14 @@ public enum UserFixture {
                 .toList();
         User user = 생성();
         user.addInterests(interestsList);
+        return user;
+    }
+
+    public User 아이디를_입력하여_생성(Long id) throws NoSuchFieldException, IllegalAccessException {
+        User user = 생성();
+        Field field = user.getClass().getDeclaredField("id");
+        field.setAccessible(true);
+        field.set(user, id);
         return user;
     }
 
