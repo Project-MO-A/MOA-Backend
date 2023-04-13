@@ -32,7 +32,8 @@ public enum ErrorCode {
     COUNT_INVALID(400, "count.invalid", "C0001"),
     NUMBER_FORMAT(400, "number.format", "NU001"),
 
-    REPLY_NOT_FOUND(400, "reply.not.found", "R0001")
+    REPLY_NOT_FOUND(400, "reply.not.found", "RP001"),
+    REPLY_AUTHORITY(401, "reply.authority", "RP002"),
     ;
 
     private final int statusCode;
