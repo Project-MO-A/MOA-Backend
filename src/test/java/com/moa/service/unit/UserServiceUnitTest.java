@@ -1,6 +1,7 @@
 package com.moa.service.unit;
 
 import com.moa.base.AbstractServiceTest;
+import com.moa.domain.interests.RecruitmentInterest;
 import com.moa.domain.member.ApplimentMember;
 import com.moa.domain.member.ApprovalStatus;
 import com.moa.domain.member.RecruitMember;
@@ -19,6 +20,8 @@ import org.mockito.InjectMocks;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
+import java.lang.reflect.Field;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,7 +30,7 @@ import static com.moa.domain.recruit.Category.PROGRAMMING;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
@@ -121,7 +124,7 @@ class UserServiceUnitTest extends AbstractServiceTest {
     }
     @Test
     @DisplayName("유저 작성 글 조회")
-    void getUserWriting() {
+    void getUserWriting() throws NoSuchFieldException, IllegalAccessException {
         //given
         List<Recruitment> value = List.of(
                 new Recruitment(USER, new Post("title1", "content1"), RecruitStatus.RECRUITING, PROGRAMMING),
@@ -129,6 +132,13 @@ class UserServiceUnitTest extends AbstractServiceTest {
                 new Recruitment(USER, new Post("title3", "content3"), RecruitStatus.CONCURRENT, PROGRAMMING)
         );
         given(recruitmentRepository.findFetchTagsByUserId(1L)).willReturn(value);
+
+        //reflection
+        for (Recruitment recruitment : value) {
+            Field createdDate = recruitment.getClass().getSuperclass().getDeclaredField("createdDate");
+            createdDate.setAccessible(true);
+            createdDate.set(recruitment, LocalDateTime.now());
+        }
 
         //when
         RecruitmentsInfo info = userService.getUserWritingInfoById(1L);
@@ -178,9 +188,17 @@ class UserServiceUnitTest extends AbstractServiceTest {
 
     @Test
     @DisplayName("유저 관심 글 조회")
-    void getUserConcern() {
+    void getUserConcern() throws IllegalAccessException, NoSuchFieldException {
         //given
         given(userRepository.findRecruitmentInterestById(1L)).willReturn(Optional.of(ASSOCIATION_USER));
+
+        //reflection
+        for (RecruitmentInterest interest : ASSOCIATION_USER.getRecruitmentInterests()) {
+            Recruitment recruitment = interest.getRecruitment();
+            Field createdDate = recruitment.getClass().getSuperclass().getDeclaredField("createdDate");
+            createdDate.setAccessible(true);
+            createdDate.set(recruitment, LocalDateTime.now());
+        }
 
         //when
         UserRecruitmentInterestInfo info = userService.getUserConcernInfoById(1L);
