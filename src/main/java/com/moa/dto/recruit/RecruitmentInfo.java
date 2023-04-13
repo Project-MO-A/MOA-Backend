@@ -21,7 +21,7 @@ public class RecruitmentInfo {
     protected final int totalCount;
     protected final int approvedCount;
     protected String profileImage;
-    protected final int replyCount;
+    protected int replyCount;
     
     public RecruitmentInfo(Recruitment recruitment) {
         this.id = recruitment.getId();
@@ -34,9 +34,6 @@ public class RecruitmentInfo {
         this.totalCount = getTotal(recruitment);
         this.approvedCount = getApproved(recruitment);
         this.profileImage = "profileImage";
-
-        // TO DO
-        this.replyCount = 0;
     }
 
     public RecruitmentInfo(Long id, String title, String author, LocalDateTime createdDate, RecruitStatus recruitStatus, Category category, int totalCount, int approvedCount) {
@@ -48,13 +45,14 @@ public class RecruitmentInfo {
         this.category = category.getName();
         this.totalCount = totalCount;
         this.approvedCount = approvedCount;
-
-        // TO DO
-        this.replyCount = 0;
     }
 
     public void setTags(List<String> tags) {
         this.tags = tags;
+    }
+
+    public void setReplyCount(final int replyCount) {
+        this.replyCount = replyCount;
     }
 
     private List<String> getTagNames(Recruitment recruitment) {

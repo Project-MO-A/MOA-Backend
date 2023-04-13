@@ -1,6 +1,7 @@
 package com.moa.service;
 
 import com.moa.domain.recruit.RecruitmentSearchRepository;
+import com.moa.domain.reply.ReplyRepository;
 import com.moa.dto.page.PageResponse;
 import com.moa.dto.page.SliceResponse;
 import com.moa.dto.recruit.RecruitmentInfo;
@@ -18,18 +19,35 @@ import java.util.Map;
 @Service
 public class RecruitmentSearchService {
     private final RecruitmentSearchRepository recruitmentSearchRepository;
+    private final ReplyRepository replyRepository;
 
     public RecruitmentInfo searchOne(Map<String, String> searchCondition) {
-        return recruitmentSearchRepository.searchOne(searchCondition);
+        RecruitmentInfo info = recruitmentSearchRepository.searchOne(searchCondition);
+        setReplyCount(info);
+        return info;
     }
 
     public PageResponse<RecruitmentInfo> searchPageResponse(Map<String, String> searchCondition, Pageable pageable) {
         Page<RecruitmentInfo> recruitmentInfoPage = recruitmentSearchRepository.searchPage(searchCondition, pageable);
+        setReplyCount(recruitmentInfoPage);
         return new PageResponse<>(recruitmentInfoPage);
     }
 
     public SliceResponse<RecruitmentInfo> searchSliceResponse(Map<String, String> searchCondition, Pageable pageable) {
         Slice<RecruitmentInfo> recruitmentInfoSlice = recruitmentSearchRepository.searchSlice(searchCondition, pageable);
+        setReplyCount(recruitmentInfoSlice);
         return new SliceResponse<>(recruitmentInfoSlice);
+    }
+
+    private void setReplyCount(RecruitmentInfo recruitmentInfo) {
+        final Long recruitmentId = recruitmentInfo.getId();
+        int replyCount = replyRepository.countRepliesByRecruitmentId(recruitmentId);
+        recruitmentInfo.setReplyCount(replyCount);
+    }
+
+    private void setReplyCount(Slice<RecruitmentInfo> recruitmentInfos) {
+        for (RecruitmentInfo recruitmentInfo : recruitmentInfos) {
+            setReplyCount(recruitmentInfo);
+        }
     }
 }
