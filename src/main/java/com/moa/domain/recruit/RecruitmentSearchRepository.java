@@ -69,7 +69,7 @@ public class RecruitmentSearchRepository implements SearchRepository<Recruitment
                 .limit(pageSize + 1)
                 .fetch();
 
-        boolean hasNext = isHasNext(pageSize, infoList);
+        boolean hasNext = hasNext(pageSize, infoList);
         for (RecruitmentInfo recruitmentInfo : infoList) {
             setTags(recruitmentInfo);
         }
@@ -129,7 +129,7 @@ public class RecruitmentSearchRepository implements SearchRepository<Recruitment
         recruitmentInfo.setTags(tags);
     }
 
-    private boolean isHasNext(int pageSize, List<RecruitmentInfo> infoList) {
+    private boolean hasNext(int pageSize, List<RecruitmentInfo> infoList) {
         if (infoList.size() > pageSize) {
             infoList.remove(pageSize);
             return true;
@@ -147,23 +147,23 @@ public class RecruitmentSearchRepository implements SearchRepository<Recruitment
                 .fetch();
     }
 
-    private BooleanBuilder allCond(Map<String, String> searchParameter) {
+    private BooleanBuilder allCond(Map<String, String> searchCondition) {
         BooleanBuilder builder = new BooleanBuilder();
 
         return builder
-                .and(titleLike(searchParameter.getOrDefault(TITLE.getParamKey(), null)))
-                .and(categoryEq(searchParameter.getOrDefault(CATEGORY.getParamKey(), null)))
-                .and(tagLike(searchParameter.getOrDefault(TAG.getParamKey(), null)))
-                .and(stateEq(searchParameter.getOrDefault(STATE_CODE.getParamKey(), null)))
-                .and(withInDays(searchParameter.getOrDefault(DAYS_AGO.getParamKey(), null)));
+                .and(titleLike(searchCondition.getOrDefault(TITLE.getParamKey(), null)))
+                .and(categoryEq(searchCondition.getOrDefault(CATEGORY.getParamKey(), null)))
+                .and(tagLike(searchCondition.getOrDefault(TAG.getParamKey(), null)))
+                .and(stateEq(searchCondition.getOrDefault(STATE_CODE.getParamKey(), null)))
+                .and(withInDays(searchCondition.getOrDefault(DAYS_AGO.getParamKey(), null)));
     }
 
     private BooleanExpression withInDays(String daysAgo) {
-        if (Objects.isNull(daysAgo)) return null;
+        if (!StringUtils.hasText(daysAgo)) return null;
 
         Long days = convertLong(daysAgo);
-        LocalDateTime now = LocalDateTime.now();
-        LocalDate startDate = now.toLocalDate().minusDays(days);
+        LocalDate now = LocalDate.now();
+        LocalDate startDate = now.minusDays(days);
         LocalDateTime startDateTime = LocalDateTime.of(startDate, LocalTime.MIN);
 
         return recruitment.createdDate.goe(startDateTime);
@@ -191,14 +191,14 @@ public class RecruitmentSearchRepository implements SearchRepository<Recruitment
     }
 
     private BooleanExpression categoryEq(String category) {
-        if (Objects.isNull(category)) return null;
+        if (!StringUtils.hasText(category)) return null;
 
         Category instance = Category.getInstance(category);
         return recruitment.category.eq(instance);
     }
 
     private BooleanExpression stateEq(String stateCode) {
-        if (Objects.isNull(stateCode)) return null;
+        if (!StringUtils.hasText(stateCode)) return null;
 
         Integer code = convertInteger(stateCode);
         RecruitStatus instance = RecruitStatus.getInstance(code);
