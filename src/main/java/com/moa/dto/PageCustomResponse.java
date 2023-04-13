@@ -9,11 +9,11 @@ import java.util.List;
 public class PageCustomResponse<T> {
 
 	private final List<T> content;
-	private final PageableResponse pageResponse;
+	private final SliceResponse pageResponse;
 
 
 	public PageCustomResponse(List<T> content, Slice slice) {
 		this.content = content;
-		this.pageResponse = new PageableResponse(slice);
+		this.pageResponse = new SliceResponse(slice);
 	}
 }
