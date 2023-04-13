@@ -1,9 +1,12 @@
 package com.moa.controller;
 
 import com.moa.dto.ValueResponse;
+import com.moa.dto.recruit.RecruitUpdateRequest;
 import com.moa.dto.reply.ReplyPostRequest;
+import com.moa.dto.reply.ReplyUpdateRequest;
 import com.moa.global.auth.model.JwtUser;
 import com.moa.service.ReplyService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -29,5 +32,15 @@ public class ReplyController {
                 .build();
 
         return new ValueResponse<>(replyService.createReply(request));
+    }
+
+    @PutMapping("{replyId}")
+    public ValueResponse<Long> updateReply(@PathVariable Long replyId, @RequestBody @Valid ReplyUpdateRequest updateRequest, @AuthenticationPrincipal JwtUser user) {
+        return new ValueResponse<>(replyService.updateReply(replyId, updateRequest, user));
+    }
+
+    @DeleteMapping("{replyId}")
+    public ValueResponse<Long> deleteReply(@PathVariable Long replyId, @AuthenticationPrincipal JwtUser user) {
+        return new ValueResponse<>(replyService.deleteReply(replyId, user));
     }
 }

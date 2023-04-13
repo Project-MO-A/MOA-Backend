@@ -3,6 +3,7 @@ package com.moa.service;
 import com.moa.domain.recruit.Recruitment;
 import com.moa.domain.recruit.RecruitmentSearchRepository;
 import com.moa.domain.recruit.tag.RecruitTag;
+import com.moa.domain.reply.ReplyRepository;
 import com.moa.dto.page.PageResponse;
 import com.moa.dto.page.SliceResponse;
 import com.moa.dto.recruit.RecruitmentInfo;
@@ -33,6 +34,9 @@ class RecruitmentSearchServiceTest {
 
     @Mock
     private RecruitmentSearchRepository recruitmentSearchRepository;
+
+    @Mock
+    private ReplyRepository replyRepository;
 
     @InjectMocks
     private RecruitmentSearchService searchService;
@@ -101,6 +105,33 @@ class RecruitmentSearchServiceTest {
                 () -> assertThat(sliceResponse.isLast()).isFalse(),
                 () -> assertThat(sliceResponse.isFirst()).isTrue(),
                 () -> assertThat(sliceResponse.getSize()).isEqualTo(1),
+                () -> verify(recruitmentSearchRepository).searchSlice(anyMap(), any(PageRequest.class))
+        );
+    }
+
+    @DisplayName("댓글 개수가 저장된다.")
+    @Test
+    void reply() {
+        //given
+        List<RecruitmentInfo> content = List.of(new RecruitmentInfo(PROGRAMMING_POST.생성(PINGU.생성(),
+                BACKEND_TAG.생성().stream().map(RecruitTag::new).toList(),
+                List.of(BACKEND_MEMBER.생성()))));
+        PageRequest pageRequest = PageRequest.of(0, 1);
+        Slice<RecruitmentInfo> infos = new SliceImpl<>(content, pageRequest, true);
+
+        given(recruitmentSearchRepository.searchSlice(anyMap(), any(Pageable.class)))
+                .willReturn(infos);
+        given(replyRepository.countRepliesByRecruitmentId(any()))
+                .willReturn(5);
+
+        //when
+        SliceResponse<RecruitmentInfo> sliceResponse = searchService.searchSliceResponse(new ConcurrentHashMap<>(), pageRequest);
+
+        //then
+        assertAll(
+                () -> assertThat(sliceResponse.getContent().stream()
+                        .filter(info -> info.getReplyCount() == 5)
+                        .count()).isEqualTo(1),
                 () -> verify(recruitmentSearchRepository).searchSlice(anyMap(), any(PageRequest.class))
         );
     }
