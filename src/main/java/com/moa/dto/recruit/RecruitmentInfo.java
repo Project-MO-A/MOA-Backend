@@ -7,14 +7,17 @@ import com.moa.domain.recruit.Recruitment;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+
+import static java.util.Locale.ENGLISH;
 
 @Getter
 public class RecruitmentInfo {
     protected final Long id;
     protected final String title;
     protected final String author;
-    protected final LocalDateTime createdDate;
+    protected final String createdDate;
     protected final String recruitStatus;
     protected final String category;
     protected List<String> tags;
@@ -27,7 +30,7 @@ public class RecruitmentInfo {
         this.id = recruitment.getId();
         this.title = recruitment.getPost().getTitle();
         this.author = recruitment.getUser().getNickname();
-        this.createdDate = recruitment.getCreatedDate();
+        this.createdDate = convertToString(recruitment.getCreatedDate());
         this.recruitStatus = recruitment.getStatus().getStatus();
         this.category = recruitment.getCategory().getName();
         this.tags = getTagNames(recruitment);
@@ -40,7 +43,7 @@ public class RecruitmentInfo {
         this.id = id;
         this.title = title;
         this.author = author;
-        this.createdDate = createdDate;
+        this.createdDate = convertToString(createdDate);
         this.recruitStatus = recruitStatus.getStatus();
         this.category = category.getName();
         this.totalCount = totalCount;
@@ -53,6 +56,10 @@ public class RecruitmentInfo {
 
     public void setReplyCount(final int replyCount) {
         this.replyCount = replyCount;
+    }
+
+    private String convertToString(final LocalDateTime localDateTime) {
+        return localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss a").withLocale(ENGLISH));
     }
 
     private List<String> getTagNames(Recruitment recruitment) {
