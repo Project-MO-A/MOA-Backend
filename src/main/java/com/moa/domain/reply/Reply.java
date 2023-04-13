@@ -38,4 +38,8 @@ public class Reply extends BaseTimeEntity {
         this.user = user;
         this.recruitment = recruitment;
     }
+
+    public void update(String content) {
+        this.content = content;
+    }
 }
