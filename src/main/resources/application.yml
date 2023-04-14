@@ -8,7 +8,7 @@ spring:
     basename: messages
     encoding: UTF-8
   config:
-    import: SecuritySubmodule/application-kakao.yml
+    import: sub/application-kakao.yml
   profiles:
     active: dev
   jpa:
@@ -26,5 +26,5 @@ spring:
   config:
     activate:
       on-profile: prod
-    import: SecuritySubmodule/application-db.yml, SecuritySubmodule/application-jwt.yml
+    import: sub/application-db.yml, sub/application-jwt.yml
 ---
