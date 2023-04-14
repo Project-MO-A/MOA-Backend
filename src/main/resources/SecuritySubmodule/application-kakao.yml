@@ -1,4 +1,0 @@
-kakao:
-  api:
-    key: KakaoAK 494f9bc92fe3b1564f46b43ee1df7059
-    path: https://dapi.kakao.com/v2/local/search/keyword.json

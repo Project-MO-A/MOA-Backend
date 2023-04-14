@@ -1,9 +1,0 @@
-jwt:
-  secretKey: 2dae84f846e4f4b158a8d26681707f4338495bc7ab681523E6BE37DB3818CC36871E26235DD67D32FE4041492
-  info:
-    AccessToken:
-      expiration: 1800
-      header: Authorization
-    RefreshToken:
-      expiration: 1200000
-      header: AuthorizationRefresh
