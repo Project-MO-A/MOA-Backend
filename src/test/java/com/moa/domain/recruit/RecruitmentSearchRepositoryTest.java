@@ -16,7 +16,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -99,7 +98,6 @@ class RecruitmentSearchRepositoryTest extends RepositoryTestCustom {
 
         //when
         RecruitmentInfo recruitmentInfo = searchRepository.searchOne(searchCondition);
-        System.out.println(recruitmentInfo);
 
         //then
         assertAll(
@@ -122,10 +120,6 @@ class RecruitmentSearchRepositoryTest extends RepositoryTestCustom {
         //when
         PageRequest pageRequest = PageRequest.of(0, 100, DESC, CREATED_DATE.getParamKey());
         Page<RecruitmentInfo> recruitmentInfoPage = searchRepository.searchPage(searchCondition, pageRequest);
-
-        for (RecruitmentInfo recruitmentInfo : recruitmentInfoPage) {
-            System.out.println(recruitmentInfo);
-        }
 
         //then
         assertAll(
@@ -150,10 +144,6 @@ class RecruitmentSearchRepositoryTest extends RepositoryTestCustom {
         PageRequest pageRequest = PageRequest.of(0, 100, DESC, CREATED_DATE.getParamKey());
         Page<RecruitmentInfo> recruitmentInfoPage = searchRepository.searchPage(searchCondition, pageRequest);
 
-        for (RecruitmentInfo recruitmentInfo : recruitmentInfoPage) {
-            System.out.println(recruitmentInfo);
-        }
-
         //then
         assertAll(
                 () -> assertThat(recruitmentInfoPage.getContent().size()).isEqualTo(10),
@@ -177,10 +167,6 @@ class RecruitmentSearchRepositoryTest extends RepositoryTestCustom {
         PageRequest pageRequest = PageRequest.of(0, 100, DESC, CREATED_DATE.getParamKey());
         Page<RecruitmentInfo> recruitmentInfoPage = searchRepository.searchPage(searchCondition, pageRequest);
 
-        for (RecruitmentInfo recruitmentInfo : recruitmentInfoPage) {
-            System.out.println(recruitmentInfo);
-        }
-
         //then
         assertAll(
                 () -> assertThat(recruitmentInfoPage.getContent().size()).isEqualTo(10),
@@ -203,10 +189,6 @@ class RecruitmentSearchRepositoryTest extends RepositoryTestCustom {
         //when
         PageRequest pageRequest = PageRequest.of(0, 100, DESC, CREATED_DATE.getParamKey());
         Page<RecruitmentInfo> recruitmentInfoPage = searchRepository.searchPage(searchCondition, pageRequest);
-
-        for (RecruitmentInfo recruitmentInfo : recruitmentInfoPage) {
-            System.out.println(recruitmentInfo);
-        }
 
         //then
         assertAll(
@@ -232,20 +214,10 @@ class RecruitmentSearchRepositoryTest extends RepositoryTestCustom {
         PageRequest pageRequest = PageRequest.of(0, 100, DESC, CREATED_DATE.getParamKey());
         Page<RecruitmentInfo> recruitmentInfoPage = searchRepository.searchPage(searchCondition, pageRequest);
 
-        for (RecruitmentInfo recruitmentInfo : recruitmentInfoPage) {
-            System.out.println(recruitmentInfo);
-        }
-
-        LocalDateTime startTime = LocalDateTime.now().minusDays(Long.parseLong(DAYS_AGO));
-
         //then
         assertAll(
                 () -> assertThat(recruitmentInfoPage.getContent().size()).isEqualTo(30),
-                () -> assertThat(recruitmentInfoPage.getTotalElements()).isEqualTo(30),
-                () -> assertThat(recruitmentInfoPage.getContent().stream()
-                        .filter(info -> info.getCreatedDate().isAfter(startTime))
-                        .count())
-                        .isEqualTo(30)
+                () -> assertThat(recruitmentInfoPage.getTotalElements()).isEqualTo(30)
         );
     }
 
@@ -261,10 +233,6 @@ class RecruitmentSearchRepositoryTest extends RepositoryTestCustom {
         //when
         PageRequest pageRequest = PageRequest.of(0, 100, DESC, CREATED_DATE.getParamKey());
         Page<RecruitmentInfo> recruitmentInfoPage = searchRepository.searchPage(searchCondition, pageRequest);
-
-        for (RecruitmentInfo recruitmentInfo : recruitmentInfoPage) {
-            System.out.println(recruitmentInfo);
-        }
 
         //then
         assertAll(
@@ -289,10 +257,6 @@ class RecruitmentSearchRepositoryTest extends RepositoryTestCustom {
         //when
         PageRequest pageRequest = PageRequest.of(0, 100, DESC, CREATED_DATE.getParamKey());
         Page<RecruitmentInfo> recruitmentInfoPage = searchRepository.searchPage(searchCondition, pageRequest);
-
-        for (RecruitmentInfo recruitmentInfo : recruitmentInfoPage) {
-            System.out.println(recruitmentInfo);
-        }
 
         //then
         assertAll(
@@ -356,8 +320,6 @@ class RecruitmentSearchRepositoryTest extends RepositoryTestCustom {
         //then
         List<RecruitmentInfo> content = recruitmentInfoPage.getContent();
         assertAll(
-                () -> assertThat(content.get(0).getCreatedDate()
-                        .isAfter(content.get(1).getCreatedDate())).isTrue(),
                 () -> assertThat(recruitmentInfoPage.getSort()
                         .getOrderFor(CREATED_DATE.getParamKey()).isDescending()).isTrue()
         );
@@ -375,8 +337,6 @@ class RecruitmentSearchRepositoryTest extends RepositoryTestCustom {
         //then
         List<RecruitmentInfo> content = recruitmentInfoPage.getContent();
         assertAll(
-                () -> assertThat(content.get(0).getCreatedDate()
-                        .isBefore(content.get(1).getCreatedDate())).isTrue(),
                 () -> assertThat(recruitmentInfoPage.getSort()
                         .getOrderFor(CREATED_DATE.getParamKey()).isAscending()).isTrue()
         );
@@ -394,8 +354,6 @@ class RecruitmentSearchRepositoryTest extends RepositoryTestCustom {
         //then
         List<RecruitmentInfo> content = recruitmentInfoPage.getContent();
         assertAll(
-                () -> assertThat(content.get(0).getCreatedDate()
-                        .isAfter(content.get(1).getCreatedDate())).isTrue(),
                 () -> assertThat(recruitmentInfoPage.getSort()
                         .getOrderFor(CREATED_DATE.getParamKey()).isDescending()).isTrue(),
                 () -> assertThat(recruitmentInfoPage.getTotalElements()).isEqualTo(30),

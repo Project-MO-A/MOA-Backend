@@ -59,6 +59,7 @@ public class RecruitmentInfo {
     }
 
     private String convertToString(final LocalDateTime localDateTime) {
+        if (localDateTime == null) return null;
         return localDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss a").withLocale(ENGLISH));
     }
 
