@@ -2,6 +2,7 @@ package com.moa.domain.user;
 
 import com.moa.domain.interests.Interests;
 import com.moa.domain.interests.RecruitmentInterest;
+import com.moa.domain.link.Link;
 import com.moa.dto.user.UserUpdateRequest;
 import jakarta.persistence.*;
 import lombok.Builder;
@@ -42,6 +43,9 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Interests> interests = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Link> link = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Alarm> alarms = new ArrayList<>();
