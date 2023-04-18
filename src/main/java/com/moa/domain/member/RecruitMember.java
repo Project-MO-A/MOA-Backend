@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.moa.global.exception.ErrorCode.*;
+import static jakarta.persistence.CascadeType.ALL;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -27,7 +28,7 @@ public class RecruitMember {
     @JoinColumn(name = "RECRUITMENT_ID")
     private Recruitment recruitment;
 
-    @OneToMany(mappedBy = "recruitMember", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "recruitMember", cascade = ALL)
     private List<ApplimentMember> applimentMembers = new ArrayList<>();
 
     private String recruitField;
