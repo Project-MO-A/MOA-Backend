@@ -4,17 +4,14 @@ import com.moa.domain.reply.Reply;
 import lombok.Getter;
 
 import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
 
 import static java.util.Locale.ENGLISH;
 
 @Getter
 public class RepliesInfo {
 
-    private final Map<Long, ReplyInfo> info;
+    private final List<ReplyInfo> info;
 
     public RepliesInfo(List<Reply> replys) {
         Map<Long, ReplyInfo> result = new HashMap<>();
@@ -28,23 +25,28 @@ public class RepliesInfo {
             Long userId = reply.getUser().getId();
             String createdDate = reply.getCreatedDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss a").withLocale(ENGLISH));
 
-            ReplyInfo replyInfo = new ReplyInfo(id, userId, nickname, content, createdDate, new HashMap<>());
+            ReplyInfo replyInfo = new ReplyInfo(id, userId, nickname, content, createdDate, new ArrayList<>());
             if (parentId == null) {
                 parentInfo.put(id, id);
                 result.put(id, replyInfo);
                 continue;
             }
             parentInfo.put(id, parentId);
-            getSubRepliesLoop(result, parentInfo, parentId).put(id, replyInfo);
+            getSubRepliesLoop(result, parentInfo, parentId).add(replyInfo);
         }
-        this.info = result;
+        this.info = result.values().stream().toList();
     }
 
-    private Map<Long, ReplyInfo> getSubRepliesLoop(Map<Long, ReplyInfo> result, Map<Long, Long> parentInfo, Long parentId) {
+    private List<ReplyInfo> getSubRepliesLoop(Map<Long, ReplyInfo> result, Map<Long, Long> parentInfo, Long parentId) {
         Stack<Long> ids = getReplyIdDepth(parentInfo, parentId);
-        Map<Long, ReplyInfo> response = result.get(ids.pop()).subReplies;
+        List<ReplyInfo> response = result.get(ids.pop()).subReplies;
         while (!ids.isEmpty()) {
-            response = response.get(ids.pop()).subReplies;
+            for (ReplyInfo replyInfo : response) {
+                if (replyInfo.replyId.equals(ids.pop())) {
+                    response = replyInfo.subReplies;
+                    break;
+                }
+            }
         }
         return response;
     }
@@ -68,6 +70,6 @@ public class RepliesInfo {
             String author,
             String content,
             String createDate,
-            Map<Long, ReplyInfo> subReplies
+            List<ReplyInfo> subReplies
     ) {}
 }

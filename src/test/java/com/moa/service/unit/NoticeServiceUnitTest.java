@@ -19,7 +19,6 @@ import org.mockito.InjectMocks;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -146,12 +145,14 @@ class NoticeServiceUnitTest extends AbstractServiceTest {
         NoticesResponse response = noticeService.findAll(recruitmentId);
 
         //then
-        assertAll(() -> assertThat(response.notices().size()).isEqualTo(3), () -> {
-            Long id = 1L;
-            for (Map.Entry<Long, NoticeResponse> entry : response.notices().entrySet()) {
-                assertThat(entry.getKey()).isEqualTo(id);
-                assertThat(entry.getValue().content()).isEqualTo("content" + id++);
-            }
+        assertAll(
+                () -> assertThat(response.notices().size()).isEqualTo(3),
+                () -> {
+                    Long id = 1L;
+                    for (NoticeResponse noticeResponse : response.notices()) {
+                        assertThat(noticeResponse.getNoticeId()).isEqualTo(id);
+                        assertThat(noticeResponse.getContent()).isEqualTo("content" + id++);
+                    }
         });
     }
 
