@@ -2,6 +2,7 @@ package com.moa.dto.notice;
 
 import com.moa.domain.member.AttendMember;
 import com.moa.domain.notice.Notice;
+import lombok.Getter;
 
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -9,12 +10,12 @@ import java.util.stream.Collectors;
 
 import static com.moa.domain.member.Attendance.*;
 
-public record NoticesResponse(Map<Long, NoticeResponse> notices) {
+public record NoticesResponse(List<NoticeResponse> notices) {
     public NoticesResponse(List<Notice> notices, List<AttendMember> attendMembers) {
         this(createResponse(notices, attendMembers));
     }
 
-    private static Map<Long, NoticeResponse> createResponse(List<Notice> notices, List<AttendMember> attendMembers) {
+    private static List<NoticeResponse> createResponse(List<Notice> notices, List<AttendMember> attendMembers) {
         Map<Long, Notice> noticeMap = listToMap(notices);
 
         Map<Long, NoticeResponse> response = new HashMap<>();
@@ -24,7 +25,8 @@ public record NoticesResponse(Map<Long, NoticeResponse> notices) {
             noticeResponse.addMember(attendMember.getAttendance().name(), attendMember);
             response.put(noticeId, noticeResponse);
         }
-        return response;
+
+        return response.values().stream().toList();
     }
 
     private static Map<Long, Notice> listToMap(List<Notice> notices) {
@@ -34,13 +36,22 @@ public record NoticesResponse(Map<Long, NoticeResponse> notices) {
                         notice -> notice));
     }
 
-    public record NoticeResponse(
-            String content,
-            String createdAt,
-            Map<String, List<String>> members
-    ) {
+    @Getter
+    public static class NoticeResponse {
+        private final Long noticeId;
+        private final String content;
+        private final String createdAt;
+        private final Map<String, List<String>> members;
+
         public NoticeResponse(Notice notice) {
-            this(notice.getPost().getContent(), notice.getCreatedDate().format(DateTimeFormatter.ofPattern("yy.MM.dd")),attendanceMap());
+            this(notice.getId(), notice.getPost().getContent(), notice.getCreatedDate().format(DateTimeFormatter.ofPattern("yy.MM.dd")), attendanceMap());
+        }
+
+        public NoticeResponse(Long noticeId, String content, String createdAt, Map<String, List<String>> members) {
+            this.noticeId = noticeId;
+            this.content = content;
+            this.createdAt = createdAt;
+            this.members = members;
         }
 
         public void addMember(String attendance, AttendMember attendMember) {
