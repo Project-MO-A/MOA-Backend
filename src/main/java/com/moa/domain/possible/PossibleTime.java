@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import static com.moa.global.exception.ErrorCode.TIME_INVALID;
@@ -24,28 +25,12 @@ public class PossibleTime {
     @JoinColumn(name = "APPLIMENT_MEMBER_ID")
     private ApplimentMember applimentMember;
 
-    @Column(name = "possible_day")
-    private Day day;
-
     @Column(nullable = false)
-    private LocalTime startTime;
-
-    @Column(nullable = false)
-    private LocalTime endTime;
+    private LocalDateTime time;
 
     @Builder
-    public PossibleTime(ApplimentMember applimentMember, Day day, LocalTime startTime, LocalTime endTime) {
+    public PossibleTime(ApplimentMember applimentMember, LocalDateTime time) {
         this.applimentMember = applimentMember;
-        this.day = day;
-        this.startTime = startTime;
-        this.endTime = endTime;
-        validateTime();
-    }
-
-    private void validateTime() {
-        if (this.startTime.getHour() > this.endTime.getHour() ||
-                (this.startTime.getHour() == this.endTime.getHour() && this.startTime.getMinute() >= this.endTime.getMinute())) {
-            throw new InvalidTimeException(TIME_INVALID);
-        }
+        this.time = time;
     }
 }
