@@ -129,7 +129,7 @@ class RecruitmentSearchServiceTest {
 
         //then
         assertAll(
-                () -> assertThat(sliceResponse.getContent().stream()
+                () -> assertThat(sliceResponse.getValue().stream()
                         .filter(info -> info.getReplyCount() == 5)
                         .count()).isEqualTo(1),
                 () -> verify(recruitmentSearchRepository).searchSlice(anyMap(), any(PageRequest.class))
