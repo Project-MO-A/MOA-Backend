@@ -1,17 +1,12 @@
 package com.moa.domain.possible;
 
 import com.moa.domain.member.ApplimentMember;
-import com.moa.global.exception.service.InvalidTimeException;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 
-import static com.moa.global.exception.ErrorCode.TIME_INVALID;
-
+@ToString
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -24,28 +19,16 @@ public class PossibleTime {
     @JoinColumn(name = "APPLIMENT_MEMBER_ID")
     private ApplimentMember applimentMember;
 
-    @Column(name = "possible_day")
-    private Day day;
+    @Column(nullable = false)
+    private LocalDateTime startTime;
 
     @Column(nullable = false)
-    private LocalTime startTime;
-
-    @Column(nullable = false)
-    private LocalTime endTime;
+    private LocalDateTime endTime;
 
     @Builder
-    public PossibleTime(ApplimentMember applimentMember, Day day, LocalTime startTime, LocalTime endTime) {
+    public PossibleTime(ApplimentMember applimentMember, LocalDateTime startTime, LocalDateTime endTime) {
         this.applimentMember = applimentMember;
-        this.day = day;
         this.startTime = startTime;
         this.endTime = endTime;
-        validateTime();
-    }
-
-    private void validateTime() {
-        if (this.startTime.getHour() > this.endTime.getHour() ||
-                (this.startTime.getHour() == this.endTime.getHour() && this.startTime.getMinute() >= this.endTime.getMinute())) {
-            throw new InvalidTimeException(TIME_INVALID);
-        }
     }
 }

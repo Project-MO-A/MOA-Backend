@@ -3,11 +3,9 @@ package com.moa.service;
 import com.moa.domain.member.ApplimentMember;
 import com.moa.domain.member.ApplimentMemberRepository;
 import com.moa.domain.member.ApplimentSearchRepository;
-import com.moa.domain.possible.Day;
 import com.moa.domain.possible.PossibleTime;
 import com.moa.domain.possible.PossibleTimeRepository;
 import com.moa.dto.member.ApprovedMemberResponse;
-import com.moa.dto.possible.PossibleTimeData;
 import com.moa.dto.possible.PossibleTimeRequest;
 import com.moa.dto.possible.PossibleTimeResponse;
 import com.moa.global.exception.service.EntityNotFoundException;
@@ -15,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.moa.global.exception.ErrorCode.APPLIMENT_NOT_FOUND;
@@ -30,6 +29,7 @@ public class PossibleTimeService {
     @Transactional(readOnly = true)
     public List<PossibleTimeResponse> getAllMembersTimeList(final Long recruitmentId) {
         List<ApprovedMemberResponse> allMembers = applimentSearchRepository.findAllApprovedMembers(recruitmentId);
+
         return allMembers.stream().map(all -> PossibleTimeResponse.builder()
                     .nickname(all.getNickname())
                     .possibleTimes(possibleTimeRepository.findAllByApplimentMemberId(all.getApplyId())).build())
@@ -37,7 +37,7 @@ public class PossibleTimeService {
     }
 
     @Transactional(readOnly = true)
-    public List<PossibleTimeData> getTimeList(final Long recruitmentId, final Long userId) {
+    public List<LocalDateTime> getTimeList(final Long recruitmentId, final Long userId) {
         ApplimentMember applimentMember = applimentMemberRepository.findByRecruitIdAndUserId(recruitmentId, userId)
                 .orElseThrow(() -> new EntityNotFoundException(APPLIMENT_NOT_FOUND));
         List<PossibleTime> possibleTimes = possibleTimeRepository.findAllByApplimentMemberId(applimentMember.getId());
@@ -53,13 +53,7 @@ public class PossibleTimeService {
     }
 
     private void saveTime(PossibleTimeRequest timeRequestList, ApplimentMember applimentMember) {
-        timeRequestList.possibleTimeDataList().stream()
-                .map(time -> PossibleTime.builder()
-                        .applimentMember(applimentMember)
-                        .day(Day.valueOf(time.day()))
-                        .startTime(time.startTime())
-                        .endTime(time.endTime())
-                        .build())
-                .forEach(possibleTimeRepository::save);
+        List<PossibleTime> possibleTimeList = timeRequestList.getEntityList(applimentMember);
+        possibleTimeRepository.saveAll(possibleTimeList);
     }
 }

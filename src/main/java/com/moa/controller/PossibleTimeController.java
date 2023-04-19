@@ -1,6 +1,5 @@
 package com.moa.controller;
 
-import com.moa.dto.possible.PossibleTimeData;
 import com.moa.dto.possible.PossibleTimeRequest;
 import com.moa.dto.possible.PossibleTimeResponse;
 import com.moa.global.auth.model.JwtUser;
@@ -12,6 +11,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.NO_CONTENT;
@@ -28,7 +28,7 @@ public class PossibleTimeController {
     }
 
     @GetMapping
-    public List<PossibleTimeData> getTimeList(@PathVariable Long recruitmentId, @AuthenticationPrincipal JwtUser user) {
+    public List<LocalDateTime> getTimeList(@PathVariable Long recruitmentId, @AuthenticationPrincipal JwtUser user) {
         return possibleTimeService.getTimeList(recruitmentId, user.id());
     }
 

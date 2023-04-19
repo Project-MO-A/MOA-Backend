@@ -3,11 +3,9 @@ package com.moa.service;
 import com.moa.domain.member.ApplimentMember;
 import com.moa.domain.member.ApplimentMemberRepository;
 import com.moa.domain.member.ApplimentSearchRepository;
-import com.moa.domain.possible.Day;
 import com.moa.domain.possible.PossibleTime;
 import com.moa.domain.possible.PossibleTimeRepository;
 import com.moa.dto.member.ApprovedMemberResponse;
-import com.moa.dto.possible.PossibleTimeData;
 import com.moa.dto.possible.PossibleTimeRequest;
 import com.moa.dto.possible.PossibleTimeResponse;
 import com.moa.global.exception.service.EntityNotFoundException;
@@ -19,7 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -61,12 +60,12 @@ class PossibleTimeServiceTest {
         );
 
         List<PossibleTime> possibleTimes1 = List.of(
-                MONDAY_DAYTIME.빈_객체_생성(),
-                TUESDAY_ALL.빈_객체_생성()
+                TIME2.빈_객체_생성(),
+                TIME3.빈_객체_생성()
         );
         List<PossibleTime> possibleTimes2 = List.of(
-                MONDAY_DAYTIME.빈_객체_생성(),
-                TUESDAY_ALL.빈_객체_생성()
+                TIME2.빈_객체_생성(),
+                TIME3.빈_객체_생성()
         );
 
         given(applimentSearchRepository.findAllApprovedMembers(recruitmentId))
@@ -117,9 +116,8 @@ class PossibleTimeServiceTest {
         ApplimentMember applimentMember = APPROVED_MEMBER.생성(PINGU.생성(), BACKEND_MEMBER.생성());
 
         List<PossibleTime> possibleTimes1 = List.of(
-                MONDAY_DAYTIME.빈_객체_생성(),
-                TUESDAY_ALL.빈_객체_생성(),
-                SATURDAY_ALL.빈_객체_생성()
+                TIME2.빈_객체_생성(),
+                TIME3.빈_객체_생성()
         );
 
         given(applimentMemberRepository.findByRecruitIdAndUserId(recruitmentId, userId))
@@ -128,11 +126,15 @@ class PossibleTimeServiceTest {
                 .willReturn(possibleTimes1);
 
         //when
-        List<PossibleTimeData> timeList = possibleTimeService.getTimeList(recruitmentId, userId);
+        List<LocalDateTime> timeList = possibleTimeService.getTimeList(recruitmentId, userId);
+
+        for (LocalDateTime localDateTime : timeList) {
+            System.out.println(localDateTime);
+        }
 
         //then
         assertAll(
-                () -> assertThat(timeList.size()).isEqualTo(3),
+                () -> assertThat(timeList.size()).isEqualTo(38),
                 () -> verify(applimentMemberRepository).findByRecruitIdAndUserId(recruitmentId, userId),
                 () -> verify(possibleTimeRepository).findAllByApplimentMemberId(any())
         );
@@ -179,13 +181,13 @@ class PossibleTimeServiceTest {
         final Long recruitmentId = 3L;
         final Long userId = 2L;
         ApplimentMember applimentMember = APPROVED_MEMBER.생성(PINGU.생성(), BACKEND_MEMBER.생성());
-        PossibleTimeRequest timeRequest = new PossibleTimeRequest(
-                Stream.of(        MONDAY_DAYTIME.빈_객체_생성(),
-                                TUESDAY_ALL.빈_객체_생성(),
-                                SATURDAY_ALL.빈_객체_생성())
-                        .map(time -> new PossibleTimeData(time.getDay().name(), time.getStartTime(), time.getEndTime()))
-                        .toList()
-        );
+        List<LocalDateTime> timeList = Stream.of(TIME2.빈_객체_생성(),
+                        TIME3.빈_객체_생성(),
+                        TIME5.빈_객체_생성())
+                .map(PossibleTime::getStartTime)
+                .toList();
+        List<LocalDateTime> list = new ArrayList<>(timeList);
+        PossibleTimeRequest timeRequest = new PossibleTimeRequest(list);
 
         given(applimentMemberRepository.findByRecruitIdAndUserId(recruitmentId, userId))
                 .willReturn(Optional.ofNullable(applimentMember));
@@ -197,34 +199,7 @@ class PossibleTimeServiceTest {
         assertAll(
                 () -> verify(applimentMemberRepository).findByRecruitIdAndUserId(recruitmentId, userId),
                 () -> verify(possibleTimeRepository).deleteAllByApplimentMember(applimentMember),
-                () -> verify(possibleTimeRepository, times(3)).save(any(PossibleTime.class))
-        );
-    }
-
-    @DisplayName("setTime - 개인의 시간을 설정하는데 실패한다. (startTime 보다 endTime이 더 큼)")
-    @Test
-    void setTimeFail() {
-        //given
-        final Long recruitmentId = 3L;
-        final Long userId = 2L;
-        ApplimentMember applimentMember = APPROVED_MEMBER.생성(PINGU.생성(), BACKEND_MEMBER.생성());
-        PossibleTimeRequest timeRequest = new PossibleTimeRequest(
-                List.of(
-                        new PossibleTimeData(Day.MONDAY.name(), LocalTime.of(18, 0), LocalTime.of(17, 0)),
-                        new PossibleTimeData(Day.TUESDAY.name(), LocalTime.of(10, 0), LocalTime.of(17, 0))
-                )
-        );
-
-        given(applimentMemberRepository.findByRecruitIdAndUserId(recruitmentId, userId))
-                .willReturn(Optional.ofNullable(applimentMember));
-
-        //when & then
-        assertAll(
-                () -> assertThatThrownBy(() -> possibleTimeService.setTime(timeRequest, recruitmentId, userId))
-                        .isExactlyInstanceOf(InvalidTimeException.class),
-                () -> verify(applimentMemberRepository).findByRecruitIdAndUserId(recruitmentId, userId),
-                () -> verify(possibleTimeRepository).deleteAllByApplimentMember(applimentMember),
-                () -> verify(possibleTimeRepository, times(0)).save(any(PossibleTime.class))
+                () -> verify(possibleTimeRepository).saveAll(anyList())
         );
     }
 
@@ -236,10 +211,11 @@ class PossibleTimeServiceTest {
         given(applimentMemberRepository.findByRecruitIdAndUserId(invalidId, 3L))
                 .willThrow(EntityNotFoundException.class);
         PossibleTimeRequest timeRequest = new PossibleTimeRequest(
-                List.of(
-                        new PossibleTimeData(Day.MONDAY.name(), LocalTime.of(14, 0), LocalTime.of(17, 0)),
-                        new PossibleTimeData(Day.TUESDAY.name(), LocalTime.of(10, 0), LocalTime.of(17, 0))
-                )
+                Stream.of(      TIME2.빈_객체_생성(),
+                                TIME3.빈_객체_생성(),
+                                TIME5.빈_객체_생성())
+                        .map(PossibleTime::getStartTime)
+                        .toList()
         );
 
         //then
@@ -259,10 +235,11 @@ class PossibleTimeServiceTest {
         given(applimentMemberRepository.findByRecruitIdAndUserId(3L, invalidId))
                 .willThrow(EntityNotFoundException.class);
         PossibleTimeRequest timeRequest = new PossibleTimeRequest(
-                List.of(
-                        new PossibleTimeData(Day.MONDAY.name(), LocalTime.of(14, 0), LocalTime.of(17, 0)),
-                        new PossibleTimeData(Day.TUESDAY.name(), LocalTime.of(10, 0), LocalTime.of(17, 0))
-                )
+                Stream.of(      TIME2.빈_객체_생성(),
+                                TIME3.빈_객체_생성(),
+                                TIME5.빈_객체_생성())
+                        .map(PossibleTime::getStartTime)
+                        .toList()
         );
 
         //then

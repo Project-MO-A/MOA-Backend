@@ -1,71 +1,69 @@
 package com.moa.support.fixture;
 
 import com.moa.domain.member.ApplimentMember;
-import com.moa.domain.possible.Day;
 import com.moa.domain.possible.PossibleTime;
-import lombok.Getter;
 
-import java.time.LocalTime;
-
-import static com.moa.domain.possible.Day.*;
+import java.time.LocalDateTime;
 
 public enum PossibleTimeFixture {
-    MONDAY_ALL(MONDAY, 9, 23),
-    MONDAY_DAYTIME(MONDAY, 13, 19),
-    TUESDAY_ALL(TUESDAY, 9, 23),
-    TUESDAY_DAYTIME(TUESDAY, 13, 19),
-    SATURDAY_ALL(SATURDAY, 9, 23),
-    SATURDAY_DAYTIME(SATURDAY, 13, 19),
-    SUNDAY_ALL(SUNDAY, 9, 23),
-    SUNDAY_DAYTIME(SUNDAY, 13, 19);
+    TIME1(LocalDateTime.of(2023, 4, 20, 9, 0),
+            LocalDateTime.of(2023, 4, 20, 18, 0)),
+    TIME2(LocalDateTime.of(2023, 4, 21, 9, 0),
+            LocalDateTime.of(2023, 4, 21, 17, 0)),
+    TIME3(LocalDateTime.of(2023, 4, 22, 9, 0),
+            LocalDateTime.of(2023, 4, 22, 19, 0)),
+    TIME4(LocalDateTime.of(2023, 4, 23, 9, 0),
+            LocalDateTime.of(2023, 4, 23, 19, 0)),
+    TIME5(LocalDateTime.of(2023, 4, 24, 9, 0),
+            LocalDateTime.of(2023, 4, 24, 20, 0)),
+    TIME6(LocalDateTime.of(2023, 4, 25, 9, 0),
+            LocalDateTime.of(2023, 4, 25, 11, 0)),
+    TIME7(LocalDateTime.of(2023, 4, 26, 9, 0),
+            LocalDateTime.of(2023, 4, 26, 15, 0)),
+    TIME8(LocalDateTime.of(2023, 4, 27, 9, 0),
+            LocalDateTime.of(2023, 4, 27, 15, 0));
 
-    private final Day day;
-    private final int startHour;
-    private final int endHour;
+    private final LocalDateTime startTime;
+    private final LocalDateTime endTime;
 
-    PossibleTimeFixture(Day day, int startHour, int endHour) {
-        this.day = day;
-        this.startHour = startHour;
-        this.endHour = endHour;
+    PossibleTimeFixture(LocalDateTime startTime, LocalDateTime endTime) {
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 
     public PossibleTime 생성(ApplimentMember applimentMember) {
         return 기본_빌더_생성(applimentMember)
-                .startTime(LocalTime.of(this.startHour, 0))
-                .endTime(LocalTime.of(this.endHour, 0))
+                .startTime(this.startTime)
+                .endTime(this.endTime)
                 .build();
     }
 
-    public PossibleTime 시간을_바꾸어_생성(ApplimentMember applimentMember, int startHour, int endHour) {
+    public PossibleTime 시간을_바꾸어_생성(ApplimentMember applimentMember, LocalDateTime startTime, LocalDateTime endTime) {
         return 기본_빌더_생성(applimentMember)
-                .startTime(LocalTime.of(startHour, 0))
-                .endTime(LocalTime.of(endHour, 0))
+                .startTime(startTime)
+                .endTime(endTime)
                 .build();
     }
 
     public PossibleTime 빈_객체_생성() {
         return PossibleTime.builder()
-                .day(this.day)
-                .startTime(LocalTime.of(this.startHour, 0))
-                .endTime(LocalTime.of(this.endHour, 0))
+                .startTime(this.startTime)
+                .endTime(this.endTime)
                 .build();
     }
 
     private PossibleTime.PossibleTimeBuilder 기본_빌더_생성(ApplimentMember applimentMember) {
         return PossibleTime.builder()
-                .day(this.day)
+                .startTime(this.startTime)
+                .endTime(this.endTime)
                 .applimentMember(applimentMember);
     }
 
-    public Day getDay() {
-        return day;
+    public LocalDateTime getStartTime() {
+        return startTime;
     }
 
-    public int getStartHour() {
-        return startHour;
-    }
-
-    public int getEndHour() {
-        return endHour;
+    public LocalDateTime getEndTime() {
+        return endTime;
     }
 }

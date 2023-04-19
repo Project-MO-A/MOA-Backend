@@ -69,10 +69,10 @@ class PossibleTimeRepositoryTest extends RepositoryTestCustom {
     @Test
     void findAllByApplimentMemberId() {
         //given
-        PossibleTime time = MONDAY_ALL.생성(APPLIMENT_JHS);
-        PossibleTime time1 = TUESDAY_ALL.생성(APPLIMENT_JHS);
-        PossibleTime time2 = SATURDAY_ALL.생성(APPLIMENT_JHS);
-        PossibleTime time3 = SUNDAY_ALL.생성(APPLIMENT_JHS);
+        PossibleTime time = TIME1.생성(APPLIMENT_JHS);
+        PossibleTime time1 = TIME3.생성(APPLIMENT_JHS);
+        PossibleTime time2 = TIME5.생성(APPLIMENT_JHS);
+        PossibleTime time3 = TIME7.생성(APPLIMENT_JHS);
 
         possibleTimeRepository.saveAll(List.of(
                 time, time1, time2, time3
@@ -92,10 +92,10 @@ class PossibleTimeRepositoryTest extends RepositoryTestCustom {
     @Test
     void findAllByApplimentMemberIdFail() {
         //given
-        PossibleTime time = MONDAY_ALL.생성(APPLIMENT_JHS);
-        PossibleTime time1 = TUESDAY_ALL.생성(APPLIMENT_JHS);
-        PossibleTime time2 = SATURDAY_ALL.생성(APPLIMENT_JHS);
-        PossibleTime time3 = SUNDAY_ALL.생성(APPLIMENT_JHS);
+        PossibleTime time = TIME1.생성(APPLIMENT_JHS);
+        PossibleTime time1 = TIME3.생성(APPLIMENT_JHS);
+        PossibleTime time2 = TIME5.생성(APPLIMENT_JHS);
+        PossibleTime time3 = TIME7.생성(APPLIMENT_JHS);
 
         possibleTimeRepository.saveAll(List.of(
                 time, time1, time2, time3
@@ -112,10 +112,10 @@ class PossibleTimeRepositoryTest extends RepositoryTestCustom {
     @Test
     void deleteAllByApplimentMember() {
         //given
-        PossibleTime time = MONDAY_ALL.생성(APPLIMENT_JHS);
-        PossibleTime time1 = TUESDAY_ALL.생성(APPLIMENT_JHS);
-        PossibleTime time2 = SATURDAY_ALL.생성(APPLIMENT_JHS);
-        PossibleTime time3 = SUNDAY_ALL.생성(APPLIMENT_JHS);
+        PossibleTime time = TIME1.생성(APPLIMENT_JHS);
+        PossibleTime time1 = TIME3.생성(APPLIMENT_JHS);
+        PossibleTime time2 = TIME5.생성(APPLIMENT_JHS);
+        PossibleTime time3 = TIME7.생성(APPLIMENT_JHS);
 
         possibleTimeRepository.saveAll(List.of(
                 time, time1, time2, time3
