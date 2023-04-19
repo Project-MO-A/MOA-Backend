@@ -92,6 +92,14 @@ public class RecruitmentService {
         return recruitmentInterestsRepository.save(new RecruitmentInterest(user, recruitment)).getId();
     }
 
+    public Long deleteConcern(Long recruitmentId, Long userId) {
+        RecruitmentInterest recruitmentInterest = recruitmentInterestsRepository.findByUserIdAndRecruitmentId(userId, recruitmentId)
+                .orElseThrow(() -> new EntityNotFoundException(RECRUITMENT_NOT_FOUND));
+        recruitmentInterestsRepository.delete(recruitmentInterest);
+
+        return recruitmentInterest.getId();
+    }
+
     public List<RecruitmentInfo> getTopRecruitment() {
         List<Recruitment> recruitments = recruitmentRepository.findAllDescByCount(PageRequest.of(0, 10));
         return convertToRecruitmentInfo(recruitments);
