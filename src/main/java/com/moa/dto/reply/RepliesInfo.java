@@ -69,7 +69,7 @@ public class RepliesInfo {
             Long userId,
             String author,
             String content,
-            String createDate,
+            String createdDate,
             List<ReplyInfo> subReplies
     ) {}
 }

@@ -40,17 +40,17 @@ public record NoticesResponse(List<NoticeResponse> notices) {
     public static class NoticeResponse {
         private final Long noticeId;
         private final String content;
-        private final String createdAt;
+        private final String createdDate;
         private final Map<String, List<String>> members;
 
         public NoticeResponse(Notice notice) {
             this(notice.getId(), notice.getPost().getContent(), notice.getCreatedDate().format(DateTimeFormatter.ofPattern("yy.MM.dd")), attendanceMap());
         }
 
-        public NoticeResponse(Long noticeId, String content, String createdAt, Map<String, List<String>> members) {
+        public NoticeResponse(Long noticeId, String content, String createdDate, Map<String, List<String>> members) {
             this.noticeId = noticeId;
             this.content = content;
-            this.createdAt = createdAt;
+            this.createdDate = createdDate;
             this.members = members;
         }
 
