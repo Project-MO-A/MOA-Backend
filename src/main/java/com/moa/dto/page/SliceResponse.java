@@ -7,7 +7,7 @@ import java.util.List;
 
 @Getter
 public class SliceResponse<T> {
-    protected final List<T> content;
+    protected final List<T> value;
     protected final SortResponse sort;
     protected final int currentPage;
     protected final int size;
@@ -15,7 +15,7 @@ public class SliceResponse<T> {
     protected final boolean last;
 
     public SliceResponse(Slice<T> sliceContent) {
-        this.content = sliceContent.getContent();
+        this.value = sliceContent.getContent();
         this.sort = new SortResponse(sliceContent.getSort());
         this.currentPage = sliceContent.getNumber() + 1;
         this.size = sliceContent.getSize();
