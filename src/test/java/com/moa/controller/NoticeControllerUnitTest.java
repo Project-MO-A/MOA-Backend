@@ -137,9 +137,9 @@ class NoticeControllerUnitTest extends AbstractControllerUnitTest {
     void findAllNotice() throws Exception {
         //given
         given(noticeService.findAll(1L)).willReturn(new NoticesResponse(
-                List.of(new NoticeResponse(1L, "content1", "2023-04-01",
+                List.of(new NoticeResponse(1L, "content1", "2023-04-01", true,
                                 Map.of("ATTENDANCE", List.of("member1", "member2"))),
-                        new NoticeResponse(2L, "content2", "2023-04-03",
+                        new NoticeResponse(2L, "content2", "2023-04-03", true,
                                 Map.of("ATTENDANCE", List.of("member1", "member2"))))
         ));
 
