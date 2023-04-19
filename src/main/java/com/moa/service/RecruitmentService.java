@@ -95,9 +95,10 @@ public class RecruitmentService {
     public Long deleteConcern(Long recruitmentId, Long userId) {
         RecruitmentInterest recruitmentInterest = recruitmentInterestsRepository.findByUserIdAndRecruitmentId(userId, recruitmentId)
                 .orElseThrow(() -> new EntityNotFoundException(RECRUITMENT_NOT_FOUND));
+        Long returnValue = recruitmentInterest.getId();
         recruitmentInterestsRepository.delete(recruitmentInterest);
 
-        return recruitmentInterest.getId();
+        return returnValue;
     }
 
     public List<RecruitmentInfo> getTopRecruitment() {
