@@ -1,18 +1,12 @@
 package com.moa.domain.possible;
 
 import com.moa.domain.member.ApplimentMember;
-import com.moa.global.exception.service.InvalidTimeException;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
-import static com.moa.global.exception.ErrorCode.TIME_INVALID;
-
+@ToString
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -26,11 +20,15 @@ public class PossibleTime {
     private ApplimentMember applimentMember;
 
     @Column(nullable = false)
-    private LocalDateTime time;
+    private LocalDateTime startTime;
+
+    @Column(nullable = false)
+    private LocalDateTime endTime;
 
     @Builder
-    public PossibleTime(ApplimentMember applimentMember, LocalDateTime time) {
+    public PossibleTime(ApplimentMember applimentMember, LocalDateTime startTime, LocalDateTime endTime) {
         this.applimentMember = applimentMember;
-        this.time = time;
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 }
