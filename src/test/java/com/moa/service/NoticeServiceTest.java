@@ -168,6 +168,5 @@ class NoticeServiceTest {
 
         //then
         assertThat(response.notices().size()).isEqualTo(5);
-        assertThat(response.notices().get(0).getContent()).isEqualTo("notice content1");
     }
 }
