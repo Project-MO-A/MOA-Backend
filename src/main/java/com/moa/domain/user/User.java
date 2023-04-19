@@ -84,6 +84,13 @@ public class User {
         }
     }
 
+    private void addLinks(List<Link> links) {
+        if (links != null) {
+            this.link = links;
+            links.forEach(l -> l.setParent(this));
+        }
+    }
+
     public void addRecruitmentInterests(RecruitmentInterest recruitmentInterest) {
         this.recruitmentInterests.add(recruitmentInterest);
     }
@@ -101,6 +108,7 @@ public class User {
         this.locationLongitude = validateDouble(updateRequest.locationLongitude(), this.locationLongitude);
         this.details = validateStringValue(updateRequest.details(), this.details);
         addInterests(updateRequest.interestsValue());
+        addLinks(updateRequest.linksValue());
     }
 
     private String validateStringValue(String value, String origin) {

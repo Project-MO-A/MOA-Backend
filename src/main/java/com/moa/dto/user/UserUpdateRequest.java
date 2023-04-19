@@ -1,6 +1,7 @@
 package com.moa.dto.user;
 
 import com.moa.domain.interests.Interests;
+import com.moa.domain.link.Link;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
@@ -17,12 +18,22 @@ public record UserUpdateRequest(
         @Positive double locationLatitude,
         @Positive double locationLongitude,
         String details,
-        List<String> interests
+        List<String> interests,
+        List<String> links
 ) {
     public List<Interests> interestsValue() {
         if (interests != null) {
             return interests.stream()
                     .map(Interests::new)
+                    .toList();
+        }
+        return null;
+    }
+
+    public List<Link> linksValue() {
+        if (links != null) {
+            return links.stream()
+                    .map(Link::new)
                     .toList();
         }
         return null;

@@ -211,7 +211,8 @@ class UserControllerTest extends AbstractControllerTest {
                                             fieldWithPath("details").type(STRING).description("details").optional(),
                                             fieldWithPath("locationLatitude").type(NUMBER).description("locationLatitude").optional(),
                                             fieldWithPath("locationLongitude").type(NUMBER).description("locationLongitude").optional(),
-                                            fieldWithPath("interests").type(ARRAY).description("interests of list").optional()
+                                            fieldWithPath("interests").type(ARRAY).description("interests of list").optional(),
+                                            fieldWithPath("links").type(ARRAY).description("links").optional()
                                     )
                             )
                     );

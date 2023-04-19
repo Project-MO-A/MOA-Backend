@@ -248,7 +248,7 @@ class UserServiceUnitTest extends AbstractServiceTest {
     @DisplayName("유저 정보 변경 성공")
     void successChangeUserProfile() {
         //given
-        UserUpdateRequest request = new UserUpdateRequest(USER.getEmail(), "newName", USER.getNickname(), USER.getLocationLatitude(), USER.getLocationLongitude(), null, null);
+        UserUpdateRequest request = new UserUpdateRequest(USER.getEmail(), "newName", USER.getNickname(), USER.getLocationLatitude(), USER.getLocationLongitude(), null, null, null);
         given(userRepository.findByEmail(request.email())).willReturn(Optional.of(USER));
 
         //when
@@ -265,7 +265,7 @@ class UserServiceUnitTest extends AbstractServiceTest {
     @DisplayName("존재하지 않은 유저 정보 실패")
     void failChangeUserProfile() {
         //given
-        UserUpdateRequest request = new UserUpdateRequest(USER.getEmail(), "newName", USER.getNickname(), USER.getLocationLatitude(), USER.getLocationLongitude(), null, null);
+        UserUpdateRequest request = new UserUpdateRequest(USER.getEmail(), "newName", USER.getNickname(), USER.getLocationLatitude(), USER.getLocationLongitude(), null, null, null);
         given(userRepository.findByEmail(request.email())).willReturn(Optional.empty());
 
         //when & then

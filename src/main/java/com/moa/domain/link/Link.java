@@ -26,4 +26,12 @@ public class Link {
         this.url = url;
         this.user = user;
     }
+
+    public Link(String url) {
+        this.url = url;
+    }
+
+    public void setParent(User user) {
+        this.user = user;
+    }
 }

@@ -70,7 +70,7 @@ public class UserControllerUnitTest extends AbstractControllerUnitTest {
     void successUpdateUserInfo() throws Exception {
         //given
         UserUpdateRequest request = new UserUpdateRequest("user@email.com", "name",
-                "nickname", 1.0, 1.0, null, null);
+                "nickname", 1.0, 1.0, null, null, null);
         willDoNothing().given(userService).updateUser(request);
 
         //when
@@ -88,7 +88,7 @@ public class UserControllerUnitTest extends AbstractControllerUnitTest {
     void failUpdateUserInfo() throws Exception {
         //given
         UserUpdateRequest request = new UserUpdateRequest("invalid@email.com", "name",
-                "nickname", 1.0, 1.0, null, null);
+                "nickname", 1.0, 1.0, null, null, null);
         willThrow(new EntityNotFoundException(USER_NOT_FOUND)).given(userService).updateUser(request);
 
         //when
