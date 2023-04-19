@@ -121,7 +121,7 @@ class RecruitmentRepositoryTest extends RepositoryTestCustom {
     @Test
     void findByUserIdFetchTags() {
         //given
-        Long id = RECRUITMENT.getId();
+        Long id = USER.getId();
         em.flush();
         em.clear();
 
