@@ -6,6 +6,8 @@ import com.moa.domain.recruit.Recruitment;
 import com.moa.domain.recruit.RecruitmentRepository;
 import com.moa.domain.user.User;
 import com.moa.domain.user.UserRepository;
+import com.moa.dto.user.UserInfoUpdateRequest;
+import com.moa.dto.user.UserProfileUpdateRequest;
 import com.moa.dto.recruit.RecruitmentsInfo;
 import com.moa.dto.user.*;
 import com.moa.global.auth.model.SecurityUser;
@@ -54,10 +56,7 @@ public class UserService implements UserDetailsService {
 
     @Transactional(readOnly = true)
     public UserInfo getUserProfileInfoById(final Long userId) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
-
-        return new UserInfo(user);
+        return new UserInfo(findUser(userId));
     }
 
     @Transactional(readOnly = true)
@@ -80,17 +79,30 @@ public class UserService implements UserDetailsService {
     }
 
     public void deleteUser(Long id) {
-        Optional<User> findUser = userRepository.findById(id);
-        if (findUser.isEmpty()) {
-            throw new EntityNotFoundException(USER_NOT_FOUND);
-        }
-        userRepository.delete(findUser.get());
+        userRepository.delete(findUser(id));
     }
 
     public void updateUser(final UserUpdateRequest updateRequest) {
         User user = userRepository.findByEmail(updateRequest.email())
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
         user.update(updateRequest);
+    }
+
+    public Long updateUserProfile(UserProfileUpdateRequest request, Long userId) {
+        User user = findUser(userId);
+        user.update(request);
+        return user.getId();
+    }
+
+    public Long updateUserInfo(UserInfoUpdateRequest request, Long userId) {
+        User user = findUser(userId);
+        user.update(request, passwordEncoder);
+        return user.getId();
+    }
+
+    private User findUser(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
     }
 
     public void changePassword(final UserPwUpdateRequest pwUpdateRequest) {
