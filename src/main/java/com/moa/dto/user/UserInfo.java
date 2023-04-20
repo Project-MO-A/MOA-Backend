@@ -10,6 +10,7 @@ import java.util.List;
 
 @Builder
 public record UserInfo(
+        Long userId,
         String email,
         String name,
         String nickname,
@@ -21,7 +22,7 @@ public record UserInfo(
         List<String> link
 ) {
     public UserInfo(User user) {
-        this(user.getEmail(), user.getName(), user.getNickname(), user.getLocationLatitude(),
+        this(user.getId(), user.getEmail(), user.getName(), user.getNickname(), user.getLocationLatitude(),
                 user.getLocationLongitude(), new PopularityInfo(user.getPopularity()), user.getDetails(), user.getInterests().stream().map(Interests::getName).toList(),
                 user.getLink().stream().map(Link::getUrl).toList());
     }
