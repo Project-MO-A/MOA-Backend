@@ -9,6 +9,7 @@ public class ApprovedMemberResponse {
     private final Long userId;
     private final Long applyId;
     private final String nickname;
+    private final Long recruitMemberId;
     private final String recruitField;
     private final double popularity;
     private Long totalAttend;

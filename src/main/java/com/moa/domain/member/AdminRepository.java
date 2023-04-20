@@ -61,6 +61,7 @@ public class AdminRepository implements ApplimentSearchRepository {
                         user.id,
                         applimentMember.id,
                         user.nickname,
+                        recruitMember.id,
                         recruitMember.recruitField,
                         applimentMember.popularity)
                 )
