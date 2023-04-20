@@ -25,9 +25,7 @@ public class AdminService implements ApplimentHandler {
     @Transactional(readOnly = true)
     @Override
     public List<ApplimentMemberResponse> getApplimentMembers(final Long recruitmentId, final ApprovalStatus status) {
-        List<ApplimentMemberResponse> allApplimentResponse = adminRepository.findAllApplimentMembers(recruitmentId, status);
-        if (allApplimentResponse.isEmpty()) throw new EntityNotFoundException(RECRUITMENT_NOT_FOUND);
-        return allApplimentResponse;
+        return adminRepository.findAllApplimentMembers(recruitmentId, status);
     }
 
     @Transactional(readOnly = true)
