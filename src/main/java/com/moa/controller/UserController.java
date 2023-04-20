@@ -1,5 +1,7 @@
 package com.moa.controller;
 
+import com.moa.dto.user.UserInfoUpdateRequest;
+import com.moa.dto.user.UserProfileUpdateRequest;
 import com.moa.dto.ValueResponse;
 import com.moa.dto.recruit.RecruitmentsInfo;
 import com.moa.dto.user.*;
@@ -49,6 +51,18 @@ public class UserController {
     @GetMapping("/info/concern")
     public UserRecruitmentInterestInfo getConcernInfo(@AuthenticationPrincipal JwtUser user) {
         return userService.getUserConcernInfoById(user.id());
+    }
+
+    @ResponseStatus(OK)
+    @PatchMapping("/info/profile")
+    public ValueResponse<Long> updateUserProfile(@RequestBody @Valid UserProfileUpdateRequest request, @AuthenticationPrincipal JwtUser user) {
+        return new ValueResponse<>(userService.updateUserProfile(request, user.id()));
+    }
+
+    @ResponseStatus(OK)
+    @PatchMapping("/info/basic")
+    public ValueResponse<Long> updateUserProfile(@RequestBody @Valid UserInfoUpdateRequest request, @AuthenticationPrincipal JwtUser user) {
+        return new ValueResponse<>(userService.updateUserInfo(request, user.id()));
     }
 
     @ResponseStatus(NO_CONTENT)

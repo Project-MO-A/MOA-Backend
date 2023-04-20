@@ -42,14 +42,16 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests(authorize ->
                         authorize
+                                //top priority
                                 .requestMatchers(GET, "/recruitment/*").permitAll()
-                                .requestMatchers(DELETE, "/user/sign-out").hasRole("USER")
                                 //admin
-                                .requestMatchers("/recruitment/*", "/recruitment/*/apply/**", "/recruitment/*/approved/**", "/recruitment/*/notice/*", "/recruitment/*/notice/*/vote").access(forAuthor)
+                                .requestMatchers("/recruitment/*", "/recruitment/*/apply/*", "/recruitment/*/approved/**", "/recruitment/*/notice/*", "/recruitment/*/notice/*/vote").access(forAuthor)
                                 .requestMatchers(POST, "/recruitment/*/notice").access(forAuthor)
                                 //appliment member
                                 .requestMatchers("/recruitment/*/time/**", "/recruitment/*/notice/*/vote/*").access(forApplimentMember)
                                 .requestMatchers(GET, "/recruitment/*/notice").access(forApplimentMember)
+                                //user
+                                .requestMatchers("/user/withdraw","/recruitment/*/*", "/recruitment/*/reply/*", "/user/info/**", "/home/recruitment/recommend", "/recruitment").hasRole("USER")
                                 .anyRequest().permitAll()
                 );
 

@@ -143,7 +143,7 @@ class UserControllerTest extends AbstractControllerTest {
     @WithAnonymousUser
     void signOutFail() throws Exception {
         //when
-        ResultActions action = mvc.perform(delete("/user/sign-out"));
+        ResultActions action = mvc.perform(delete("/user/withdraw"));
 
         //then
         action.andExpect(status().isForbidden());
