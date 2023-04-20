@@ -51,7 +51,7 @@ public class SecurityConfig {
                                 .requestMatchers("/recruitment/*/time/**", "/recruitment/*/notice/*/vote/*").access(forApplimentMember)
                                 .requestMatchers(GET, "/recruitment/*/notice").access(forApplimentMember)
                                 //user
-                                .requestMatchers("/recruitment/*/*", "/recruitment/*/reply/*", "/user/info/**", "/home/recruitment/recommend", "/recruitment").hasRole("USER")
+                                .requestMatchers("/user/withdraw","/recruitment/*/*", "/recruitment/*/reply/*", "/user/info/**", "/home/recruitment/recommend", "/recruitment").hasRole("USER")
                                 .anyRequest().permitAll()
                 );
 
