@@ -1,6 +1,7 @@
 package com.moa.dto.user;
 
 import com.moa.domain.member.ApplimentMember;
+import com.moa.domain.member.RecruitMember;
 import com.moa.domain.recruit.RecruitStatus;
 import com.moa.domain.recruit.Recruitment;
 import lombok.Getter;
@@ -11,8 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.moa.domain.member.ApprovalStatus.APPROVED;
-import static com.moa.domain.recruit.RecruitStatus.CONCURRENT;
-import static com.moa.domain.recruit.RecruitStatus.FINISH;
+import static com.moa.domain.recruit.RecruitStatus.*;
 
 @Getter
 public class UserActivityInfo {
@@ -29,34 +29,38 @@ public class UserActivityInfo {
         approved.put(CONCURRENT.name(), new ArrayList<>());
         approved.put(FINISH.name(), new ArrayList<>());
         for (ApplimentMember applimentMember : info) {
-            if (applimentMember.getStatus().equals(APPROVED)) {
-                RecruitStatus key = applimentMember.getRecruitMember().getRecruitment().getStatus();
-                approved.put(key.name(), setRecruitmentInfo(approved.get(key.name()), applimentMember.getRecruitMember().getRecruitment()));
+            RecruitMember recruitMember = applimentMember.getRecruitMember();
+            RecruitStatus key = recruitMember.getRecruitment().getStatus();
+            if (key.equals(RECRUITING)) {
+                etc.add(setEtcInfo(applimentMember));
                 continue;
             }
-            etc.add(setEtcInfo(applimentMember));
+            if (applimentMember.getStatus().equals(APPROVED)) {
+                approved.put(key.name(), setRecruitmentInfo(approved.get(key.name()), recruitMember.getRecruitment()));
+            }
         }
         this.approvedProjects = approved;
         this.etcProjects = etc;
     }
 
     private static List<ApprovedInfo> setRecruitmentInfo(List<ApprovedInfo> applimentInfos, Recruitment recruitment) {
-        String title = recruitment.getPost().getTitle();
-        applimentInfos.add(new ApprovedInfo(title));
+        applimentInfos.add(new ApprovedInfo(recruitment.getId(), recruitment.getPost().getTitle()));
         return applimentInfos;
     }
 
     private static EtcInfo setEtcInfo(ApplimentMember applimentMember) {
         Recruitment recruitment = applimentMember.getRecruitMember().getRecruitment();
         String field = applimentMember.getRecruitMember().getRecruitField();
-        return new EtcInfo(recruitment.getPost().getTitle(), field, applimentMember.getStatus().getStatus());
+        return new EtcInfo(recruitment.getId(), recruitment.getPost().getTitle(), field, applimentMember.getStatus().getStatus());
     }
 
     public record ApprovedInfo(
+            Long recruitmentId,
             String title
     ) {}
 
     public record EtcInfo(
+            Long recruitmentId,
             String title,
             String field,
             String status
