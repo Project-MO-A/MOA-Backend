@@ -18,6 +18,15 @@ public interface ApplimentMemberRepository extends JpaRepository<ApplimentMember
             """)
     List<ApplimentMember> findAllRecruitmentByUserId(@Param("userId") Long userId);
 
+    @Query("""
+            select a
+            from ApplimentMember a
+            join fetch a.recruitMember rm
+            join fetch rm.recruitment r
+            where a.user.id = :userId
+            """)
+    List<ApplimentMember> findAllRecruitmentForAuthByUserId(@Param("userId") Long userId);
+
     @Query("select a from ApplimentMember a join a.recruitMember m where m.recruitment.id=:recruitId and a.user.id=:userId")
     Optional<ApplimentMember> findByRecruitIdAndUserId(@Param("recruitId") Long recruitmentId, @Param("userId") Long userId);
 }

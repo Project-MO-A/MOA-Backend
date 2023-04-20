@@ -23,7 +23,7 @@ public class RecruitmentAuthorizationManagerForApplimentMember implements Author
     }
 
     private boolean canAccess(JwtUser user, String requestURI) {
-        return applimentMemberRepository.findAllRecruitmentByUserId(user.id()).stream()
+        return applimentMemberRepository.findAllRecruitmentForAuthByUserId(user.id()).stream()
                 .map(am -> am.getRecruitMember().getRecruitment().getId())
                 .anyMatch(recruitmentId -> match(recruitmentId, requestURI));
     }
