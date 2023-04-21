@@ -30,13 +30,13 @@ public class UserActivityInfo {
         approved.put(FINISH.name(), new ArrayList<>());
         for (ApplimentMember applimentMember : info) {
             RecruitMember recruitMember = applimentMember.getRecruitMember();
-            RecruitStatus key = recruitMember.getRecruitment().getStatus();
-            if (key.equals(RECRUITING)) {
+            RecruitStatus status = recruitMember.getRecruitment().getStatus();
+            if (status.equals(RECRUITING)) {
                 etc.add(setEtcInfo(applimentMember));
                 continue;
             }
             if (applimentMember.getStatus().equals(APPROVED)) {
-                approved.put(key.name(), setRecruitmentInfo(approved.get(key.name()), recruitMember.getRecruitment()));
+                approved.put(status.name(), setRecruitmentInfo(approved.get(status.name()), recruitMember.getRecruitment()));
             }
         }
         this.approvedProjects = approved;
