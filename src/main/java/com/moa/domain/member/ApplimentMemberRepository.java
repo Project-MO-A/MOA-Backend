@@ -1,5 +1,6 @@
 package com.moa.domain.member;
 
+import com.moa.domain.recruit.Recruitment;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,8 +14,6 @@ public interface ApplimentMemberRepository extends JpaRepository<ApplimentMember
             type = EntityGraph.EntityGraphType.LOAD)
     List<ApplimentMember> findAllRecruitmentByUserId(Long userId);
 
-    List<ApplimentMember> findAllByUserId(Long userId);
-
-    @Query("select a from ApplimentMember a join a.recruitMember m where m.recruitment.id=:recruitId and a.user.id=:userId")
+    @Query("select a from ApplimentMember a join a.recruitMember m join a.user u where m.recruitment.id=:recruitId and u.id=:userId")
     Optional<ApplimentMember> findByRecruitIdAndUserId(@Param("recruitId") Long recruitmentId, @Param("userId") Long userId);
 }
