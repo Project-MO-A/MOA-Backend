@@ -25,6 +25,7 @@ public enum ErrorCode {
     RECRUITMEMBER_NO_FIELD_OR_RECRUIT_NOT_FOUND(404, "recruitmemeber.no.field.or.recruitment.not.found", "R006"),
 
     APPLIMENT_NOT_FOUND(404, "appliment.not.found", "P0001"),
+    APPLIMENT_STATUS_CHANGE_LEADER(400, "appliment.status.change.leader", "P0002"),
 
     CATEGORY_NOT_FOUND(404, "category.not.found", "CA001"),
 
