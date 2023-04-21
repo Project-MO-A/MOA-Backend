@@ -20,14 +20,21 @@ public enum Category {
     ETC("기타")
     ;
 
-    private final String name;
-    Category(String name) {
-        this.name = name;
+    private final String value;
+    Category(String value) {
+        this.value = value;
     }
 
-    public static Category getInstance(String name) {
+    public static Category getInstanceByValue(String value) {
         return Arrays.stream(Category.values())
-                .filter(category -> category.getName().equals(name))
+                .filter(category -> category.getValue().equals(value))
+                .findFirst()
+                .orElseThrow(() -> new CategoryNotFoundException(CATEGORY_NOT_FOUND));
+    }
+
+    public static Category getInstanceByName(String name) {
+        return Arrays.stream(Category.values())
+                .filter(category -> category.name().equals(name))
                 .findFirst()
                 .orElseThrow(() -> new CategoryNotFoundException(CATEGORY_NOT_FOUND));
     }
