@@ -43,6 +43,15 @@ public enum RecruitMemberFixture {
                 .build();
     }
 
+    public RecruitMember 생성(Recruitment recruitment) {
+        return RecruitMember
+                .builder()
+                .recruitment(recruitment)
+                .recruitField(this.field)
+                .totalRecruitCount(this.total)
+                .build();
+    }
+
     public String getField() {
         return field;
     }
