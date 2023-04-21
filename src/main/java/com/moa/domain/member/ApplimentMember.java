@@ -9,8 +9,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import static com.moa.domain.member.ApprovalStatus.PENDING;
+import static com.moa.domain.member.ApprovalStatus.*;
 import static com.moa.global.exception.ErrorCode.STATUS_CODE_INVALID;
+import static com.moa.global.exception.ErrorCode.STATUS_CODE_REPLACE_TO_KICK;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -44,6 +45,8 @@ public class ApplimentMember {
 
     public String changeStatus(ApprovalStatus status) {
         if (status == PENDING) throw new InvalidCodeException(STATUS_CODE_INVALID);
+        changeRecruitMemberCount(status, this.recruitMember);
+
         this.status = status;
         return this.status.name();
     }
@@ -61,5 +64,11 @@ public class ApplimentMember {
             userPopularity.updatePopularity(this.popularity, rate);
         }
         this.popularity = rate;
+    }
+
+    private void changeRecruitMemberCount(ApprovalStatus status, RecruitMember appliedRecruitMember) {
+        if (this.status != APPROVED && status == APPROVED) appliedRecruitMember.addCount();
+        else if (this.status == APPROVED && status == KICK) appliedRecruitMember.minusCount();
+        else if (this.status == APPROVED && status == REFUSE) throw new InvalidCodeException(STATUS_CODE_REPLACE_TO_KICK);
     }
 }

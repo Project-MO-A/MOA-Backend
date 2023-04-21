@@ -42,10 +42,8 @@ public class AdminService implements ApplimentHandler {
     public String changeApplimentStatus(final Long applyId, final ApprovalStatus status) {
         ApplimentMember applimentMember = adminRepository.findApplimentMemberById(applyId)
                 .orElseThrow(() -> new EntityNotFoundException(APPLIMENT_NOT_FOUND));
-        RecruitMember appliedRecruitMember = applimentMember.getRecruitMember();
-        validNotLeader(appliedRecruitMember);
+        validNotLeader(applimentMember.getRecruitMember());
 
-        changeRecruitMemberCount(status, appliedRecruitMember);
         return applimentMember.changeStatus(status);
     }
 
@@ -56,17 +54,12 @@ public class AdminService implements ApplimentHandler {
         return applimentMember.getPopularity();
     }
 
-    private void changeRecruitMemberCount(ApprovalStatus status, RecruitMember appliedRecruitMember) {
-        if (status == APPROVED) appliedRecruitMember.addCount();
-        else if (status == REFUSE || status == KICK) appliedRecruitMember.minusCount();
-    }
-
-    private void validRecruitmentId(Long recruitmentId) {
+    private void validRecruitmentId(final Long recruitmentId) {
         adminRepository.findRecruitmentById(recruitmentId)
                 .orElseThrow(() -> new EntityNotFoundException(RECRUITMENT_NOT_FOUND));
     }
 
-    private void validNotLeader(RecruitMember recruitMember) {
+    private void validNotLeader(final RecruitMember recruitMember) {
         if (recruitMember.getRecruitField().equals("LEADER")) throw new ApplimentStatusChangeException(APPLIMENT_STATUS_CHANGE_LEADER);
     }
 }
