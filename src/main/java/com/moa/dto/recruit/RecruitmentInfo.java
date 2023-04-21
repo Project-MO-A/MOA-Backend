@@ -32,7 +32,7 @@ public class RecruitmentInfo {
         this.author = recruitment.getUser().getNickname();
         this.createdDate = convertToString(recruitment.getCreatedDate());
         this.recruitStatus = recruitment.getStatus().getStatus();
-        this.category = recruitment.getCategory().getName();
+        this.category = recruitment.getCategory().getValue();
         this.tags = getTagNames(recruitment);
         this.totalCount = getTotal(recruitment);
         this.approvedCount = getApproved(recruitment);
@@ -45,7 +45,7 @@ public class RecruitmentInfo {
         this.author = author;
         this.createdDate = convertToString(createdDate);
         this.recruitStatus = recruitStatus.getStatus();
-        this.category = category.getName();
+        this.category = category.getValue();
         this.totalCount = totalCount;
         this.approvedCount = approvedCount;
     }

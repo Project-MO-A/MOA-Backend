@@ -193,7 +193,7 @@ public class RecruitmentSearchRepository implements SearchRepository<Recruitment
     private BooleanExpression categoryEq(String category) {
         if (!StringUtils.hasText(category)) return null;
 
-        Category instance = Category.getInstance(category);
+        Category instance = Category.getInstanceByValue(category);
         return recruitment.category.eq(instance);
     }
 
