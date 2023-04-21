@@ -4,10 +4,11 @@ import com.moa.domain.member.ApplimentMember;
 import com.moa.domain.member.ApplimentSearchRepository;
 import com.moa.domain.member.ApprovalStatus;
 import com.moa.domain.member.RecruitMember;
+import com.moa.domain.recruit.Recruitment;
 import com.moa.dto.member.ApplimentMemberResponse;
 import com.moa.dto.member.ApprovedMemberResponse;
 import com.moa.global.exception.service.EntityNotFoundException;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -24,8 +25,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 class AdminServiceTest {
     static AdminService adminService;
 
-    @BeforeAll
-    static void setUp() {
+    @BeforeEach
+    void setUp() {
         adminService = new AdminService(new TestApplimentSearchRepository());
     }
 
@@ -60,6 +61,9 @@ class AdminServiceTest {
     @DisplayName("getApplimentMembers - 신청한 멤버를 조회하는데 실패한다. (잘못된 모집글 ID)")
     @Test
     void getApplimentMembersFail() {
+        //given
+        adminService = new AdminService(new ExceptionSearchRepository());
+
         //when & then
         assertThatThrownBy(() -> adminService.getApplimentMembers(10L, KICK))
                 .isInstanceOf(EntityNotFoundException.class);
@@ -82,6 +86,9 @@ class AdminServiceTest {
     @DisplayName("getApprovedMembers - 승인된 멤버들을 조회하는데 실패한다. (잘못된 모집글 ID)")
     @Test
     void getApprovedMembersFail() {
+        //given
+        adminService = new AdminService(new ExceptionSearchRepository());
+
         //when & then
         assertThatThrownBy(() -> adminService.getApprovedMembers(10L))
                 .isInstanceOf(EntityNotFoundException.class);
@@ -165,17 +172,44 @@ class AdminServiceTest {
         public List<ApprovedMemberResponse> findAllApprovedMembers(Long recruitmentId) {
             if (recruitmentId == 10L) return new ArrayList<>();
             List<ApprovedMemberResponse> memberResponses = new ArrayList<>();
-            ApprovedMemberResponse response1 = new ApprovedMemberResponse(1L, 1L, "nickname1", "백엔드", 3.5);
+            ApprovedMemberResponse response1 = new ApprovedMemberResponse(1L, 1L, "nickname1", 1L, "백엔드", 3.5);
             response1.setTotalAttend(4L);
             response1.setAttend(3L);
             memberResponses.add(response1);
 
-            ApprovedMemberResponse response2 = new ApprovedMemberResponse(2L, 2L, "nickname2", "프론트엔드", 4.5);
+            ApprovedMemberResponse response2 = new ApprovedMemberResponse(2L, 2L, "nickname2", 2L,  "프론트엔드", 4.5);
             response2.setTotalAttend(4L);
             response2.setAttend(2L);
             memberResponses.add(response2);
 
             return memberResponses;
+        }
+
+        @Override
+        public Optional<Recruitment> findRecruitmentById(Long recruitmentId) {
+            return Optional.of(Recruitment.builder().build());
+        }
+    }
+
+    static class ExceptionSearchRepository implements ApplimentSearchRepository {
+        @Override
+        public Optional<ApplimentMember> findApplimentMemberById(Long applyId) {
+            return Optional.empty();
+        }
+
+        @Override
+        public List<ApplimentMemberResponse> findAllApplimentMembers(Long recruitmentId, ApprovalStatus status) {
+            return null;
+        }
+
+        @Override
+        public List<ApprovedMemberResponse> findAllApprovedMembers(Long recruitmentId) {
+            return null;
+        }
+
+        @Override
+        public Optional<Recruitment> findRecruitmentById(Long recruitmentId) {
+            return Optional.empty();
         }
     }
 }
