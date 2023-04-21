@@ -13,8 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static com.moa.domain.member.ApprovalStatus.PENDING;
-import static com.moa.global.exception.ErrorCode.APPLIMENT_NOT_FOUND;
-import static com.moa.global.exception.ErrorCode.RECRUITMEMEBER_NO_FIELD;
+import static com.moa.global.exception.ErrorCode.*;
 
 @Service
 @Transactional
@@ -26,7 +25,7 @@ public class RecruitMemberService {
 
     public String applyMember(RecruitApplyRequest request) {
         RecruitMember recruitMember = recruitMemberRepository.findByRecruitFieldAndRecruitmentId(request.position(), request.recruitmentId())
-                .orElseThrow(() -> new EntityNotFoundException(RECRUITMEMEBER_NO_FIELD));
+                .orElseThrow(() -> new EntityNotFoundException(RECRUITMEMBER_NO_FIELD_OR_RECRUIT_NOT_FOUND));
         User user = userRepository.getReferenceById(request.userId());
         return applimentMemberRepository.save(new ApplimentMember(recruitMember, user, PENDING)).getStatus().name();
     }

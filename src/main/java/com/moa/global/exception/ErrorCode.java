@@ -22,6 +22,7 @@ public enum ErrorCode {
     RECRUITMEMBER_FULL_COUNT(400, "recruitmemeber.full.count", "R0003"),
     RECRUITMEMBER_ZERO_COUNT(400, "recruitmemeber.zero.count", "R0004"),
     RECRUITMEMBER_NOT_FOUND(404, "recruitmember.not.found", "R0005"),
+    RECRUITMEMBER_NO_FIELD_OR_RECRUIT_NOT_FOUND(404, "recruitmemeber.no.field.or.recruitment.not.found", "R006"),
 
     APPLIMENT_NOT_FOUND(404, "appliment.not.found", "P0001"),
 
