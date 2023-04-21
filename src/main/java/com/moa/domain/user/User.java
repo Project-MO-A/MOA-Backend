@@ -95,7 +95,7 @@ public class User {
             addInterests(request.stringToInterests());
             addLinks(request.stringToLink());
         }
-        this.imageUrl = imageUrl;
+        this.imageUrl = validateStringValue(imageUrl, this.imageUrl);
     }
 
     public void update(UserInfoUpdateRequest request, PasswordEncoder passwordEncoder) {
