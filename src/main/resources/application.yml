@@ -12,7 +12,7 @@ spring:
     basename: messages
     encoding: UTF-8
   config:
-    import: sub/application-kakao.yml
+    import: sub/application-kakao.yml, sub/application-s3.yml
   profiles:
     active: dev
   jpa:

@@ -38,6 +38,9 @@ public enum ErrorCode {
 
     REPLY_NOT_FOUND(400, "reply.not.found", "RP001"),
     REPLY_AUTHORITY(401, "reply.authority", "RP002"),
+
+    IMAGE_NOT_PROCESS(400, "image.not.process", "I0001"),
+    IO_ERROR(400, "io.error", "IO0001")
     ;
 
     private final int statusCode;

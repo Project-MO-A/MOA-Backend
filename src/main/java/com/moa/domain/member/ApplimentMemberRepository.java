@@ -10,9 +10,24 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ApplimentMemberRepository extends JpaRepository<ApplimentMember, Long> {
-    @EntityGraph(attributePaths = {"recruitMember", "recruitMember.recruitment"},
-            type = EntityGraph.EntityGraphType.LOAD)
-    List<ApplimentMember> findAllRecruitmentByUserId(Long userId);
+    @Query("""
+            select a
+            from ApplimentMember a
+            join fetch a.recruitMember rm
+            join fetch rm.recruitment r
+            where a.user.id = :userId
+            and rm.recruitField <> 'LEADER'
+            """)
+    List<ApplimentMember> findAllRecruitmentByUserId(@Param("userId") Long userId);
+
+    @Query("""
+            select a
+            from ApplimentMember a
+            join fetch a.recruitMember rm
+            join fetch rm.recruitment r
+            where a.user.id = :userId
+            """)
+    List<ApplimentMember> findAllRecruitmentForAuthByUserId(@Param("userId") Long userId);
 
     @Query("select a from ApplimentMember a join a.recruitMember m join a.user u where m.recruitment.id=:recruitId and u.id=:userId")
     Optional<ApplimentMember> findByRecruitIdAndUserId(@Param("recruitId") Long recruitmentId, @Param("userId") Long userId);

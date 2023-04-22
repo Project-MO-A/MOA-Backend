@@ -17,8 +17,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 public class SecurityFilterBeanConfig {
 
     @Bean
-    public JwtProviderHandler jwtProviderHandler(AccessTokenProvider accessTokenProvider, RefreshTokenProvider refreshTokenProvider, TokenInjector tokenInjector) {
-        return new JwtProviderHandler(accessTokenProvider, refreshTokenProvider, tokenInjector);
+    public JwtProviderHandler jwtProviderHandler(AccessTokenProvider accessTokenProvider, RefreshTokenProvider refreshTokenProvider, TokenInjector tokenInjector, ObjectMapper objectMapper) {
+        return new JwtProviderHandler(accessTokenProvider, refreshTokenProvider, tokenInjector, objectMapper);
     }
 
     @Bean

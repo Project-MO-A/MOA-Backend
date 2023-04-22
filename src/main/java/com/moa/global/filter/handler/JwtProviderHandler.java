@@ -1,5 +1,7 @@
 package com.moa.global.filter.handler;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.moa.dto.user.UserIdNameResponse;
 import com.moa.global.auth.model.Claims;
 import com.moa.global.auth.model.SecurityUser;
 import com.moa.global.auth.model.TokenMapping;
@@ -13,6 +15,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -24,15 +27,18 @@ public class JwtProviderHandler implements AuthenticationSuccessHandler {
     private final AccessTokenProvider accessTokenProvider;
     private final RefreshTokenProvider refreshTokenProvider;
     private final TokenInjector tokenInjector;
+    private final ObjectMapper objectMapper;
 
     @Override
     @Transactional
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
         Long id = securityUser.getId();
         securityUser.getAuthorities();
 
         tokenInjector.injectToken(response, createToken(id, convert(securityUser.getAuthorities())));
+        response.setContentType("application/json");
+        response.getOutputStream().print(objectMapper.writeValueAsString(new UserIdNameResponse(null, securityUser.getUsername())));
     }
 
     private TokenMapping createToken(Long id, List<String> authorities) {
