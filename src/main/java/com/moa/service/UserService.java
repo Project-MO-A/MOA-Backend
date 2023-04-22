@@ -13,6 +13,7 @@ import com.moa.dto.user.*;
 import com.moa.global.auth.model.SecurityUser;
 import com.moa.global.exception.BusinessException;
 import com.moa.global.exception.service.EntityNotFoundException;
+import com.moa.service.util.S3Accessor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,6 +21,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -35,6 +37,7 @@ public class UserService implements UserDetailsService {
     private final RecruitmentRepository recruitmentRepository;
     private final ApplimentMemberRepository applimentMemberRepository;
     private final PasswordEncoder passwordEncoder;
+    private final S3Accessor s3Accessor;
 
     @Override
     @Transactional(readOnly = true)
@@ -56,7 +59,12 @@ public class UserService implements UserDetailsService {
 
     @Transactional(readOnly = true)
     public UserInfo getUserProfileInfoById(final Long userId) {
-        return new UserInfo(findUser(userId));
+        User user = findUser(userId);
+        String imageUrl = null;
+        if (user.getImageUrl() != null) {
+            imageUrl = s3Accessor.load(user.getImageUrl());
+        }
+        return new UserInfo(user, imageUrl);
     }
 
     @Transactional(readOnly = true)
@@ -88,9 +96,10 @@ public class UserService implements UserDetailsService {
         user.update(updateRequest);
     }
 
-    public Long updateUserProfile(UserProfileUpdateRequest request, Long userId) {
+    public Long updateUserProfile(UserProfileUpdateRequest request, MultipartFile image, Long userId) {
         User user = findUser(userId);
-        user.update(request);
+        String imageUrl = s3Accessor.save(image, String.valueOf(user.getId()));
+        user.update(request, imageUrl);
         return user.getId();
     }
 

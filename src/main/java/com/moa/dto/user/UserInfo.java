@@ -18,12 +18,13 @@ public record UserInfo(
         PopularityInfo popularity,
         String details,
         List<String> interests,
-        List<String> link
+        List<String> link,
+        String image
 ) {
-    public UserInfo(User user) {
+    public UserInfo(User user, String image) {
         this(user.getEmail(), user.getName(), user.getNickname(), user.getLocationLatitude(),
                 user.getLocationLongitude(), new PopularityInfo(user.getPopularity()), user.getDetails(), user.getInterests().stream().map(Interests::getName).toList(),
-                user.getLink().stream().map(Link::getUrl).toList());
+                user.getLink().stream().map(Link::getUrl).toList(), image);
     }
 
     record PopularityInfo(double rate, int count) {
