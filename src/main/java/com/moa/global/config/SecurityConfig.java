@@ -44,6 +44,7 @@ public class SecurityConfig {
                         authorize
                                 //top priority
                                 .requestMatchers(GET, "/recruitment/*").permitAll()
+                                .requestMatchers("/recruitment/search/*").permitAll()
                                 //admin
                                 .requestMatchers("/recruitment/*", "/recruitment/*/apply/*", "/recruitment/*/approved/**", "/recruitment/*/notice/*", "/recruitment/*/notice/*/vote").access(forAuthor)
                                 .requestMatchers(POST, "/recruitment/*/notice").access(forAuthor)

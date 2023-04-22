@@ -46,6 +46,8 @@ public class User {
     @Column(columnDefinition = "CLOB")
     private String details;
 
+    private String imageUrl;
+
     private String refreshToken;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -61,15 +63,16 @@ public class User {
     private List<RecruitmentInterest> recruitmentInterests = new ArrayList<>();
 
     @Builder
-    public User(String email, String password, Popularity popularity, String name, String nickname, Double locationLatitude, Double locationLongitude, String details) {
+    public User(String email, String password, Popularity popularity, String name, String nickname, double locationLatitude, double locationLongitude, String details, String imageUrl) {
         this.email = email;
         this.password = password;
         this.name = name;
         this.nickname = nickname;
         this.locationLatitude = locationLatitude;
         this.locationLongitude = locationLongitude;
-        this.popularity = popularity != null ? popularity : new Popularity() ;
+        this.popularity = popularity != null ? popularity : new Popularity();
         this.details = details;
+        this.imageUrl = imageUrl;
     }
 
     public void encodePassword(PasswordEncoder passwordEncoder) {
@@ -84,12 +87,15 @@ public class User {
         this.refreshToken = refreshToken;
     }
 
-    public void update(UserProfileUpdateRequest request) {
-        this.locationLatitude = validateDouble(request.locationLatitude(), this.locationLatitude);
-        this.locationLongitude = validateDouble(request.locationLongitude(), this.locationLongitude);
-        this.details = validateStringValue(request.details(), this.details);
-        addInterests(request.stringToInterests());
-        addLinks(request.stringToLink());
+    public void update(UserProfileUpdateRequest request, String imageUrl) {
+        if (request != null) {
+            this.locationLatitude = validateDouble(request.locationLatitude(), this.locationLatitude);
+            this.locationLongitude = validateDouble(request.locationLongitude(), this.locationLongitude);
+            this.details = validateStringValue(request.details(), this.details);
+            addInterests(request.stringToInterests());
+            addLinks(request.stringToLink());
+        }
+        this.imageUrl = validateStringValue(imageUrl, this.imageUrl);
     }
 
     public void update(UserInfoUpdateRequest request, PasswordEncoder passwordEncoder) {
