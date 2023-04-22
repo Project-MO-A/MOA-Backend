@@ -38,7 +38,8 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 @AutoConfigureRestDocs
@@ -339,8 +340,8 @@ class AdminControllerTest {
     void approvedMemberInfo() throws Exception {
         //given
         List<ApprovedMemberResponse> approvedMemberResponses = new ArrayList<>();
-        ApprovedMemberResponse member1 = new ApprovedMemberResponse(1L, 1L, "hose", "백엔드", 3.5);
-        ApprovedMemberResponse member2 = new ApprovedMemberResponse(2L, 2L, "sole", "백엔드", 3.5);
+        ApprovedMemberResponse member1 = new ApprovedMemberResponse(1L, 1L, "hose", 1L, "백엔드", 3.5);
+        ApprovedMemberResponse member2 = new ApprovedMemberResponse(2L, 2L, "sole", 2L,"백엔드", 3.5);
         approvedMemberResponses.add(member1);
         approvedMemberResponses.add(member2);
 

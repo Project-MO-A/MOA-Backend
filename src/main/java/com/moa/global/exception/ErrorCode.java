@@ -6,6 +6,7 @@ public enum ErrorCode {
     LOGIN_BAD_VALUE(401, "login.bad.value", "A0004"),
 
     STATUS_CODE_INVALID(404, "status.code.invalid", "S0001"),
+    STATUS_CODE_REPLACE_TO_KICK(404, "status.code.replace.to.kick", "S0002"),
 
     USER_NOT_FOUND(404, "user.not.found", "U0001"),
     USER_DUPLICATED_EMAIL(400, "user.duplicate.email", "U0002"),
@@ -22,8 +23,11 @@ public enum ErrorCode {
     RECRUITMEMBER_FULL_COUNT(400, "recruitmemeber.full.count", "R0003"),
     RECRUITMEMBER_ZERO_COUNT(400, "recruitmemeber.zero.count", "R0004"),
     RECRUITMEMBER_NOT_FOUND(404, "recruitmember.not.found", "R0005"),
+    RECRUITMEMBER_NO_FIELD_OR_RECRUIT_NOT_FOUND(404, "recruitmemeber.no.field.or.recruitment.not.found", "R006"),
 
     APPLIMENT_NOT_FOUND(404, "appliment.not.found", "P0001"),
+    APPLIMENT_STATUS_CHANGE_LEADER(400, "appliment.status.change.leader", "P0002"),
+    APPLIMENT_DUPLICATE(400, "appliment.duplicate", "P0003"),
 
     CATEGORY_NOT_FOUND(404, "category.not.found", "CA001"),
 

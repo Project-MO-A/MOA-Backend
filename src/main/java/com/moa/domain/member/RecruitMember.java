@@ -71,17 +71,17 @@ public class RecruitMember {
     }
 
     public void addCount() {
-        if (this.totalRecruitCount <= currentRecruitCount) throw new MemberStatusException(RECRUITMEMBER_FULL_COUNT);
+        if (totalRecruitCount <= currentRecruitCount) throw new MemberStatusException(RECRUITMEMBER_FULL_COUNT);
         currentRecruitCount += 1;
     }
 
     public void minusCount() {
-        if (this.currentRecruitCount <= 0 ) throw new MemberStatusException(RECRUITMEMBER_ZERO_COUNT);
+        if (currentRecruitCount <= 0 ) throw new MemberStatusException(RECRUITMEMBER_ZERO_COUNT);
         currentRecruitCount -= 1;
     }
 
     private void setTotal(int total) {
         if (currentRecruitCount > total) throw new InvalidRequestException(COUNT_INVALID);
-        this.totalRecruitCount = total;
+        totalRecruitCount = total;
     }
 }

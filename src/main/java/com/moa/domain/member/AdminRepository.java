@@ -1,5 +1,6 @@
 package com.moa.domain.member;
 
+import com.moa.domain.recruit.Recruitment;
 import com.moa.dto.member.ApplimentMemberResponse;
 import com.moa.dto.member.ApprovedMemberResponse;
 import com.querydsl.core.types.Projections;
@@ -61,6 +62,7 @@ public class AdminRepository implements ApplimentSearchRepository {
                         user.id,
                         applimentMember.id,
                         user.nickname,
+                        recruitMember.id,
                         recruitMember.recruitField,
                         applimentMember.popularity)
                 )
@@ -78,6 +80,14 @@ public class AdminRepository implements ApplimentSearchRepository {
         }
 
         return approvedMemberResponses;
+    }
+
+    @Override
+    public Optional<Recruitment> findRecruitmentById(final Long recruitmentId) {
+        return Optional.ofNullable(queryFactory
+                .selectFrom(recruitment)
+                .where(recruitment.id.eq(recruitmentId))
+                .fetchOne());
     }
 
     public Long countAttend(final Long recruitmentId, final Long userId, final Attendance attendance) {

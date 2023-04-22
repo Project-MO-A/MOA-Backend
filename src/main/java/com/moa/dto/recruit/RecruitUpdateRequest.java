@@ -16,6 +16,7 @@ public record RecruitUpdateRequest(
         String content,
         Integer state,
         @Valid List<RecruitMemberRequest> memberFields,
+        String categoryName,
         List<String> tags
 ) {
     public List<RecruitMember> toMemberList() {

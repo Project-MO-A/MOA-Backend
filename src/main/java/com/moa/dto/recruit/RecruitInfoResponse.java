@@ -24,7 +24,7 @@ public class RecruitInfoResponse {
         this.title = recruitment.getPost().getTitle();
         this.content = recruitment.getPost().getContent();
         this.state = recruitment.getStatus().getCode();
-        this.category = recruitment.getCategory().getName();
+        this.category = recruitment.getCategory().getValue();
         setPostUser(recruitment.getUser());
         setTags(recruitment.getTags());
         setMembers(recruitment.getMembers());
