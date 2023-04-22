@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 
 import static com.moa.global.auth.utils.AuthorityToStringConvertor.convert;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 @RequiredArgsConstructor
 public class JwtProviderHandler implements AuthenticationSuccessHandler {
@@ -34,12 +35,11 @@ public class JwtProviderHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException {
         SecurityUser securityUser = (SecurityUser) authentication.getPrincipal();
         Long id = securityUser.getId();
-        securityUser.getAuthorities();
 
         tokenInjector.injectToken(response, createToken(id, convert(securityUser.getAuthorities())));
         response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
-        response.getOutputStream().print(objectMapper.writeValueAsString(new UserIdNameResponse(null, securityUser.getUsername())));
+        response.getOutputStream().write(objectMapper.writeValueAsString(new UserIdNameResponse(null, securityUser.getUsername())).getBytes(UTF_8));
     }
 
     private TokenMapping createToken(Long id, List<String> authorities) {
