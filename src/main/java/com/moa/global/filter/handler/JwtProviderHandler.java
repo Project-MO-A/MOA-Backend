@@ -38,6 +38,7 @@ public class JwtProviderHandler implements AuthenticationSuccessHandler {
 
         tokenInjector.injectToken(response, createToken(id, convert(securityUser.getAuthorities())));
         response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
         response.getOutputStream().print(objectMapper.writeValueAsString(new UserIdNameResponse(null, securityUser.getUsername())));
     }
 
