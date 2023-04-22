@@ -63,7 +63,7 @@ public class User {
     private List<RecruitmentInterest> recruitmentInterests = new ArrayList<>();
 
     @Builder
-    public User(String email, String password, Popularity popularity, String name, String nickname, double locationLatitude, double locationLongitude, String details, String imageUrl) {
+    public User(String email, String password, Popularity popularity, String name, String nickname, Double locationLatitude, Double locationLongitude, String details, String imageUrl) {
         this.email = email;
         this.password = password;
         this.name = name;
