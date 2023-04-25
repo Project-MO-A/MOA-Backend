@@ -8,6 +8,7 @@ import com.moa.domain.member.RecruitMember;
 import com.moa.domain.recruit.Recruitment;
 import com.moa.domain.recruit.RecruitmentRepository;
 import com.moa.domain.recruit.tag.RecruitTag;
+import com.moa.domain.recruit.tag.RecruitTagRepository;
 import com.moa.domain.recruit.tag.Tag;
 import com.moa.domain.reply.ReplyRepository;
 import com.moa.domain.user.User;
@@ -44,6 +45,7 @@ import static com.moa.global.exception.ErrorCode.*;
 public class RecruitmentService {
     private final RecruitmentInterestsRepository recruitmentInterestsRepository;
     private final RecruitmentRepository recruitmentRepository;
+    private final RecruitTagRepository recruitTagRepository;
     private final ReplyRepository replyRepository;
     private final UserRepository userRepository;
     private final EntityManager em;
@@ -65,9 +67,12 @@ public class RecruitmentService {
     public Long update(final Long recruitId, final RecruitUpdateRequest request, final List<Tag> tags) {
         Recruitment recruitment = recruitmentRepository.findFetchMembersById(recruitId)
                 .orElseThrow(() -> new EntityNotFoundException(RECRUITMENT_NOT_FOUND));
-        recruitment.update(request, getRecruitTags(tags));
+        recruitTagRepository.deleteAllByRecruitmentId(recruitment.getId());
+        recruitment.update(request, tags.size());
         updateRecruitMember(request, recruitment);
+        em.flush();
 
+        recruitment.setTags(getRecruitTags(tags));
         return recruitment.getId();
     }
 
@@ -165,11 +170,9 @@ public class RecruitmentService {
     }
 
     private List<RecruitTag> getRecruitTags(List<Tag> tags) {
-        List<Tag> mergedTags = new ArrayList<>();
-        for (Tag tag : tags) {
-            mergedTags.add(em.merge(tag));
-        }
-        return mergedTags.stream()
+        return tags.stream()
+                .map(em::merge).toList()
+                .stream()
                 .map(RecruitTag::new)
                 .toList();
     }
