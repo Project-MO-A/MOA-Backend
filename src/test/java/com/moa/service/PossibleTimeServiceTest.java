@@ -125,11 +125,7 @@ class PossibleTimeServiceTest {
                 .willReturn(possibleTimes1);
 
         //when
-        List<LocalDateTime> timeList = possibleTimeService.getTimeList(recruitmentId, userId);
-
-        for (LocalDateTime localDateTime : timeList) {
-            System.out.println(localDateTime);
-        }
+        List<String> timeList = possibleTimeService.getTimeList(recruitmentId, userId);
 
         //then
         assertAll(

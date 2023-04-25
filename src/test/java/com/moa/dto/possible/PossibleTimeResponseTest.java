@@ -6,6 +6,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,11 +39,21 @@ class PossibleTimeResponseTest {
         list.add(build2);
         list.add(build3);
 
-        List<LocalDateTime> possibleTimeData = PossibleTimeResponse.getPossibleTimeData(list);
+        List<String> possibleTimeData = PossibleTimeResponse.getPossibleTimeData(list);
+
+        for (String possibleTimeDatum : possibleTimeData) {
+            System.out.println(possibleTimeDatum);
+        }
 
         for (int i = 1; i < possibleTimeData.size(); i++) {
-            LocalDateTime data = possibleTimeData.get(i-1);
-            assertThat(data.isBefore(possibleTimeData.get(i)));
+            String data = possibleTimeData.get(i-1);
+            LocalDateTime dateTime = LocalDateTime.parse(data, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+
+            assertThat(dateTime.isBefore(
+                    LocalDateTime.parse(possibleTimeData.get(i), DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"))
+            ));
         }
     }
+
+
 }
