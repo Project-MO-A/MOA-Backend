@@ -28,7 +28,7 @@ public class PossibleTimeController {
     }
 
     @GetMapping
-    public List<LocalDateTime> getTimeList(@PathVariable Long recruitmentId, @AuthenticationPrincipal JwtUser user) {
+    public List<String> getTimeList(@PathVariable Long recruitmentId, @AuthenticationPrincipal JwtUser user) {
         return possibleTimeService.getTimeList(recruitmentId, user.id());
     }
 
