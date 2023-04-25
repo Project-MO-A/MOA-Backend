@@ -87,7 +87,7 @@ public class User {
         this.refreshToken = refreshToken;
     }
 
-    public void update(UserProfileUpdateRequest request, String imageUrl) {
+    public void update(UserProfileUpdateRequest request) {
         if (request != null) {
             this.locationLatitude = validateDouble(request.locationLatitude(), this.locationLatitude);
             this.locationLongitude = validateDouble(request.locationLongitude(), this.locationLongitude);
@@ -95,13 +95,13 @@ public class User {
             addInterests(request.stringToInterests());
             addLinks(request.stringToLink());
         }
-        this.imageUrl = validateStringValue(imageUrl, this.imageUrl);
     }
 
-    public void update(UserInfoUpdateRequest request, PasswordEncoder passwordEncoder) {
+    public void update(UserInfoUpdateRequest request, String imageUrl, PasswordEncoder passwordEncoder) {
         updatePassword(request, passwordEncoder);
         this.name = validateStringValue(request.name(), this.name);
         this.nickname = validateStringValue(request.nickname(), this.nickname);
+        this.imageUrl = validateStringValue(imageUrl, this.imageUrl);
     }
 
     private void updatePassword(UserInfoUpdateRequest request, PasswordEncoder passwordEncoder) {

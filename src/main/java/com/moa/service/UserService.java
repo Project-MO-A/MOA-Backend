@@ -96,16 +96,16 @@ public class UserService implements UserDetailsService {
         user.update(updateRequest);
     }
 
-    public Long updateUserProfile(UserProfileUpdateRequest request, MultipartFile image, Long userId) {
+    public Long updateUserProfile(UserProfileUpdateRequest request, Long userId) {
         User user = findUser(userId);
-        String imageUrl = s3Accessor.save(image, String.valueOf(user.getId()));
-        user.update(request, imageUrl);
+        user.update(request);
         return user.getId();
     }
 
-    public Long updateUserInfo(UserInfoUpdateRequest request, Long userId) {
+    public Long updateUserInfo(UserInfoUpdateRequest request, MultipartFile image, Long userId) {
         User user = findUser(userId);
-        user.update(request, passwordEncoder);
+        String imageUrl = s3Accessor.save(image, String.valueOf(user.getId()));
+        user.update(request, imageUrl, passwordEncoder);
         return user.getId();
     }
 

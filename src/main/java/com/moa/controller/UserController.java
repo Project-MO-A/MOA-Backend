@@ -54,16 +54,17 @@ public class UserController {
 
     @ResponseStatus(OK)
     @PatchMapping("/info/profile")
-    public ValueResponse<Long> updateUserProfile(@RequestPart(value = "request", required = false) UserProfileUpdateRequest request,
-                                                 @RequestPart(value = "image", required = false) MultipartFile image,
+    public ValueResponse<Long> updateUserProfile(@RequestBody UserProfileUpdateRequest request,
                                                  @AuthenticationPrincipal JwtUser user) {
-        return new ValueResponse<>(userService.updateUserProfile(request, image, user.id()));
+        return new ValueResponse<>(userService.updateUserProfile(request, user.id()));
     }
 
     @ResponseStatus(OK)
     @PatchMapping("/info/basic")
-    public ValueResponse<Long> updateUserProfile(@RequestBody @Valid UserInfoUpdateRequest request, @AuthenticationPrincipal JwtUser user) {
-        return new ValueResponse<>(userService.updateUserInfo(request, user.id()));
+    public ValueResponse<Long> updateUserProfile(@RequestPart(value = "request", required = false) UserInfoUpdateRequest request,
+                                                 @RequestPart(value = "image", required = false) MultipartFile image,
+                                                 @AuthenticationPrincipal JwtUser user) {
+        return new ValueResponse<>(userService.updateUserInfo(request, image, user.id()));
     }
 
     @ResponseStatus(NO_CONTENT)
