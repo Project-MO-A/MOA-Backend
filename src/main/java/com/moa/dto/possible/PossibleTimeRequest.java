@@ -15,16 +15,16 @@ public record PossibleTimeRequest(
         @NotNull @Valid
         List<LocalDateTime> possibleTimeDataList
 ) {
-    public void sortTime() {
-        Collections.sort(possibleTimeDataList);
-    }
-
     public List<PossibleTime> getEntityList(ApplimentMember applimentMember) {
         Collections.sort(this.possibleTimeDataList);
         List<PossibleTime> possibleTimes = new ArrayList<>();
 
         LocalDateTime before = possibleTimeDataList.get(0);
         int startIdx = 0;
+
+        if (possibleTimeDataList.size() == 1) {
+            possibleTimes.add(new PossibleTime(applimentMember, before, before));
+        }
 
         for (int idx = 1; idx < this.possibleTimeDataList.size(); idx++) {
             LocalDateTime current = possibleTimeDataList.get(idx);
