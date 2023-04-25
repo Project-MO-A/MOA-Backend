@@ -11,9 +11,15 @@ import static java.util.Locale.ENGLISH;
 @Getter
 public class RepliesInfo {
 
+    private final int count;
     private final List<ReplyInfo> info;
 
-    public RepliesInfo(List<Reply> replys) {
+    public RepliesInfo(List<Reply> replies, int count) {
+        this.count = count;
+        this.info = getReplyInfo(replies);
+    }
+
+    private List<ReplyInfo> getReplyInfo(List<Reply> replys) {
         Map<Long, ReplyInfo> result = new HashMap<>();
         Map<Long, Long> parentInfo = new HashMap<>();
 
@@ -34,7 +40,7 @@ public class RepliesInfo {
             parentInfo.put(id, parentId);
             getSubRepliesLoop(result, parentInfo, parentId).add(replyInfo);
         }
-        this.info = result.values().stream().toList();
+        return result.values().stream().toList();
     }
 
     private List<ReplyInfo> getSubRepliesLoop(Map<Long, ReplyInfo> result, Map<Long, Long> parentInfo, Long parentId) {
