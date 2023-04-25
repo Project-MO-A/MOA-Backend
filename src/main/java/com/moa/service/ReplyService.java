@@ -16,6 +16,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 import static com.moa.global.exception.ErrorCode.REPLY_NOT_FOUND;
 
 @Service
@@ -35,7 +37,10 @@ public class ReplyService {
     }
 
     public RepliesInfo getAllReply(Long recruitmentId) {
-        return new RepliesInfo(replyRepository.findByRecruitmentIdOrderByParentIdAsc(recruitmentId));
+        List<Reply> reply = replyRepository.findByRecruitmentIdOrderByParentIdAsc(recruitmentId);
+        int count = replyRepository.countRepliesByRecruitmentId(recruitmentId);
+
+        return new RepliesInfo(reply, count);
     }
 
     public Long updateReply(final Long replyId, final ReplyUpdateRequest updateRequest, final JwtUser user) {

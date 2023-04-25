@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.moa.global.exception.ErrorCode.APPLIMENT_NOT_FOUND;
@@ -37,7 +36,7 @@ public class PossibleTimeService {
     }
 
     @Transactional(readOnly = true)
-    public List<LocalDateTime> getTimeList(final Long recruitmentId, final Long userId) {
+    public List<String> getTimeList(final Long recruitmentId, final Long userId) {
         ApplimentMember applimentMember = applimentMemberRepository.findByRecruitIdAndUserId(recruitmentId, userId)
                 .orElseThrow(() -> new EntityNotFoundException(APPLIMENT_NOT_FOUND));
         List<PossibleTime> possibleTimes = possibleTimeRepository.findAllByApplimentMemberId(applimentMember.getId());

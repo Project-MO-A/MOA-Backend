@@ -25,6 +25,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.moa.support.fixture.PossibleTimeFixture.*;
@@ -99,7 +101,7 @@ class PossibleTimeControllerTest {
                 status().isOk(),
                 jsonPath("$.[0].nickname").value(PINGU.getNickname()),
                 jsonPath("$.[1].possibleTimeData.[0]")
-                        .value(TIME2.getStartTime() + ":00")
+                        .value(TIME2.getStartTime() + ":00.000Z")
         );
 
         verify(possibleTimeService).getAllMembersTimeList(recruitmentId);
@@ -115,7 +117,7 @@ class PossibleTimeControllerTest {
                 TIME3.빈_객체_생성(),
                 TIME6.빈_객체_생성()
         );
-        List<LocalDateTime> possibleTimeData = PossibleTimeResponse.getPossibleTimeData(possibleTimes);
+        List<String> possibleTimeData = PossibleTimeResponse.getPossibleTimeData(possibleTimes);
 
         given(possibleTimeService.getTimeList(recruitmentId, 1L))
                 .willReturn(possibleTimeData);
@@ -130,7 +132,7 @@ class PossibleTimeControllerTest {
         actions.andExpectAll(
                 status().isOk(),
                 jsonPath("$.[0]")
-                        .value(TIME2.getStartTime() + ":00")
+                        .value(TIME2.getStartTime() + ":00.000Z")
         );
 
         verify(possibleTimeService).getTimeList(recruitmentId, 1L);
@@ -141,14 +143,18 @@ class PossibleTimeControllerTest {
     void setPossibleTime() throws Exception {
         //given
         final Long recruitmentId = 3L;
-        List<LocalDateTime> possibleTimeData = PossibleTimeResponse.getPossibleTimeData(
+        List<String> possibleTimeData = PossibleTimeResponse.getPossibleTimeData(
                 List.of(
                         TIME2.빈_객체_생성(),
                         TIME3.빈_객체_생성(),
                         TIME6.빈_객체_생성()
                 )
         );
-        PossibleTimeRequest possibleTimeRequest = new PossibleTimeRequest(possibleTimeData);
+        List<LocalDateTime> input = new ArrayList<>();
+        for (String possibleTimeDatum : possibleTimeData) {
+            input.add(LocalDateTime.parse(possibleTimeDatum, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")));
+        }
+        PossibleTimeRequest possibleTimeRequest = new PossibleTimeRequest(input);
 
         //when
         ResultActions actions = mvc.perform(

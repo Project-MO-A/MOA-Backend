@@ -1,11 +1,13 @@
 package com.moa.controller;
 
 import com.moa.domain.member.ApprovalStatus;
+import com.moa.domain.member.Attendance;
 import com.moa.dto.ValueResponse;
 import com.moa.dto.member.ApplimentMemberResponse;
 import com.moa.dto.member.ApprovedMemberResponse;
 import com.moa.dto.member.ApprovedPopularityRequest;
 import com.moa.service.AdminService;
+import com.moa.service.AttendMemberService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,7 @@ import static com.moa.domain.member.ApprovalStatus.getStatus;
 @RestController
 public class AdminController {
     private final AdminService adminService;
+    private final AttendMemberService attendMemberService;
 
     @GetMapping("/apply/members")
     public ValueResponse<List<ApplimentMemberResponse>> applimentMemberInfo (@PathVariable Long recruitmentId, @RequestParam(required = false) Integer statusCode) {
@@ -41,5 +44,11 @@ public class AdminController {
     public ValueResponse<Double> setPopularity(@PathVariable Long applyId, @RequestBody @Valid ApprovedPopularityRequest popularityRequest) {
         double popularity = adminService.setApprovedPopularity(applyId, popularityRequest.popularity());
         return new ValueResponse<>(popularity);
+    }
+
+    @PutMapping("/attend/{attendMemberId}")
+    public ValueResponse<Attendance> setMemberAttendance(@PathVariable Long attendMemberId, @RequestParam String attendName) {
+        Attendance attendance = attendMemberService.changeMemberAttendance(attendMemberId, Attendance.valueOf(attendName));
+        return new ValueResponse<>(attendance);
     }
 }

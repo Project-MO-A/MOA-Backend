@@ -47,6 +47,7 @@ public class SecurityConfig {
                                 .requestMatchers("/recruitment/search/*").permitAll()
                                 //admin
                                 .requestMatchers("/recruitment/*", "/recruitment/*/apply/*", "/recruitment/*/approved/**", "/recruitment/*/notice/*", "/recruitment/*/notice/*/vote").access(forAuthor)
+                                .requestMatchers(PUT, "/recruitment/*/attend/**").access(forAuthor)
                                 .requestMatchers(POST, "/recruitment/*/notice").access(forAuthor)
                                 //appliment member
                                 .requestMatchers("/recruitment/*/time/**", "/recruitment/*/notice/*/vote/*").access(forApplimentMember)

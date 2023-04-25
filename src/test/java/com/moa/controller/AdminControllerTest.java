@@ -1,12 +1,14 @@
 package com.moa.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.moa.domain.member.Attendance;
 import com.moa.dto.member.ApplimentMemberResponse;
 import com.moa.dto.member.ApprovedMemberResponse;
 import com.moa.dto.member.ApprovedPopularityRequest;
 import com.moa.global.config.WebBeanConfig;
 import com.moa.global.exception.service.EntityNotFoundException;
 import com.moa.service.AdminService;
+import com.moa.service.AttendMemberService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -30,14 +32,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.moa.domain.member.ApprovalStatus.*;
+import static com.moa.domain.member.Attendance.ATTENDANCE;
 import static com.moa.global.exception.ErrorCode.RECRUITMENT_NOT_FOUND;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -49,6 +51,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 class AdminControllerTest {
     @MockBean
     private AdminService adminService;
+    @MockBean
+    private AttendMemberService attendMemberService;
+
     @Autowired
     private ObjectMapper mapper;
 
@@ -453,5 +458,28 @@ class AdminControllerTest {
         );
 
         verify(adminService, times(0)).setApprovedPopularity(anyLong(), anyDouble());
+    }
+
+    @DisplayName("참여 멤버의 참여 여부를 수정한다")
+    @Test
+    void setAttendance() throws Exception {
+        //given
+        given(attendMemberService.changeMemberAttendance(1L, ATTENDANCE))
+                .willReturn(ATTENDANCE);
+
+        //when
+        ResultActions actions = mvc.perform(
+                put("/recruitment/{recruitmentId}/attend/{attendMemberId}", 1L, 1L)
+                        .queryParam("attendName", ATTENDANCE.name())
+                        .header(HttpHeaders.AUTHORIZATION, "Bearer Token")
+        );
+
+        //then
+        actions.andExpectAll(
+                status().isOk(),
+                jsonPath("$.value").value("ATTENDANCE")
+        );
+
+        verify(attendMemberService).changeMemberAttendance(1L, ATTENDANCE);
     }
 }
