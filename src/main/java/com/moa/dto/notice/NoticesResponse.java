@@ -42,17 +42,19 @@ public record NoticesResponse(List<NoticeResponse> notices) {
         private final String content;
         private final String createdDate;
         private final boolean checkVote;
-        private final Map<String, List<String>> members;
+        private final Map<String, List<Member>> members;
 
         public NoticeResponse(Notice notice) {
-            this(notice.getId(),
+            this(
+                    notice.getId(),
                     notice.getPost().getContent(),
                     notice.getCreatedDate().format(DateTimeFormatter.ofPattern("yy.MM.dd")),
                     notice.isCheckVote(),
-                    attendanceMap());
+                    attendanceMap()
+            );
         }
 
-        public NoticeResponse(Long noticeId, String content, String createdDate, boolean checkVote, Map<String, List<String>> members) {
+        public NoticeResponse(Long noticeId, String content, String createdDate, boolean checkVote, Map<String, List<Member>> members) {
             this.noticeId = noticeId;
             this.content = content;
             this.createdDate = createdDate;
@@ -61,9 +63,11 @@ public record NoticesResponse(List<NoticeResponse> notices) {
         }
 
         public void addMember(String attendance, AttendMember attendMember) {
-            List<String> members = this.members.get(attendance);
-            members.add(attendMember.getUser().getNickname() == null ? attendMember.getUser().getName() : attendMember.getUser().getNickname());
+            List<Member> members = this.members.get(attendance);
+            members.add(new Member(attendMember.getId(), attendMember.getUser().getNickname() == null ? attendMember.getUser().getName() : attendMember.getUser().getNickname()));
             this.members.put(attendance, members);
         }
+
+        public record Member(Long applimentMemberId, String memberName) {}
     }
 }
