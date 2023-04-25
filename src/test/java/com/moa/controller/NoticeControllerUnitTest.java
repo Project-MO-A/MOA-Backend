@@ -3,6 +3,7 @@ package com.moa.controller;
 import com.moa.base.AbstractControllerUnitTest;
 import com.moa.dto.notice.NoticesResponse;
 import com.moa.dto.notice.NoticesResponse.NoticeResponse;
+import com.moa.dto.notice.NoticesResponse.NoticeResponse.Member;
 import com.moa.dto.notice.PostNoticeRequest;
 import com.moa.dto.notice.UpdateNoticeRequest;
 import com.moa.global.exception.GlobalControllerAdvice;
@@ -138,10 +139,10 @@ class NoticeControllerUnitTest extends AbstractControllerUnitTest {
         //given
         given(noticeService.findAll(1L)).willReturn(new NoticesResponse(
                 List.of(new NoticeResponse(1L, "content1", "2023-04-01", true,
-                                Map.of("ATTENDANCE", List.of("member1", "member2"))),
+                                Map.of("ATTENDANCE", List.of(new Member(1L, "member1"), new Member(2L, "member2")))),
                         new NoticeResponse(2L, "content2", "2023-04-03", true,
-                                Map.of("ATTENDANCE", List.of("member1", "member2"))))
-        ));
+                                Map.of("ATTENDANCE", List.of(new Member(1L, "member1"), new Member(2L, "member2"))))
+        )));
 
         //when
         ResultActions action = mvc.perform(get("/recruitment/{recruitmentId}/notice", 1L)
