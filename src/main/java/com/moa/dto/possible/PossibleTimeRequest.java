@@ -19,6 +19,10 @@ public record PossibleTimeRequest(
         Collections.sort(this.possibleTimeDataList);
         List<PossibleTime> possibleTimes = new ArrayList<>();
 
+        if (possibleTimeDataList.size() == 0) {
+            return possibleTimes;
+        }
+
         LocalDateTime before = possibleTimeDataList.get(0);
         int startIdx = 0;
 
