@@ -98,9 +98,11 @@ public class User {
     }
 
     public void update(UserInfoUpdateRequest request, String imageUrl, PasswordEncoder passwordEncoder) {
-        updatePassword(request, passwordEncoder);
-        this.name = validateStringValue(request.name(), this.name);
-        this.nickname = validateStringValue(request.nickname(), this.nickname);
+        if (request != null) {
+            updatePassword(request, passwordEncoder);
+            this.name = validateStringValue(request.name(), this.name);
+            this.nickname = validateStringValue(request.nickname(), this.nickname);
+        }
         this.imageUrl = validateStringValue(imageUrl, this.imageUrl);
     }
 
@@ -109,7 +111,9 @@ public class User {
             if (!checkPasswordChangeValue(request, passwordEncoder)) {
                 throw new InvalidRequestException(USER_MISMATCH_PASSWORD);
             }
-            this.password = passwordEncoder.encode(request.newPassword());
+            if (StringUtils.hasText(request.newPassword())) {
+                this.password = passwordEncoder.encode(request.newPassword());
+            }
         }
     }
 
