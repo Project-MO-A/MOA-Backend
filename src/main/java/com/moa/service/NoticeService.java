@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static com.moa.domain.member.Attendance.ATTENDANCE;
 import static com.moa.global.exception.ErrorCode.NOTICE_NOT_FOUND;
 import static com.moa.service.util.KakaoUtils.getRecommendedLocationByKakao;
 
@@ -68,7 +69,11 @@ public class NoticeService {
     public String finishVote(Long recruitmentId, Long noticeId) {
         Notice notice = noticeRepository.findFetchMemberByIdAndRecruitmentId(noticeId, recruitmentId)
                 .orElseThrow(() -> new EntityNotFoundException(NOTICE_NOT_FOUND));
-        String recommendedLocation = findLocation(notice.getAttendMembers());
+        String recommendedLocation = findLocation(
+                notice.getAttendMembers().stream()
+                        .filter(member -> member.getAttendance().equals(ATTENDANCE))
+                        .toList()
+        );
         notice.recommend(recommendedLocation);
         notice.finishVote();
         return recommendedLocation;

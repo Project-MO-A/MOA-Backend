@@ -21,7 +21,12 @@ public class GrahamUtils {
         points.forEach(point -> point.calculateTan(start));
         points.sort(comparingDouble(o -> o.tan));
 
-        Stack<Point> stack = getOutSidePoints(points, start);
+        Stack<Point> stack = new Stack<>();
+        if (points.size() > 0) {
+            stack = getOutSidePoints(points, start);
+        } else {
+            stack.push(start);
+        }
         List<Point> result = new ArrayList<>();
         while (!stack.isEmpty()) {
             result.add(stack.pop());
