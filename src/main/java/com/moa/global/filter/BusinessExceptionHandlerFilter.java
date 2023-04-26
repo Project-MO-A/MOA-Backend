@@ -9,13 +9,16 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+@Slf4j
 @RequiredArgsConstructor
 public class BusinessExceptionHandlerFilter extends OncePerRequestFilter {
+    private static final String LOG_FORMAT = "Error Class : {}, Error Code : {}, Message : {}";
 
     private final ObjectMapper objectMapper;
     private final MessageSourceAccessor messageSourceAccessor;
@@ -25,6 +28,8 @@ public class BusinessExceptionHandlerFilter extends OncePerRequestFilter {
         try {
             filterChain.doFilter(request, response);
         } catch (BusinessException exception) {
+            log.error(LOG_FORMAT, exception.getClass(), exception.getErrorCode(), exception.getMessage());
+
             ErrorCode errorCode = exception.getErrorCode();
             response.setStatus(errorCode.getStatusCode());
             response.setCharacterEncoding("UTF-8");
