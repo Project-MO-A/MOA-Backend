@@ -47,7 +47,7 @@ public class Notice extends BaseTimeEntity {
         this.confirmedLocation = confirmedLocation;
         this.recommendedLocation = recommendedLocation;
         this.checkVote = checkVote;
-        this.isVote = true;
+        this.isVote = checkVote;
     }
 
     public void update(Recruitment recruitment, UpdateNoticeRequest request) {
