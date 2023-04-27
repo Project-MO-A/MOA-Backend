@@ -24,7 +24,7 @@ public class AttendMemberService {
         AttendMember attendMember = attendMemberRepository.findByNoticeIdAndUserId(request.noticeId(), request.userId())
                 .orElseThrow(() -> new EntityNotFoundException(ATTENDMEMBER_NOT_FOUND));
 
-        if (!attendMember.canVote()) {
+        if (attendMember.finishVote()) {
             throw new VoteFinishException(NOTICE_VOTE_FINISH);
         }
         attendMember.checkRecruitment(request.recruitmentId());

@@ -51,7 +51,7 @@ public class AttendMember {
         }
     }
 
-    public boolean canVote() {
+    public boolean finishVote() {
         return this.notice.isVote();
     }
 }

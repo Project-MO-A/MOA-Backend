@@ -52,7 +52,7 @@ public record NoticesResponse(List<NoticeResponse> notices) {
                     notice.getPost().getContent(),
                     notice.getCreatedDate().format(DateTimeFormatter.ofPattern("yy.MM.dd")),
                     notice.isCheckVote(),
-                    !notice.isVote(),
+                    notice.isVote(),
                     notice.getRecommendedLocation(),
                     attendanceMap()
             );
