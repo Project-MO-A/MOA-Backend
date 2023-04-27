@@ -6,6 +6,7 @@ cd $REPOSITORY
 APP_NAME=moa
 JAR_NAME=$(ls $REPOSITORY/build/libs/ | grep 'SNAPSHOT.jar' | tail -n 1)
 JAR_PATH=$REPOSITORY/build/libs/$JAR_NAME
+LOG_PATH=$REPOSITORY/src/main/resources/logback-spring.xml
 
 CURRENT_PID=$(pgrep -f $APP_NAME)
 
@@ -19,4 +20,4 @@ else
 fi
 
 echo "> Deploy - $JAR_PATH "
-nohup java -jar $JAR_PATH --spring.profiles.active=prod > /dev/null 2> /dev/null < /dev/null &
+nohup java -jar -Dlogging.config=$LOG_PATH $JAR_PATH --spring.profiles.active=prod > /dev/null 2> /dev/null < /dev/null &
