@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.IOException;
 import java.util.Base64;
+import java.util.UUID;
 
 import static com.moa.global.exception.ErrorCode.IO_ERROR;
 
@@ -44,7 +45,8 @@ public class S3Accessor {
 
     private File convert(MultipartFile file) {
         try {
-            File convertFile = new File(file.getOriginalFilename());
+            String id = UUID.randomUUID().toString().substring(0, 8);
+            File convertFile = new File("image" + id);
             FileCopyUtils.copy(file.getBytes(), convertFile);
             return convertFile;
         } catch (IOException e) {
