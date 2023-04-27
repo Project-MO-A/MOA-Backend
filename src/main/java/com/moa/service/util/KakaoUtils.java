@@ -33,7 +33,8 @@ public class KakaoUtils {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         Point middlePoint = getMiddlePoint(members);
         System.out.println("============find Middle Point==============");
-        System.out.println("middlePoint = " + middlePoint);
+        System.out.println("x = " + middlePoint.getX());
+        System.out.println("y = " + middlePoint.getY());
         params.add("x", String.valueOf(middlePoint.getX()));
         params.add("y", String.valueOf(middlePoint.getY()));
         params.add("radius", "2000");
@@ -52,6 +53,7 @@ public class KakaoUtils {
                 .toList();
         List<Point> outSide = getOutSide(new ArrayList<>(points));
 
+        System.out.println("==========outside points with member point============");
         double sumLatitude = 0.0;
         double sumLongitude = 0.0;
         for (Point point : outSide) {

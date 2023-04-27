@@ -16,6 +16,8 @@ public class GrahamUtils {
     public static List<Point> getOutSide(List<Point> points) {
         points.sort((o1, o2) -> o1.x == o2.x ? Double.compare(o1.y, o2.y) : Double.compare(o1.x, o2.x));
 
+        System.out.println("============members location point=============");
+        System.out.println(points.toString());
         Point start = points.get(0);
         points.remove(start);
         points.forEach(point -> point.calculateTan(start));
