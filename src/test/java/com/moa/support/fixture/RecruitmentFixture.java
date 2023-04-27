@@ -53,11 +53,17 @@ public enum RecruitmentFixture {
         return recruitment;
     }
 
-    public Recruitment 아이디를_삽입하여_생성(Long recruitId) throws NoSuchFieldException, IllegalAccessException {
+    public Recruitment 아이디를_삽입하여_생성(Long recruitId) {
+
         Recruitment recruitment = 기본_빌더_생성().build();
-        Field id = recruitment.getClass().getDeclaredField("id");
-        id.setAccessible(true);
-        id.set(recruitment, recruitId);
+        Field id = null;
+        try {
+            id = recruitment.getClass().getDeclaredField("id");
+            id.setAccessible(true);
+            id.set(recruitment, recruitId);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         return recruitment;
     }
 

@@ -5,10 +5,13 @@ import com.moa.domain.member.ApplimentSearchRepository;
 import com.moa.domain.member.ApprovalStatus;
 import com.moa.domain.member.RecruitMember;
 import com.moa.domain.recruit.Recruitment;
+import com.moa.domain.user.Popularity;
+import com.moa.domain.user.User;
 import com.moa.dto.member.ApplimentMemberResponse;
 import com.moa.dto.member.ApprovedMemberResponse;
 import com.moa.global.exception.service.EntityNotFoundException;
-import org.junit.jupiter.api.BeforeEach;
+import com.moa.support.fixture.RecruitmentFixture;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -18,6 +21,9 @@ import java.util.Optional;
 
 import static com.moa.constant.TestConst.USER;
 import static com.moa.domain.member.ApprovalStatus.*;
+import static com.moa.support.fixture.ApplimentFixture.APPROVED_MEMBER;
+import static com.moa.support.fixture.RecruitmentFixture.PROGRAMMING_POST;
+import static com.moa.support.fixture.UserFixture.PINGU;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -25,8 +31,8 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 class AdminServiceTest {
     static AdminService adminService;
 
-    @BeforeEach
-    void setUp() {
+    @BeforeAll
+    static void setUp() {
         adminService = new AdminService(new TestApplimentSearchRepository());
     }
 
@@ -61,9 +67,6 @@ class AdminServiceTest {
     @DisplayName("getApplimentMembers - 신청한 멤버를 조회하는데 실패한다. (잘못된 모집글 ID)")
     @Test
     void getApplimentMembersFail() {
-        //given
-        adminService = new AdminService(new ExceptionSearchRepository());
-
         //when & then
         assertThatThrownBy(() -> adminService.getApplimentMembers(10L, KICK))
                 .isInstanceOf(EntityNotFoundException.class);
@@ -86,9 +89,6 @@ class AdminServiceTest {
     @DisplayName("getApprovedMembers - 승인된 멤버들을 조회하는데 실패한다. (잘못된 모집글 ID)")
     @Test
     void getApprovedMembersFail() {
-        //given
-        adminService = new AdminService(new ExceptionSearchRepository());
-
         //when & then
         assertThatThrownBy(() -> adminService.getApprovedMembers(10L))
                 .isInstanceOf(EntityNotFoundException.class);
@@ -126,6 +126,32 @@ class AdminServiceTest {
         //when & then
         assertThatThrownBy(() -> adminService.setApprovedPopularity(10L, 3.5))
                 .isInstanceOf(EntityNotFoundException.class);
+    }
+
+    @DisplayName("인기도를 변경하면 유저 인기도 비율에 정상적으로 반영된다")
+    @Test
+    void setPopularityMulti() {
+        //when
+        User pingu = PINGU.생성();
+        ApplimentMember applimentMember1 = APPROVED_MEMBER.모집글_없이_생성(pingu);
+        ApplimentMember applimentMember2 = APPROVED_MEMBER.모집글_없이_생성(pingu);
+        ApplimentMember applimentMember3 = APPROVED_MEMBER.모집글_없이_생성(pingu);
+
+        applimentMember1.setPopularity(3.5);
+        applimentMember2.setPopularity(0.5);
+        applimentMember3.setPopularity(1.5);
+
+        //change popularity
+        applimentMember2.setPopularity(4.5);
+        applimentMember3.setPopularity(2.5);
+
+        //then
+        Popularity popularity = pingu.getPopularity();
+        assertAll(
+                () -> assertThat(popularity.getCount()).isEqualTo(3),
+                () -> assertThat(popularity.getTotalRate()).isEqualTo(10.5),
+                () -> assertThat(popularity.getRate()).isEqualTo(10.5 / 3)
+        );
     }
 
     static class TestApplimentSearchRepository implements ApplimentSearchRepository {
@@ -171,13 +197,14 @@ class AdminServiceTest {
         @Override
         public List<ApprovedMemberResponse> findAllApprovedMembers(Long recruitmentId) {
             if (recruitmentId == 10L) return new ArrayList<>();
+
             List<ApprovedMemberResponse> memberResponses = new ArrayList<>();
-            ApprovedMemberResponse response1 = new ApprovedMemberResponse(1L, 1L, "nickname1", 1L, "백엔드", 3.5);
+            ApprovedMemberResponse response1 = new ApprovedMemberResponse(1L, 1L, "nickname1", 1L,  "백엔드", 3.5);
             response1.setTotalAttend(4L);
             response1.setAttend(3L);
             memberResponses.add(response1);
 
-            ApprovedMemberResponse response2 = new ApprovedMemberResponse(2L, 2L, "nickname2", 2L,  "프론트엔드", 4.5);
+            ApprovedMemberResponse response2 = new ApprovedMemberResponse(2L, 2L, "nickname2", 1L, "프론트엔드", 4.5);
             response2.setTotalAttend(4L);
             response2.setAttend(2L);
             memberResponses.add(response2);
@@ -187,29 +214,9 @@ class AdminServiceTest {
 
         @Override
         public Optional<Recruitment> findRecruitmentById(Long recruitmentId) {
-            return Optional.of(Recruitment.builder().build());
-        }
-    }
+            if (recruitmentId == 10L) return Optional.empty();
 
-    static class ExceptionSearchRepository implements ApplimentSearchRepository {
-        @Override
-        public Optional<ApplimentMember> findApplimentMemberById(Long applyId) {
-            return Optional.empty();
-        }
-
-        @Override
-        public List<ApplimentMemberResponse> findAllApplimentMembers(Long recruitmentId, ApprovalStatus status) {
-            return null;
-        }
-
-        @Override
-        public List<ApprovedMemberResponse> findAllApprovedMembers(Long recruitmentId) {
-            return null;
-        }
-
-        @Override
-        public Optional<Recruitment> findRecruitmentById(Long recruitmentId) {
-            return Optional.empty();
+            return Optional.of(PROGRAMMING_POST.아이디를_삽입하여_생성(recruitmentId));
         }
     }
 }
