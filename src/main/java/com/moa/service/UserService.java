@@ -104,10 +104,10 @@ public class UserService implements UserDetailsService {
 
     public Long updateUserInfo(UserInfoUpdateRequest request, MultipartFile image, Long userId) {
         User user = findUser(userId);
-        String imageUrl = null;
-        if (image != null) {
+        String imageUrl = request.imageUrl();
+        /*if (image != null) {
             imageUrl = s3Accessor.save(image, String.valueOf(user.getId()));
-        }
+        }*/
         user.update(request, imageUrl, passwordEncoder);
         return user.getId();
     }
