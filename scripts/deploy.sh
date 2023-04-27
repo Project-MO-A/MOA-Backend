@@ -20,4 +20,4 @@ else
 fi
 
 echo "> Deploy - $JAR_PATH "
-sudo nohup java -jar -Dspring.profiles.active=prod -Dlogging.config=$LOG_PATH $JAR_PATH > /dev/null 2> /dev/null < /dev/null &
+sudo nohup java -jar $JAR_PATH --spring.profiles.active=prod > /dev/null 2> /dev/null < /dev/null &

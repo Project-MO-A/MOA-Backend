@@ -19,6 +19,10 @@ spring:
     properties:
       hibernate:
         default_batch_fetch_size: 100
+
+logging:
+  file:
+    path: ./logback-spring.xml
 ---
 spring:
   config:
