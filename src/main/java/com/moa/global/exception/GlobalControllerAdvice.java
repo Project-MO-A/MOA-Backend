@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.GONE;
 
 @Slf4j
 @RestControllerAdvice
@@ -45,5 +46,11 @@ public class GlobalControllerAdvice {
         int code = BAD_REQUEST.value();
         log.error(LOG_FORMAT, e.getClass(), code,  e.getMessage());
         return new ResponseEntity<>(new ErrorResponse(String.valueOf(code), e.getMessage()), BAD_REQUEST);
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ErrorResponse> exception(Exception e) {
+        log.error(LOG_FORMAT, e.getClass(), 500,  e.getMessage());
+        return new ResponseEntity<>(new ErrorResponse(e.getClass().getName(), e.getMessage()), GONE);
     }
 }
