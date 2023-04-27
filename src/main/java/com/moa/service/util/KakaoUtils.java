@@ -32,6 +32,8 @@ public class KakaoUtils {
     private static MultiValueMap<String, String> createParams(List<AttendMember> members) {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         Point middlePoint = getMiddlePoint(members);
+        System.out.println("============find Middle Point==============");
+        System.out.println("middlePoint = " + middlePoint);
         params.add("x", String.valueOf(middlePoint.getX()));
         params.add("y", String.valueOf(middlePoint.getY()));
         params.add("radius", "2000");
