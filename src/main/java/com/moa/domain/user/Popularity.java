@@ -27,7 +27,7 @@ public class Popularity {
     }
 
     public void updatePopularity(double beforeRate, double updateRate) {
-        totalRate -= beforeRate + updateRate;
+        totalRate += updateRate - beforeRate;
         this.rate = totalRate / count;
     }
 }

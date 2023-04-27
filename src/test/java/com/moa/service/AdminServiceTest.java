@@ -4,9 +4,14 @@ import com.moa.domain.member.ApplimentMember;
 import com.moa.domain.member.ApplimentSearchRepository;
 import com.moa.domain.member.ApprovalStatus;
 import com.moa.domain.member.RecruitMember;
+import com.moa.domain.user.Popularity;
+import com.moa.domain.user.User;
 import com.moa.dto.member.ApplimentMemberResponse;
 import com.moa.dto.member.ApprovedMemberResponse;
 import com.moa.global.exception.service.EntityNotFoundException;
+import com.moa.support.fixture.ApplimentFixture;
+import com.moa.support.fixture.RecruitmentFixture;
+import com.moa.support.fixture.UserFixture;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,6 +22,8 @@ import java.util.Optional;
 
 import static com.moa.constant.TestConst.USER;
 import static com.moa.domain.member.ApprovalStatus.*;
+import static com.moa.support.fixture.ApplimentFixture.APPROVED_MEMBER;
+import static com.moa.support.fixture.UserFixture.PINGU;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -119,6 +126,32 @@ class AdminServiceTest {
         //when & then
         assertThatThrownBy(() -> adminService.setApprovedPopularity(10L, 3.5))
                 .isInstanceOf(EntityNotFoundException.class);
+    }
+
+    @DisplayName("인기도를 변경하면 유저 인기도 비율에 정상적으로 반영된다")
+    @Test
+    void setPopularityMulti() {
+        //when
+        User pingu = PINGU.생성();
+        ApplimentMember applimentMember1 = APPROVED_MEMBER.모집글_없이_생성(pingu);
+        ApplimentMember applimentMember2 = APPROVED_MEMBER.모집글_없이_생성(pingu);
+        ApplimentMember applimentMember3 = APPROVED_MEMBER.모집글_없이_생성(pingu);
+
+        applimentMember1.setPopularity(3.5);
+        applimentMember2.setPopularity(0.5);
+        applimentMember3.setPopularity(1.5);
+
+        //change popularity
+        applimentMember2.setPopularity(4.5);
+        applimentMember3.setPopularity(2.5);
+
+        //then
+        Popularity popularity = pingu.getPopularity();
+        assertAll(
+                () -> assertThat(popularity.getCount()).isEqualTo(3),
+                () -> assertThat(popularity.getTotalRate()).isEqualTo(10.5),
+                () -> assertThat(popularity.getRate()).isEqualTo(10.5 / 3)
+        );
     }
 
     static class TestApplimentSearchRepository implements ApplimentSearchRepository {

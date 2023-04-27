@@ -34,6 +34,13 @@ public enum ApplimentFixture {
                 .build();
     }
 
+    public ApplimentMember 모집글_없이_생성(final User user) {
+        return ApplimentMember.builder()
+                .user(user)
+                .status(this.status)
+                .build();
+    }
+
     public ApprovalStatus getStatus() {
         return status;
     }
