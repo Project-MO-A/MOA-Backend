@@ -9,15 +9,13 @@ import com.moa.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Base64;
-import java.util.Optional;
 
-import static com.moa.global.exception.ErrorCode.IMAGE_NOT_PROCESS;
 import static com.moa.global.exception.ErrorCode.IO_ERROR;
 
 @Component
@@ -30,9 +28,7 @@ public class S3Accessor {
     private final AmazonS3 amazonS3Client;
 
     public String save(MultipartFile image, String dirName) {
-        File uploadFile = convert(image)
-                .orElseThrow(() -> new BusinessException(IMAGE_NOT_PROCESS));
-        return upload(uploadFile, dirName);
+        return upload(convert(image), dirName);
     }
 
     public String load(String key) {
@@ -46,19 +42,14 @@ public class S3Accessor {
         return Base64.getEncoder().encodeToString(bytes);
     }
 
-    private Optional<File> convert(MultipartFile file) {
-        File convertFile = new File(file.getOriginalFilename());
+    private File convert(MultipartFile file) {
         try {
-            if (convertFile.createNewFile()) {
-                try (FileOutputStream fos = new FileOutputStream(convertFile)) {
-                    fos.write(file.getBytes());
-                }
-                return Optional.of(convertFile);
-            }
+            File convertFile = new File(file.getOriginalFilename());
+            FileCopyUtils.copy(file.getBytes(), convertFile);
+            return convertFile;
         } catch (IOException e) {
             throw new BusinessException(IO_ERROR);
         }
-        return Optional.empty();
     }
 
     private String upload(File uploadFile, String dirName) {

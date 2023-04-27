@@ -4,6 +4,5 @@ public record UserInfoUpdateRequest(
         String name,
         String nickname,
         String currentPassword,
-        String newPassword,
-        String imageUrl
+        String newPassword
 ) {}
