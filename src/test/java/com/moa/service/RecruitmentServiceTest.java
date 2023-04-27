@@ -4,6 +4,7 @@ import com.moa.domain.member.RecruitMember;
 import com.moa.domain.recruit.Recruitment;
 import com.moa.domain.recruit.RecruitmentRepository;
 import com.moa.domain.recruit.tag.RecruitTag;
+import com.moa.domain.recruit.tag.RecruitTagRepository;
 import com.moa.domain.recruit.tag.Tag;
 import com.moa.domain.user.User;
 import com.moa.domain.user.UserRepository;
@@ -52,6 +53,8 @@ class RecruitmentServiceTest {
     private RecruitmentRepository recruitmentRepository;
     @Mock
     private UserRepository userRepository;
+    @Mock
+    private RecruitTagRepository recruitTagRepository;
     @Mock
     private EntityManager em;
     @InjectMocks
@@ -264,9 +267,7 @@ class RecruitmentServiceTest {
                     List.of(BACKEND_MEMBER.생성(), FRONTEND_MEMBER.생성()));
             given(recruitmentRepository.findFetchMembersById(recruitId))
                     .willReturn(Optional.of(basicRecruit));
-            for (Tag tag : updateTag) {
-                given(em.merge(tag)).willReturn(tag);
-            }
+
             //when & then
             assertThatThrownBy(() -> recruitmentService.update(recruitId, updateRequest, updateTag))
                             .isExactlyInstanceOf(InvalidRequestException.class);

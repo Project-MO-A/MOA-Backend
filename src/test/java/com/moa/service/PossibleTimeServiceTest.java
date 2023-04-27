@@ -9,7 +9,6 @@ import com.moa.dto.member.ApprovedMemberResponse;
 import com.moa.dto.possible.PossibleTimeRequest;
 import com.moa.dto.possible.PossibleTimeResponse;
 import com.moa.global.exception.service.EntityNotFoundException;
-import com.moa.global.exception.service.InvalidTimeException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -55,8 +54,8 @@ class PossibleTimeServiceTest {
         //given
         final Long recruitmentId = 3L;
         List<ApprovedMemberResponse> responses = List.of(
-                new ApprovedMemberResponse(2L, 2L, "nick", "백엔드", 3.5),
-                new ApprovedMemberResponse(3L, 3L, "nicka", "프론트엔드", 3.5)
+                new ApprovedMemberResponse(2L, 2L, "nick", 1L, "백엔드", 3.5),
+                new ApprovedMemberResponse(3L, 3L, "nicka", 2L, "프론트엔드", 3.5)
         );
 
         List<PossibleTime> possibleTimes1 = List.of(
@@ -126,11 +125,7 @@ class PossibleTimeServiceTest {
                 .willReturn(possibleTimes1);
 
         //when
-        List<LocalDateTime> timeList = possibleTimeService.getTimeList(recruitmentId, userId);
-
-        for (LocalDateTime localDateTime : timeList) {
-            System.out.println(localDateTime);
-        }
+        List<String> timeList = possibleTimeService.getTimeList(recruitmentId, userId);
 
         //then
         assertAll(

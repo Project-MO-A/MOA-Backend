@@ -4,14 +4,13 @@ import com.moa.domain.member.ApplimentMember;
 import com.moa.domain.member.ApplimentSearchRepository;
 import com.moa.domain.member.ApprovalStatus;
 import com.moa.domain.member.RecruitMember;
+import com.moa.domain.recruit.Recruitment;
 import com.moa.domain.user.Popularity;
 import com.moa.domain.user.User;
 import com.moa.dto.member.ApplimentMemberResponse;
 import com.moa.dto.member.ApprovedMemberResponse;
 import com.moa.global.exception.service.EntityNotFoundException;
-import com.moa.support.fixture.ApplimentFixture;
 import com.moa.support.fixture.RecruitmentFixture;
-import com.moa.support.fixture.UserFixture;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,6 +22,7 @@ import java.util.Optional;
 import static com.moa.constant.TestConst.USER;
 import static com.moa.domain.member.ApprovalStatus.*;
 import static com.moa.support.fixture.ApplimentFixture.APPROVED_MEMBER;
+import static com.moa.support.fixture.RecruitmentFixture.PROGRAMMING_POST;
 import static com.moa.support.fixture.UserFixture.PINGU;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -197,18 +197,26 @@ class AdminServiceTest {
         @Override
         public List<ApprovedMemberResponse> findAllApprovedMembers(Long recruitmentId) {
             if (recruitmentId == 10L) return new ArrayList<>();
+
             List<ApprovedMemberResponse> memberResponses = new ArrayList<>();
-            ApprovedMemberResponse response1 = new ApprovedMemberResponse(1L, 1L, "nickname1", "백엔드", 3.5);
+            ApprovedMemberResponse response1 = new ApprovedMemberResponse(1L, 1L, "nickname1", 1L,  "백엔드", 3.5);
             response1.setTotalAttend(4L);
             response1.setAttend(3L);
             memberResponses.add(response1);
 
-            ApprovedMemberResponse response2 = new ApprovedMemberResponse(2L, 2L, "nickname2", "프론트엔드", 4.5);
+            ApprovedMemberResponse response2 = new ApprovedMemberResponse(2L, 2L, "nickname2", 1L, "프론트엔드", 4.5);
             response2.setTotalAttend(4L);
             response2.setAttend(2L);
             memberResponses.add(response2);
 
             return memberResponses;
+        }
+
+        @Override
+        public Optional<Recruitment> findRecruitmentById(Long recruitmentId) {
+            if (recruitmentId == 10L) return Optional.empty();
+
+            return Optional.of(PROGRAMMING_POST.아이디를_삽입하여_생성(recruitmentId));
         }
     }
 }

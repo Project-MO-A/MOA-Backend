@@ -1,7 +1,5 @@
 package com.moa.controller;
 
-import com.moa.dto.user.UserInfoUpdateRequest;
-import com.moa.dto.user.UserProfileUpdateRequest;
 import com.moa.dto.ValueResponse;
 import com.moa.dto.recruit.RecruitmentsInfo;
 import com.moa.dto.user.*;
@@ -11,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import static org.springframework.http.HttpStatus.*;
 
@@ -55,14 +54,17 @@ public class UserController {
 
     @ResponseStatus(OK)
     @PatchMapping("/info/profile")
-    public ValueResponse<Long> updateUserProfile(@RequestBody @Valid UserProfileUpdateRequest request, @AuthenticationPrincipal JwtUser user) {
+    public ValueResponse<Long> updateUserProfile(@RequestBody UserProfileUpdateRequest request,
+                                                 @AuthenticationPrincipal JwtUser user) {
         return new ValueResponse<>(userService.updateUserProfile(request, user.id()));
     }
 
     @ResponseStatus(OK)
     @PatchMapping("/info/basic")
-    public ValueResponse<Long> updateUserProfile(@RequestBody @Valid UserInfoUpdateRequest request, @AuthenticationPrincipal JwtUser user) {
-        return new ValueResponse<>(userService.updateUserInfo(request, user.id()));
+    public ValueResponse<Long> updateUserProfile(@RequestPart(value = "request", required = false) UserInfoUpdateRequest request,
+                                                 @RequestPart(value = "image", required = false) MultipartFile image,
+                                                 @AuthenticationPrincipal JwtUser user) {
+        return new ValueResponse<>(userService.updateUserInfo(request, image, user.id()));
     }
 
     @ResponseStatus(NO_CONTENT)

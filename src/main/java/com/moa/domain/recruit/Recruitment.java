@@ -11,6 +11,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -77,17 +78,23 @@ public class Recruitment extends BaseTimeEntity {
         }
     }
 
-    public void update(RecruitUpdateRequest updateRequest, List<RecruitTag> tags) {
+    public void update(RecruitUpdateRequest updateRequest, int tagsSize) {
         this.post.updateTitle(updateRequest.title());
         this.post.updateContent(updateRequest.content());
+        updateCategory(updateRequest.categoryName());
         updateState(updateRequest.state());
-        updateTags(tags);
+        clearTags(tagsSize);
     }
 
-    private void updateTags(List<RecruitTag> tags) {
-        if (tags == null || tags.isEmpty()) return;
-        this.tags.clear();
-        this.setTags(tags);
+    private void updateCategory(String categoryName) {
+        if (!StringUtils.hasText(categoryName)) return;
+        this.category = Category.getInstanceByName(categoryName);
+    }
+
+    private void clearTags(int tagsSize) {
+        if (tagsSize > 0) {
+            this.tags.clear();
+        }
     }
 
     public void updateState(Integer stateCode) {

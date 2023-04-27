@@ -107,6 +107,20 @@ class AdminRepositoryTest extends RepositoryTestCustom {
         assertThat(applimentMember).isEmpty();
     }
 
+    @DisplayName("잘못된 모집글 ID를 입력하면 Optional.empty() 가 반환된다.")
+    @Test
+    void findInvalidRecruitmentId() {
+        //given
+        Long InvalidRecruitmentId = 100L;
+
+        //when
+        Optional<Recruitment> recruitmentById = adminRepository.findRecruitmentById(100L);
+
+        //then
+        assertThat(recruitmentById).isEmpty();
+
+    }
+
     @DisplayName("ApplimentMemberResponse - 신청 멤버 조회 테스트")
     @Nested
     class Appliment {

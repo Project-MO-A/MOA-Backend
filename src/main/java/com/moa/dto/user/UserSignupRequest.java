@@ -15,8 +15,8 @@ public record UserSignupRequest(
         @NotBlank String name,
         String nickname,
         String details,
-        double locationLatitude,
-        double locationLongitude,
+        Double locationLatitude,
+        Double locationLongitude,
         List<String> interests
 ) {
     public User toEntity() {

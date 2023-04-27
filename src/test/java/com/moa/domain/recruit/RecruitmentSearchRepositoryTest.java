@@ -105,7 +105,7 @@ class RecruitmentSearchRepositoryTest extends RepositoryTestCustom {
                 () -> assertThat(recruitmentInfo.getTags().size()).isEqualTo(4),
                 () -> assertThat(recruitmentInfo.getRecruitStatus()).isEqualTo(RECRUITING.getStatus()),
                 () -> assertThat(recruitmentInfo.getTotalCount()).isEqualTo(7),
-                () -> assertThat(recruitmentInfo.getCategory()).isEqualTo(HOBBY.getName())
+                () -> assertThat(recruitmentInfo.getCategory()).isEqualTo(HOBBY.getValue())
         );
     }
 
@@ -136,7 +136,7 @@ class RecruitmentSearchRepositoryTest extends RepositoryTestCustom {
     @Test
     void searchAll_Category() {
         //given
-        final String CATEGORY_NAME = HOBBY.getName();
+        final String CATEGORY_NAME = HOBBY.getValue();
         Map<String, String> searchCondition = new ConcurrentHashMap<>();
         searchCondition.put(CATEGORY.getParamKey(), CATEGORY_NAME);
 

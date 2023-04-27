@@ -72,7 +72,7 @@ class ApplimentMemberRepositoryTest extends RepositoryTestCustom {
     @Test
     void findAllRecruitmentByUserId() {
         //when
-        List<ApplimentMember> allAppliment = applimentMemberRepository.findAllRecruitmentByUserId(AUTHOR_KAI.getId());
+        List<ApplimentMember> allAppliment = applimentMemberRepository.findAllRecruitmentForAuthByUserId(AUTHOR_KAI.getId());
 
         //then
         assertAll(
@@ -99,7 +99,7 @@ class ApplimentMemberRepositoryTest extends RepositoryTestCustom {
     @Test
     void findAllByUserId() {
         //when
-        List<ApplimentMember> allAppliment = applimentMemberRepository.findAllRecruitmentByUserId(AUTHOR_KAI.getId());
+        List<ApplimentMember> allAppliment = applimentMemberRepository.findAllRecruitmentForAuthByUserId(AUTHOR_KAI.getId());
 
         //then
         assertAll(

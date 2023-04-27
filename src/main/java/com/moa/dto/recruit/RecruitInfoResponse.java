@@ -5,7 +5,7 @@ import com.moa.domain.recruit.Recruitment;
 import com.moa.domain.recruit.tag.RecruitTag;
 import com.moa.domain.user.User;
 import com.moa.dto.member.RecruitMemberResponse;
-import com.moa.dto.user.UserIdNameResponse;
+import com.moa.dto.user.UserIdNameNicknameResponse;
 import lombok.Getter;
 
 import java.util.List;
@@ -16,7 +16,7 @@ public class RecruitInfoResponse {
     private final String content;
     private final int state;
     private final String category;
-    private UserIdNameResponse postUser;
+    private UserIdNameNicknameResponse postUser;
     private List<String> tags;
     private List<RecruitMemberResponse> members;
 
@@ -24,14 +24,14 @@ public class RecruitInfoResponse {
         this.title = recruitment.getPost().getTitle();
         this.content = recruitment.getPost().getContent();
         this.state = recruitment.getStatus().getCode();
-        this.category = recruitment.getCategory().getName();
+        this.category = recruitment.getCategory().getValue();
         setPostUser(recruitment.getUser());
         setTags(recruitment.getTags());
         setMembers(recruitment.getMembers());
     }
 
     private void setPostUser(User user) {
-        this.postUser = new UserIdNameResponse(user.getId(), user.getName());
+        this.postUser = new UserIdNameNicknameResponse(user.getId(), user.getName(), user.getNickname());
     }
 
     private void setTags(List<RecruitTag> tags) {

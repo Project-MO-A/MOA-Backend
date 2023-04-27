@@ -9,6 +9,7 @@ import com.moa.domain.user.Popularity;
 import com.moa.domain.user.User;
 import lombok.Getter;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,6 +50,20 @@ public enum RecruitmentFixture {
             test.add(new TestRecruitMember(recruitment, recruitMembers.get(i), (long) i));
         }
         recruitment.setMembers(test);
+        return recruitment;
+    }
+
+    public Recruitment 아이디를_삽입하여_생성(Long recruitId) {
+
+        Recruitment recruitment = 기본_빌더_생성().build();
+        Field id = null;
+        try {
+            id = recruitment.getClass().getDeclaredField("id");
+            id.setAccessible(true);
+            id.set(recruitment, recruitId);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
         return recruitment;
     }
 
