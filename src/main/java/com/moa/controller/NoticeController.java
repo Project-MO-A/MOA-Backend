@@ -5,6 +5,7 @@ import com.moa.dto.notice.NoticesResponse;
 import com.moa.dto.notice.PostNoticeRequest;
 import com.moa.dto.notice.UpdateNoticeRequest;
 import com.moa.service.NoticeService;
+import com.moa.service.util.GrahamUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -40,7 +41,7 @@ public class NoticeController {
     }
 
     @PostMapping("/{noticeId}/vote")
-    public ValueResponse<String> completeVote(@PathVariable Long recruitmentId, @PathVariable Long noticeId) {
+    public ValueResponse<GrahamUtils.Point> completeVote(@PathVariable Long recruitmentId, @PathVariable Long noticeId) {
         return new ValueResponse<>(noticeService.finishVote(recruitmentId, noticeId));
     }
 }

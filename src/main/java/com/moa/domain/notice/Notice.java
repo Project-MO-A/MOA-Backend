@@ -5,6 +5,7 @@ import com.moa.domain.member.AttendMember;
 import com.moa.domain.recruit.Recruitment;
 import com.moa.dto.notice.UpdateNoticeRequest;
 import com.moa.global.exception.service.AssociationMisMatchException;
+import com.moa.service.util.GrahamUtils;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -33,19 +34,21 @@ public class Notice extends BaseTimeEntity {
     private Post post;
     private LocalDateTime confirmedTime;
     private String confirmedLocation;
-    private String recommendedLocation;
+    private Double recommendedLocationX;
+    private Double recommendedLocationY;
     private boolean checkVote;
     private boolean isVote;
 
     @OneToMany(mappedBy = "notice", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AttendMember> attendMembers = new ArrayList<>();
     @Builder
-    public Notice(Recruitment recruitment, Post post, LocalDateTime confirmedTime, String confirmedLocation, String recommendedLocation, boolean checkVote) {
+    public Notice(Recruitment recruitment, Post post, LocalDateTime confirmedTime, String confirmedLocation, Double recommendedLocationX, Double recommendedLocationY, boolean checkVote) {
         this.recruitment = recruitment;
         this.post = post;
         this.confirmedTime = confirmedTime;
         this.confirmedLocation = confirmedLocation;
-        this.recommendedLocation = recommendedLocation;
+        this.recommendedLocationX = recommendedLocationX;
+        this.recommendedLocationY = recommendedLocationY;
         this.checkVote = checkVote;
         this.isVote = false;
     }
@@ -68,7 +71,8 @@ public class Notice extends BaseTimeEntity {
         this.isVote = true;
     }
 
-    public void recommend(String recommendedLocation) {
-        this.recommendedLocation = recommendedLocation;
+    public void recommend(GrahamUtils.Point point) {
+        this.recommendedLocationX = point.getX();
+        this.recommendedLocationY = point.getY();
     }
 }

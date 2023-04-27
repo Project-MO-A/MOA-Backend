@@ -160,7 +160,7 @@ class NoticeServiceUnitTest extends AbstractServiceTest {
         private final Long id;
 
         public ProxyNotice(Recruitment recruitment, Post post, LocalDateTime confirmedTime, String confirmedLocation, boolean checkVote, Long id) {
-            super(recruitment, post, confirmedTime, confirmedLocation, "", checkVote);
+            super(recruitment, post, confirmedTime, confirmedLocation, 0.0, 0.0, checkVote);
             this.id = id;
         }
 

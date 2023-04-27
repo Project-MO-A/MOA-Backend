@@ -43,7 +43,8 @@ public record NoticesResponse(List<NoticeResponse> notices) {
         private final String createdDate;
         private final boolean checkVote;
         private final boolean finishVote;
-        private final String recommendLocation;
+        private final Double recommendLocationX;
+        private final Double recommendLocationY;
         private final Map<String, List<Member>> members;
 
         public NoticeResponse(Notice notice) {
@@ -53,18 +54,20 @@ public record NoticesResponse(List<NoticeResponse> notices) {
                     notice.getCreatedDate().format(DateTimeFormatter.ofPattern("yy.MM.dd")),
                     notice.isCheckVote(),
                     notice.isVote(),
-                    notice.getRecommendedLocation(),
+                    notice.getRecommendedLocationX(),
+                    notice.getRecommendedLocationY(),
                     attendanceMap()
             );
         }
 
-        public NoticeResponse(Long noticeId, String content, String createdDate, boolean checkVote, boolean finishVote, String recommendLocation, Map<String, List<Member>> members) {
+        public NoticeResponse(Long noticeId, String content, String createdDate, boolean checkVote, boolean finishVote, Double recommendLocationX, Double recommendLocationY, Map<String, List<Member>> members) {
             this.noticeId = noticeId;
             this.content = content;
             this.createdDate = createdDate;
             this.checkVote = checkVote;
             this.finishVote = finishVote;
-            this.recommendLocation = recommendLocation;
+            this.recommendLocationX = recommendLocationX;
+            this.recommendLocationY = recommendLocationY;
             this.members = members;
         }
 
