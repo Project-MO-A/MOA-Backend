@@ -11,15 +11,20 @@ import com.moa.dto.notice.NoticesResponse;
 import com.moa.dto.notice.PostNoticeRequest;
 import com.moa.dto.notice.UpdateNoticeRequest;
 import com.moa.global.exception.service.EntityNotFoundException;
+import com.moa.global.exception.service.InvalidRequestException;
+import com.moa.service.util.GrahamUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.moa.domain.member.Attendance.ATTENDANCE;
+import static com.moa.global.exception.ErrorCode.CAN_NOT_STOP_VOTE;
 import static com.moa.global.exception.ErrorCode.NOTICE_NOT_FOUND;
+import static com.moa.service.util.GrahamUtils.getOutSide;
 import static com.moa.service.util.KakaoUtils.getRecommendedLocationByKakao;
 
 @Service
@@ -67,17 +72,20 @@ public class NoticeService {
         return new NoticesResponse(notices, attendMembers);
     }
 
-    public String finishVote(Long recruitmentId, Long noticeId) {
+    public GrahamUtils.Point finishVote(Long recruitmentId, Long noticeId) {
         Notice notice = noticeRepository.findFetchMemberByIdAndRecruitmentId(noticeId, recruitmentId)
                 .orElseThrow(() -> new EntityNotFoundException(NOTICE_NOT_FOUND));
-        String recommendedLocation = findLocation(
+        GrahamUtils.Point middlePoint = getMiddlePoint(notice.getAttendMembers().stream()
+                .filter(member -> member.getAttendance().equals(ATTENDANCE))
+                .toList());
+        /*String recommendedLocation = findLocation(
                 notice.getAttendMembers().stream()
                         .filter(member -> member.getAttendance().equals(ATTENDANCE))
                         .toList()
-        );
-        notice.recommend(recommendedLocation);
+        );*/
+        notice.recommend(middlePoint);
         notice.finishVote();
-        return recommendedLocation;
+        return middlePoint;
     }
 
     private String findLocation(List<AttendMember> attendMembers) {
@@ -91,5 +99,26 @@ public class NoticeService {
         return documents
                 .get(0)
                 .place_name();
+    }
+
+    private GrahamUtils.Point getMiddlePoint(List<AttendMember> attendMembers) {
+        if (attendMembers.size() == 0) {
+            throw new InvalidRequestException(CAN_NOT_STOP_VOTE);
+        }
+
+        List<GrahamUtils.Point> points = attendMembers.stream()
+                .map(member -> new GrahamUtils.Point(member.getUser().getLocationLatitude(), member.getUser().getLocationLongitude()))
+                .toList();
+        List<GrahamUtils.Point> outSide = getOutSide(new ArrayList<>(points));
+
+        System.out.println("==========outside points with member point============");
+        double sumLatitude = 0.0;
+        double sumLongitude = 0.0;
+        for (GrahamUtils.Point point : outSide) {
+            sumLatitude += point.getX();
+            sumLongitude += point.getY();
+        }
+
+        return new GrahamUtils.Point(sumLatitude / outSide.size(), sumLongitude / outSide.size());
     }
 }
