@@ -1,0 +1,14 @@
+:toc: left
+:toc-title: API
+:toclevels: 1
+:sectlinks:
+
+= User
+== SignUp
+operation::user/signup[snippets='http-request,request-fields,http-response,response-fields']
+
+== SignOut
+operation::user/signout[snippets='http-request,request-headers,http-response']
+
+== Login
+operation::user/login[snippets='http-request,response-headers']

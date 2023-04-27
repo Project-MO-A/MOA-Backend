@@ -1,14 +1,38 @@
 spring:
-  datasource:
-    url: jdbc:h2:mem:testdb;Mode=MySQL
+  jackson:
+    date-format: yyyy-MM-dd'T'HH:mm:ss:SSS'Z'
+    serialization:
+      write-dates-as-timestamps: false
+  data:
+    web:
+      pageable:
+        default-page-size: 12
+        one-indexed-parameters: true
+  messages:
+    basename: messages
+    encoding: UTF-8
+  config:
+    import: sub/application-kakao.yml, sub/application-s3.yml
+  profiles:
+    active: dev
   jpa:
-    hibernate:
-      ddl-auto: create
     properties:
       hibernate:
-        show_sql: true
-        format_sql: true
-        dialect: org.hibernate.dialect.MySQL8Dialect
-  h2:
-    console:
-      enabled: true
+        default_batch_fetch_size: 100
+
+logging:
+  file:
+    path: ./logback-spring.xml
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+    import: dev/application-db.yml, dev/application-jwt.yml
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+    import: sub/application-db.yml, sub/application-jwt.yml
+---
