@@ -12,6 +12,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.MessageSourceAccessor;
+import org.springframework.web.servlet.i18n.FixedLocaleResolver;
 
 @Configuration
 @ConfigurationPropertiesScan("com.moa")
@@ -35,5 +36,12 @@ public class WebBeanConfig {
                 AWS_SECRET_ACCESS_KEY
         );
         return AmazonS3ClientBuilder.standard().withCredentials(new AWSStaticCredentialsProvider(awsCredentials)).withRegion(Regions.AP_NORTHEAST_2).build();
+    }
+
+    @Bean
+    public FixedLocaleResolver fixedLocaleResolver() {
+        FixedLocaleResolver fixedLocaleResolver = new FixedLocaleResolver();
+        fixedLocaleResolver.setDefaultLocale(java.util.Locale.KOREA);
+        return fixedLocaleResolver;
     }
 }
