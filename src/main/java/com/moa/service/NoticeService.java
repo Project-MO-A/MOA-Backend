@@ -6,6 +6,7 @@ import com.moa.domain.notice.Notice;
 import com.moa.domain.notice.NoticeRepository;
 import com.moa.domain.recruit.Recruitment;
 import com.moa.domain.recruit.RecruitmentRepository;
+import com.moa.dto.notice.Kakao;
 import com.moa.dto.notice.NoticesResponse;
 import com.moa.dto.notice.PostNoticeRequest;
 import com.moa.dto.notice.UpdateNoticeRequest;
@@ -80,9 +81,14 @@ public class NoticeService {
     }
 
     private String findLocation(List<AttendMember> attendMembers) {
-        return getRecommendedLocationByKakao(attendMembers, path, restApiKey)
+        List<Kakao.Documents> documents = getRecommendedLocationByKakao(attendMembers, path, restApiKey)
                 .block()
-                .documents()
+                .documents();
+        System.out.println("==========kakao info==========");
+        for (Kakao.Documents document : documents) {
+            System.out.println("document = " + document.place_name());
+        }
+        return documents
                 .get(0)
                 .place_name();
     }
