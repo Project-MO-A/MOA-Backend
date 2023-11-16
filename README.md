@@ -23,14 +23,14 @@
 
 <h2>🌠 Overview</h2>
 <div align="center">
-  <img width="500" alt="ERD" src="https://github.com/Project-MO-A/MOA-Backend/assets/99247279/727f959d-f943-4894-9d3a-449970a83c70">
-  <img width="500" alt="ERD" src="https://github.com/Project-MO-A/MOA-Backend/assets/99247279/5cc16554-aa37-4d49-ada1-8da9b89e7cab">
+  <img width="400" alt="ERD" src="https://github.com/Project-MO-A/MOA-Backend/assets/99247279/727f959d-f943-4894-9d3a-449970a83c70">
+  <img width="400" alt="ERD" src="https://github.com/Project-MO-A/MOA-Backend/assets/99247279/5cc16554-aa37-4d49-ada1-8da9b89e7cab">
   &nbsp;
-  <img width="450" alt="ERD" src="https://github.com/Project-MO-A/MOA-Backend/assets/99247279/fed10d7f-4040-4085-8c8f-7fe4ca34667b">
-  <img width="450" alt="ERD" src="https://github.com/Project-MO-A/MOA-Backend/assets/99247279/1706470f-a163-40fb-8d6c-7bc08af68617">
+  <img width="400" alt="ERD" src="https://github.com/Project-MO-A/MOA-Backend/assets/99247279/fed10d7f-4040-4085-8c8f-7fe4ca34667b">
+  <img width="400" alt="ERD" src="https://github.com/Project-MO-A/MOA-Backend/assets/99247279/1706470f-a163-40fb-8d6c-7bc08af68617">
   &nbsp;
-  <img width="500" alt="ERD" src="https://github.com/Project-MO-A/MOA-Backend/assets/99247279/48ca4d01-40d3-4091-a408-88454627a3b8">
-  <img width="500" alt="ERD" src="https://github.com/Project-MO-A/MOA-Backend/assets/99247279/d4c51db6-cf1b-4faf-bce6-c4707014e272">
+  <img width="400" alt="ERD" src="https://github.com/Project-MO-A/MOA-Backend/assets/99247279/48ca4d01-40d3-4091-a408-88454627a3b8">
+  <img width="400" alt="ERD" src="https://github.com/Project-MO-A/MOA-Backend/assets/99247279/d4c51db6-cf1b-4faf-bce6-c4707014e272">
 </div>
 
 &nbsp;
