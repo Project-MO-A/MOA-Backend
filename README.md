@@ -39,16 +39,20 @@
   <img width="700" alt="Stacks" src="https://github.com/Project-MO-A/MOA-Backend/assets/99247279/24fd4663-cc8d-478e-af6d-24d6ec7a0bcc">
 </div>
 
+&nbsp;
 <h2>📋 ERD</h2>
 <div align="center">
   <img width="700" alt="ERD" src="https://github.com/Project-MO-A/MOA-Backend/assets/99247279/ad793e8a-3c19-4fc4-bc0e-9f3f4d65cbbf">
 </div>
 
-<h2>🌠 Overview</h2>
+&nbsp;
+<h2>✍🏻 Collaboration</h2>
 <div align="center">
-  <img width="700" alt="ERD" src="https://github.com/Project-MO-A/MOA-Backend/assets/99247279/48ca4d01-40d3-4091-a408-88454627a3b8">
-  <img width="700" alt="ERD" src="https://github.com/Project-MO-A/MOA-Backend/assets/99247279/d4c51db6-cf1b-4faf-bce6-c4707014e272">
+  
+  **🧑🏻‍💻 Discussions를 통한 커뮤니케이션 및 Issue Tracking**
+  <img width="700" alt="ERD" src="https://github.com/Project-MO-A/MOA-Backend/assets/99247279/555813c3-0fbc-4879-bc05-feeed4425785">
 </div>
+
 
 
 <h2>⛔️ Custom Exception</h2>
