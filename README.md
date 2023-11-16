@@ -6,6 +6,11 @@
 <div align="center"><h1></h1></div>
 
 > **🧑🏻‍💻 모든 스터디를 한 눈에! 스터디 정보를 모아 볼 수 있는 서비스, MO:A**
+#### 주요 기능
+- 프로젝트, 스터디 모집글 작성 및 관리 기능
+- 프로젝트 포지션별 참여 신청 및 관리 기능
+- 팀원 인기도 평가, 참여도 관리 기능
+- 위치 기반 장소 추천, 시간 조율 기능
 
 &nbsp;
 
@@ -37,6 +42,12 @@
 <h2>🛠 Stack</h2>
 <div align="center">
   <img width="700" alt="Stacks" src="https://github.com/Project-MO-A/MOA-Backend/assets/99247279/24fd4663-cc8d-478e-af6d-24d6ec7a0bcc">
+</div>
+
+&nbsp;
+<h2>📜 Infra</h2>
+<div align="center">
+  <img width="700" alt="ERD" src="https://github.com/Project-MO-A/MOA-Backend/assets/99247279/b6a73f49-6c6e-4887-8682-d7ab13538d6f">
 </div>
 
 &nbsp;
